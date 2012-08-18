@@ -1,0 +1,285 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+\usepackage{url}
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+%%% END Article customizations
+
+%%% The "real" document content comes below...
+
+\title{\Huge Motion Detection \&\\Other Imaging Operations\\ for the N900 }
+\author{\small By Mehmet Tekman\\\small Department of Computer Science\\\small University College London}
+
+\begin{document}
+\maketitle 
+
+\part*{}{\tiny .\\\\\\\\\\\\\\\\\\\\\\\\}
+
+\begin{abstract}
+ Morphological image processing techniques were adopted upon frames captured by the camera on a mobile phone to correctly detect motion for a wide range image sizes.
+\end{abstract}
+
+%\begin{figure}
+%\begin{picture}(300,200)(0,0)
+%\put(-20,20){\resizebox{5 cm}{!}{\includegraphics{images/wiki_n900}}}
+%\end{picture}
+%\caption{{\em The N900 Mobile Device}}
+%\end{figure}
+
+\pagebreak
+\tableofcontents
+%This is awesome! It automaticaly generates a TOC depending on the part,section,subsection structure declared below!
+\pagebreak
+
+
+\part{Background}
+\section{Hardware}
+\subsection{The Device}
+\paragraph{The N900 was Nokia's third attempt at producing an internet tablet phone after the initial success of the N810. Like it's predecessor it sported a hardware keyboard, a TFT touchscreen, accelerometer, 600 MHz ARM Corex CPU, and the same PowerVR SGX Graphics chip came with the iPhone 3GS.}
+\paragraph{At the time of it's release in 2009 it boasted competitive specs with every other smart phone on the market; supported flash (unlike the iPhone) and could multitask multiple apps at the same time. However it sold poorly due to unfamiliarity of its user interface and lack of 3rd party developers - indeed the only crowd it attracted was its already loyal Nokia fanbase from previous phones.}
+\paragraph{Despite these setbacks, the N900 has been heralded as one of the most well designed phones of its generation due to its open framework, native interation of Skype, fast boot time via Ubuntu's upstart daemon. It was also one of the first smartphone's to successfully port Android (the Nitdroid project) and could emulate other linux distros.}
+
+\subsection{Camera}
+\paragraph{The Nokia N900 came with a 5 MegaPixel resolution, with dual LED flash, and a Carl Zeiss lens with a 5.2mm focal length, a fixed aperture (regulator of light) and focus minimum of 10cm.}
+\paragraph{The camera sensor uses CMOS technology rather than CCD, which makes it better suited for video than for photo due to CMOS having a larger framerate because of its rolling shutter. CMOS also holds the advantage of being good for night vision, which is a useful feature for a motion detecting application to have.}
+\paragraph{ It supports the following resolutions:\\Image: (2576x1936),(2560x1440),(2048x1536),(1280x960)\\Video: (848x480),(640x480),(320x240) at 25fps}
+
+\section{Software}
+\subsection{Maemo OS}
+\paragraph{The Maemo operating system is a Debian-based platform developed by Nokia for its internet tablets. For the N900 the Maemo OS was in it's 5th revision (Maemo 5) codenamed 'Fremantle'. It is based mostly upon open-source code, though certain user-space elements such as telephone operations, taskbar applets, and system daemons were closed source much to the chagrin of the developers, but these were later 'opened' by keen developers after Nokia dropped it's over-the-air updates in 2011.}
+\paragraph{The desktop uses the Hildon GUI framework which is based on GTK. Software is installed via HAM Application Manager (UI) but also via the classic 'apt-get' command (from the terminal emultator Xterm) native to all Debian distributions supporting the aptitude package manager, since applications are compiled as .deb files as with all Debian flavours.}
+\paragraph{The media player uses the GStreamer multimedia framework to play videos....}
+\paragraph{For software development, applications can written in C, C++, Python, Ruby and Mono. Java applications can also be written but these require to a JME to be ran and gaining access to this from the phone is not facilitated easily.}
+\subsubsection{Community}
+\paragraph{Maemo initially started off as being maintained by Nokia, with users recieving flashable firmware updates every 6 months or so, and over-the-air package updates bimonthly until it was stopped being maintained in 2011. At that point the community was responsible for updates and now the latest edition of Fremantle is known as Maemo CSSU (Community Supported Service Updates) which have transformed the device into a very fast and almost completely open-source device.}
+\paragraph{Further developements to the Kernel were made, and soon Kernel-Power (now version 51)  is most widely used kernel on the device replacing Nokia's PR 1.3 due to it's overclocking support, USB hostmode capabilites, wifi packet-injection, and even support for 720p video (not a feature of the device, nor any device, at the time of its release in 2009)}
+\paragraph{Applications follow the same open-source framework as Debian applications, where any packages in the main repositories must be open source, and any third party closed-source applications must be installed through Nokia's Ovi store which has slow access through the phone's browser}
+\subsubsection{Future of Nokia}
+\paragraph{Nokia's previous OS was Symbian, which at the time was one of the most popular mobile operating system. Every one in two mobile phones sold in 2009 carried the Symbian OS\cite{symb1} a stark contrast to the current leading smartphone OS's of today. Maemo was Nokia's next brain child, the open-source succesor to Symbian which it replaced in the release of  it's then next-gen internet tablet phones, a bold and somewhat puzzling move by Nokia after the success of their initial Symbian OS. Maemo's open framework attracted many hardcore linux developers hungry to port linux applications onto the device, but sadly that was mostly all the phone as good for. The initial Diablo release for the Nokia N810 was superseded by  the Fremantle release for the N900, which has now been surpassed by the Harmattan release for the N9 and N950.}
+\paragraph{Harmattan was supposed to be the stepping stone between Maemo and Meego, Nokia's next inventure, which was a merge between Moblin OS and Maemo. However though initial development images worked well with Nokia devices the Meego project was dropped by Nokia and the community had to once again pick up the slack, and are currently maintining Meego under the codename 'Mer' which is now being used as the template for the next completely open-source mobile OS 'Tizen' which will be launched on Samsung phones in the near future}
+\paragraph{One cannot blame Nokia for trying something new, but it is often said that the reason that sales for Nokia internet tablets did not do so well was because the CEO's were not comfortable fully backing the mostly unknown Maemo and Meego OSes. Had there been more advertizing and promotional support from Nokia's PR department, the mobile phone market may have been very different from the current state that is in now.}
+\paragraph{At the moment Nokia have backed behind the Windows Mobile 8 OS in a last bid attempt to re-establish themselves in the market to new customers with the Nokia Lumia smartphone series. This is essentially a complete reversal of the open-source ideals it had been pursuing not so many months before, leaving a lot of the original Nokia developers feeling somewhat betrayed.}
+
+\subsection{Development Tools}
+\subsubsection{Scratchbox}
+\paragraph{Scratchbox is a cross-compilation toolkit used for application development across Linux distributions aimed at mostly x86 and ARM architectures. For Maemo, this is the bare minimum required to develop applications since it comes shipped with a rootstrap device required to build the .deb packages from source code.}
+\subsubsection{Rootstrap}
+\paragraph{The rootstrap is effectively a directory containing all the prebuilt ARM libraries and files that the phone it is building for contains, and through a chrooted environment can install and run the same deb packages that Fremantle uses. \\A chrooted environment is when a new directory is set as 'the root' of a filesystem in order to run a process in a modified environment so that the process does not have access to files outside of its current root. To have access to system devices and utilities, chrooted environments often have  /dev (device), /sys (system), /proc (process) mounted or bound as well.}
+\subsubsection{Qt Framework} {
+Qt is an open-source cross-platform application framework developed by Nokia to facilitate in the creation of developing and testing apps.  It uses mainly C++ which even comes with the GCC toolchain, but also uses QML (Qt Meta Language) which is a Javascript-based language for building applications where fluid animations for widgets is desired. Qt also has bindings for Python, Ruby, Perl, Php, Java, and numerous other languages.\\
+
+Though Qt was mostly Maemo and Symbian based, the next version of Qt (version 5, currently v4.7) will be aimed at Android, iOS, and Windows 8 mobile devices in the near future. This was due to Digia buying Qt from Nokia in 2012\cite{nokiasell}.
+}
+
+\paragraph{Qt SDK}{ 
+The QtSDK holds many similarities with the Android SDK in that they both have GUI for creating layouts (Qt Designer), both access unique resources v
+
+
+ QObjects/strings management, Autogenerated files, MOC files, Qmake, Qt Designer, Resources, Similarity to Android SDK}
+
+\paragraph{Qt is well integrated with Scratchbox and is set up to have automatic access to the libraries defined in the /usr/lib/ directory of the chrooted rootstrap device.
+}
+\paragraph{Ubuntu vs Windows\\
+The QtSDK was developed in unix and ported over to windows. Linux binaries comes in 32-bit and 64-bit architectures, the latter of which is desirably faster than the former in terms of hardware emulation, building, packaging, and syntax detection.\\The Windows QtSDK is only 32 bit, mostly because of bugs in the Mingw64 project which aims to be a complete runtime environment for gcc which would support native Windows 64 and 32 bit binaries.\\
+Naturally, the windows version of the QtSDK builds slower due to the smaller architecture limitation, however it is a great deal more stable as shown later in the report.}
+\paragraph{Hardware Device, Emulator\\The QtSDK supports}
+
+
+
+\subsubsection{Version Control}
+\paragraph{The QtSDK also comes shipped with integrated version control with good support for most of the popular versioning control systems such as Git, Mercurial, Subversion, Perforce, CVS, and Bazaar.\\
+Changes to a piece of code can be committed and pushed either through simple Keyboard combinations or access through a dropdown menu.\\
+This was my first time using a versioning tool since I generally backup my last data on a USB stick, and my current data on Dropbox.
+For this project I chose to use the newer Git distributed version control (DVCS) tool over the classic Subversion centralised version control (CVS) model, purely because this was a solo project and managing multiple commits to central server was not an issue, and also because Git is generally faster, since there is no need to communicate with a central server. I also used Dropbox to sync my current work as an extra precaution.\\
+The repository I chose to host my work was BitBucket which is very similar to the classic GitHub and Launchpad, but due to its lack of online community and its shameless copying of GitHub's webpage layout, recieves very little traffic\cite{gitvs}. By this logic it would mean that access to the site would be swift and that even if I made my repository public sometime in the future, there would be very few occurences of interfering users hovering over my code and pointing out its flaws.}
+\paragraph{From the QtSDK, branches can be chosen through context menus and changes can be pushed to the server with an optional 'diff' screen to compare changes between versions.\\It should be noted that the SDK does not come shipped with Git and it is down to the user to install and setup Git repositories independently of the SDK, which can only access existing branches.\\Using the Git Handbook, I followed the 'master' 'develop' 'feature' 'hotfix' branching model where the 'master' branch holds the code for each stable release, 'develop' is branch for commiting new changes and features that are reasonably stable, but not yet ready for release. The 'feature' branch is branch that contains many branches for each new bleeding edge feature that is released  such as 'feature/avaraging\_method' or 'feature/subtract'. When these features have working prototypes they are then merged with the 'develop' branch. The 'hotfix' branch is a tiny branch that exists for quickly fixing small bugs that are found on a release.}
+\subsubsection{\LaTeX{}}
+\paragraph{Previous reports of mine have often been written in OpenOffice or Abiword, but this time I decided to try LaTex.\\LaTex is an intuitive document creating language widely used in academia to produce proffesional papers and reports using the type-setting program Tex. It has native support for writing equations, producing tables, generating a table of contents, and simplifies bibliography management.\\Every part of the document is declared in a single marking tag which can declare a section, or subsection, or subsubsection, or paragraph, or subparagraph.}
+\part{Motion Detector}
+\paragraph{A Motion Detector is a camera device that uses hardware or software to detect a significant change between scenes and flag that movement has occurred. The first motion detector was invented by Samuel Bagno in the 1950s as a burglar alarm, making use of ultrasonic waves to measure the Doppler change in frequencies to measure movement. Modern day motion detectors make use of the same technology; using infrared to measure changes in heat, or microwave lasers to measure the distance of a scene.\\
+Mobile phone's however do not come equipped with microwave lasers nor ultrasonic emitters, and though a significant amount of mobile phones have infra-red sensors and bluetooth radio sensors, the poor resolution of these sensors makes using them as reliable motion detectors somewhat tricky.\\
+Modern smartphones of today do often come equipped with camera's whose images can be used to detect motion, but all the processing is done in the software which can be slow. Fortunately smartphones of today are fast enough to handle such image processing, and using lower-level languages such as C and C++ the strain on the phone can be greatly reduced.}
+
+\section{Competition}
+\paragraph{Due to the small community of Maemo users, there are not many apps of this nature on the platform and thus not much competition at all.}
+
+\section{Software Battles}
+\paragraph{To start a basic motion detector, the very least that I would need to do is take one frame and subtract it from another to see the difference. To do this I would need to store every pixel value in an array for each image and then perform a sweep over both arrays to compare their pixel values. There must be imaging libraries that I could use that would greatly facilitate such imaging techniques.}
+
+\subsection{OpenCV vs CImg}
+\paragraph{OpenCV and CImg are both common imaging libraries for C, C++, and Python, for use with real-time image proccessing.}
+\paragraph{The Open Source Computer Vision Library (or OpenCV) was developed by Intel for use with computer vision applications, but since was dropped and is now maintained by Willow Garage and Itseez.\\A Maemo port of opencv does exist for Fremantle but}
+
+\subsection{FCam vs Gstreamer}
+\subsection{FFmpeg vs Mencoder vs ImageMagick}{CImg is actually well integrated with imagemagick}
+\section{Image Processing Techniques}
+\subsection{Subtraction}
+\subsection{Accumulation}
+\paragraph{Results}
+\paragraph{Analysis}
+\subsection{Determining a Threshold for Detection}
+\paragraph{Counting white pixels (ineffective bt itself, scatter}
+\paragraph{Noise}
+\subparagraph{Thermal Noise, CCD clocking up/down}
+\subparagraph{Oversaturation, filtering, compression}
+\subsection{Image Morphology}{Noise Removal}
+\subsubsection{Kernel Mask}
+\paragraph{Diamond,Square}
+\subsubsection{Erode, Dilate}{Open/Close}
+\section{Threads}
+\subsection{Camera Thread}
+\subsubsection{Signal/Slots}
+\subsubsection{QImage, QPixMap, and CImg}
+\subsection{Email Thread}
+\paragraph{Setting up an SMTP Server}
+\paragraph{Existing Frameworks}{QTCPSocket from version 3.x}
+\paragraph{Adoption of mailcmd}
+\subsection{Multiple Inheritance}{QObject and QThread}
+\subsection{Optimisations/Error Proofing}
+\subsubsection{Kernel Compatibility}
+
+
+\part{TimeLapse}
+\section{Command Line Switches}{Necessity for it}
+\subsection{Argument parser}
+\subsubsection{Switch Detection}
+\paragraph{Argument Removal}
+\paragraph{Terminal Colours}{Puty}
+\subsubsection{Reusing exiting variables}
+\paragraph{Why echoing the same command at differeint intervals?}
+\section{Scheduled Events}
+\subsection{Cron}
+\subsection{Cookies, Triggers, Flags}
+\subsection{Logic of repeated calls}
+\section{Software Battles}
+\subsection{Cron Vs Alarmd}
+\subsection{qDebug vs std::cout}
+\subsubsection{Message Handlers}
+\section{Optimisations/Error Proofing}
+
+
+\part{IP Streamer}
+\section{PhoneStreamer}{existing app}
+\subsection{Porting}{Seperating classes, why a rewrite is neccesary}
+\subsubsection{MySQL}
+\subsubsection{Webkit}
+\subsection{Optimisations}
+
+
+\part{User Interfaces}{dsfasdfasdfasdfasdfasdfasdfasdf}
+\section{Widgets}
+\subsection{CSS Stylesheets}
+\subsection{Labels and PixMaps}
+\subsection{Animated Gifs and QMovie}
+\section{Event Handling}
+\subsection{Slots/Signals}
+\subsubsection{Overriding events}
+\subsection{Maemo5 Stacked Windows}
+\section{Interface Diagrams}
+\subsection{Motion Detector}
+\subsection{TimeLapse}
+\subsection{IP Streamer}
+
+\part{Release}
+\section{Publishing}
+\subsection{Maemo Garage}
+\subsection{Extras}{Devel, Testing, Extras -- promotion period and rating system}
+\subsection{Announce Page}{Reception}
+
+\section{Versioning}
+\subsection{Branch model of Git}{Dropbox overall backup}
+\subsection{Rebases, Merges}
+\subsection{Release schedule}{Changelog and aims}
+
+\section{Additional Work}
+\subsection{Python Easter Egg}
+\subsection{Google Maps API}{Talk about how you were gonna include it as part of IP Stream by embedding a flash object on a page, but deemed it too unethical}
+
+\part{Bibliography}
+\begin{thebibliography}{9}
+
+\bibitem{symb1} Blookmber Business
+\url{http://www.businessweek.com/globalbiz/content/nov2009/gb2009114_367401.htm}
+
+\bibitem{gitvs} Pocoo
+\url{http://www.pocoo.org/~blackbird/github-vs-bitbucket/bitbucket.html}
+
+\bibitem{nokiasell} Lawton, Christopher (7 March 2011)
+"Nokia Sells Qt Commercial Services Business To Digia"
+\url{http://online.wsj.com/article/BT-CO-20110307-709153.html}
+
+
+\end{thebibliography}
+
+\part{Appendix}
+\subsection{Motion Detector}
+\subsection{TimeLapse}
+\subsection{IP Streamer}
+\subsection{Commit Log}
+\subsection{Other}{Python code, Interval, GMaps}
+
+
+\end{document}
+
+Transcript of commits
+
+Section: Future features
+Plan to have a 'night mode' that can be used for detecting movement at night using a longer exposure on the CMOS chip
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
