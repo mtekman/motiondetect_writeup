@@ -164,13 +164,40 @@ Modern smartphones of today do often come equipped with camera's whose images ca
 \paragraph{Due to the small community of Maemo users, there are not many apps of this nature on the platform and thus not much competition at all.}
 
 \section{Software Battles}
-\paragraph{To start a basic motion detector, the very least that I would need to do is take one frame and subtract it from another to see the difference. To do this I would need to store every pixel value in an array for each image and then perform a sweep over both arrays to compare their pixel values. There must be imaging libraries that I could use that would greatly facilitate such imaging techniques.}
+\paragraph{To start a basic motion detector, the very least that I would need to do is take one frame and subtract it from another to see the difference. To do this I would need to store every pixel value in an array for each image and then perform a sweep over both arrays to compare their pixel values. There must be imaging libraries that I could use that would greatly facilitate such imaging techniques. But first I would need to be able to take a single photo.....}
+
+\subsection{QtMobility vs Gstreamer vs FCam}
+\paragraph{QtMobility is a Qt library that enabed developers to have access to standard mobile functionality such as messaging, contacts, multimedia, and camera.  The camera is contained within a QCamera widget and simple calls can be made to the imaging device.
+\\Unfortunately the official stable version v1.1 had camera support for Symbian and Meego(Harmattan), but not Fremantle. There was an unstable version 1.2 which included Fremantle support, but once I had installed libqtm-dev\_1.2 on the rootstrap device, and tried to use the QCamera element from within a C++ class it did not work. This is because the QCamera element has to be accessed through QML, which would be doable but would not be optimized for speed. For this reason I dropped QtMobility.
+}
+\paragraph{GStreamer is an open source multimedia framework that is already native to Fremantle since it is the library that the default mediaplayer uses and so would reduce the dependencies of my application. GStreamer makes use of pipelining, byt connecting a number of elements in an ordered fashion so that the output (source) of one element is fed into the input(sink) of another element and so on until it reaches the final element which is usually a file or a network stream.
+\\\\A previous app of mine was Gstreamer based and a typical command from it would be:
+}
+\begin{verbatim}
+	      gst-launch v4l2src device=/dev/video0 ! \
+	      videoscale ! video/x-raw-yuv, width=320, height=240 ! \
+	      ffmpegcolorspace !  jpegenc 80 ! \
+	      tcpserversink host=192.168.1.101 port=9000
+\end{verbatim}
+\paragraph{This pipes the video-for-linux(version2) camera source into a video scaling element, into a raw video stream of defined height and width, into an element that convert the pixel color depths to type ffmpeg color sizes, into an element that encodes the raw stream into mjpeg format with a quality of 80\%, which then pipes it into a tcp server element which broadcasts to the specified host and port.
+\\On the recieving side, a gstreamer pipe would need to reverse the order of the elements (i.e. recieve from tcpserver, feed it into a jpeg decoder, and then specify an output window or file sink.
+\\Gstreamer is very well developed, and has a Good, Bad, and Ugly heirarchy of stable to unstable plugins that can be used to enable a wide array of different multimedia functionalities and formats.
+}
+
 
 \subsection{OpenCV vs CImg}
-\paragraph{OpenCV and CImg are both common imaging libraries for C, C++, and Python, for use with real-time image proccessing.}
-\paragraph{The Open Source Computer Vision Library (or OpenCV) was developed by Intel for use with computer vision applications, but since was dropped and is now maintained by Willow Garage and Itseez.\\A Maemo port of opencv does exist for Fremantle but}
+\paragraph{OpenCV and CImg are both common imaging libraries for C, C++, and Python, for use with real-time image proccessing. In terms of reducing the overhead on the size of the packaged app, OpenCV would be the ideal choice but}
+\paragraph{The Open Source Computer Vision Library (or OpenCV) was developed by Intel for use with computer vision applications, but since was dropped and is now maintained by Willow Garage and Itseez.
+\\OpenCV comes with many useful functions for motion detection: image subtraction, image averaging, normalising, and even its own method for tracking movement. It
+}
 
-\subsection{FCam vs Gstreamer}
+\paragraph{
+A Maemo port of openCV does exist for Fremantle \cite{libcv} but despite installing libcv, libcv-dev, and many of it's dependencies (libcvcore, libhighgui) the SDK would complain about many missing dependencies when building the application. The culprit turned out to be missing dependencies for libhighgui-dev, but this was false since running a quit dpkg -L <dependency\_name> confirmed that the dependency was indeed installed. At one stage I copied my entire /usr/lib directory from the phone to the rootstrap but it would still fail when trying to build.\\
+A few hours of trawling through the Maemo reading lists came up with a bug report \cite{highgui-dev} from the original maintainer claiming a bug within the build system.\\
+For this reason OpenCV had to be abondoned
+}
+
+
 \subsection{FFmpeg vs Mencoder vs ImageMagick}{CImg is actually well integrated with imagemagick}
 \section{Image Processing Techniques}
 \subsection{Subtraction}
@@ -267,6 +294,14 @@ Modern smartphones of today do often come equipped with camera's whose images ca
 \bibitem{nokiasell} Lawton, Christopher (7 March 2011)
 "Nokia Sells Qt Commercial Services Business To Digia"
 \url{http://online.wsj.com/article/BT-CO-20110307-709153.html}
+
+\bibitem{libcv} Maemo Packages
+LibCV
+\url{http://maemo.org/packages/view/libcv-dev/}
+
+\bibitem{highgui-dev} Oliver Hookins, Maemo Mailing Lists
+"[Maemo-developers] False Missing Dependencies In Package View"
+\url{http://lists.maemo.org/pipermail/maemo-developers/2011-August/028583.html}
 
 
 \end{thebibliography}
