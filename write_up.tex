@@ -50,7 +50,7 @@
 
 %%% The "real" document content comes below...
 
-\title{\Huge Motion Detection \&\\Other Imaging Operations\\ for the N900 }
+\title{\Huge Motion Detection and\\Other Imaging Operations\\ for the N900 }
 \author{\small By Mehmet Tekman\\\small Department of Computer Science\\\small University College London}
 
 \begin{document}
@@ -62,13 +62,6 @@
  Morphological image processing techniques were adopted upon frames captured by the camera on a mobile phone to correctly detect motion for a wide range image sizes.
 \end{abstract}
 
-%\begin{figure}
-%\begin{picture}(300,200)(0,0)
-%\put(-20,20){\resizebox{5 cm}{!}{\includegraphics{images/wiki_n900}}}
-%\end{picture}
-%\caption{{\em The N900 Mobile Device}}
-%\end{figure}
-
 \pagebreak
 \tableofcontents
 %This is awesome! It automaticaly generates a TOC depending on the part,section,subsection structure declared below!
@@ -77,6 +70,12 @@
 
 \part{Background}
 \section{Hardware}
+\begin{figure}
+\begin{picture}(300,200)(0,0)
+\put(300,20){\resizebox{4 cm}{!}{\includegraphics{images/wiki_n900}}}
+\end{picture}
+\caption{{\em The N900 Mobile Device}}
+\end{figure}
 \subsection{The Device}
 \paragraph{The N900 was Nokia's third attempt at producing an internet tablet phone after the initial success of the N810. Like it's predecessor it sported a hardware keyboard, a TFT touchscreen, accelerometer, 600 MHz ARM Corex CPU, and the same PowerVR SGX Graphics chip came with the iPhone 3GS.}
 \paragraph{At the time of it's release in 2009 it boasted competitive specs with every other smart phone on the market; supported flash (unlike the iPhone) and could multitask multiple apps at the same time. However it sold poorly due to unfamiliarity of its user interface and lack of 3rd party developers - indeed the only crowd it attracted was its already loyal Nokia fanbase from previous phones.}
@@ -93,41 +92,59 @@
 \paragraph{The desktop uses the Hildon GUI framework which is based on GTK. Software is installed via HAM Application Manager (UI) but also via the classic 'apt-get' command (from the terminal emultator Xterm) native to all Debian distributions supporting the aptitude package manager, since applications are compiled as .deb files as with all Debian flavours.}
 \paragraph{The media player uses the GStreamer multimedia framework to play videos....}
 \paragraph{For software development, applications can written in C, C++, Python, Ruby and Mono. Java applications can also be written but these require to a JME to be ran and gaining access to this from the phone is not facilitated easily.}
+
 \subsubsection{Community}
 \paragraph{Maemo initially started off as being maintained by Nokia, with users recieving flashable firmware updates every 6 months or so, and over-the-air package updates bimonthly until it was stopped being maintained in 2011. At that point the community was responsible for updates and now the latest edition of Fremantle is known as Maemo CSSU (Community Supported Service Updates) which have transformed the device into a very fast and almost completely open-source device.}
 \paragraph{Further developements to the Kernel were made, and soon Kernel-Power (now version 51)  is most widely used kernel on the device replacing Nokia's PR 1.3 due to it's overclocking support, USB hostmode capabilites, wifi packet-injection, and even support for 720p video (not a feature of the device, nor any device, at the time of its release in 2009)}
 \paragraph{Applications follow the same open-source framework as Debian applications, where any packages in the main repositories must be open source, and any third party closed-source applications must be installed through Nokia's Ovi store which has slow access through the phone's browser}
+
 \subsubsection{Future of Nokia}
 \paragraph{Nokia's previous OS was Symbian, which at the time was one of the most popular mobile operating system. Every one in two mobile phones sold in 2009 carried the Symbian OS\cite{symb1} a stark contrast to the current leading smartphone OS's of today. Maemo was Nokia's next brain child, the open-source succesor to Symbian which it replaced in the release of  it's then next-gen internet tablet phones, a bold and somewhat puzzling move by Nokia after the success of their initial Symbian OS. Maemo's open framework attracted many hardcore linux developers hungry to port linux applications onto the device, but sadly that was mostly all the phone as good for. The initial Diablo release for the Nokia N810 was superseded by  the Fremantle release for the N900, which has now been surpassed by the Harmattan release for the N9 and N950.}
 \paragraph{Harmattan was supposed to be the stepping stone between Maemo and Meego, Nokia's next inventure, which was a merge between Moblin OS and Maemo. However though initial development images worked well with Nokia devices the Meego project was dropped by Nokia and the community had to once again pick up the slack, and are currently maintining Meego under the codename 'Mer' which is now being used as the template for the next completely open-source mobile OS 'Tizen' which will be launched on Samsung phones in the near future}
 \paragraph{One cannot blame Nokia for trying something new, but it is often said that the reason that sales for Nokia internet tablets did not do so well was because the CEO's were not comfortable fully backing the mostly unknown Maemo and Meego OSes. Had there been more advertizing and promotional support from Nokia's PR department, the mobile phone market may have been very different from the current state that is in now.}
 \paragraph{At the moment Nokia have backed behind the Windows Mobile 8 OS in a last bid attempt to re-establish themselves in the market to new customers with the Nokia Lumia smartphone series. This is essentially a complete reversal of the open-source ideals it had been pursuing not so many months before, leaving a lot of the original Nokia developers feeling somewhat betrayed.}
 
+
 \subsection{Development Tools}
-\subsubsection{Scratchbox}
-\paragraph{Scratchbox is a cross-compilation toolkit used for application development across Linux distributions aimed at mostly x86 and ARM architectures. For Maemo, this is the bare minimum required to develop applications since it comes shipped with a rootstrap device required to build the .deb packages from source code.}
-\subsubsection{Rootstrap}
-\paragraph{The rootstrap is effectively a directory containing all the prebuilt ARM libraries and files that the phone it is building for contains, and through a chrooted environment can install and run the same deb packages that Fremantle uses. \\A chrooted environment is when a new directory is set as 'the root' of a filesystem in order to run a process in a modified environment so that the process does not have access to files outside of its current root. To have access to system devices and utilities, chrooted environments often have  /dev (device), /sys (system), /proc (process) mounted or bound as well.}
+\subsubsection{Scratchbox and the Rootstrap device}
+\paragraph{Scratchbox is a cross-compilation toolkit used for application development across Linux distributions aimed at mostly x86 and ARM architectures. For Maemo, this is the bare minimum required to develop applications since it comes shipped with the Maemo Application Development and Debugging Environment rootstrap device (or MADDE) required to build the .deb packages from source code.}
+
+\paragraph{The Rootstrap is effectively a directory containing all the same prebuilt ARM libraries and files that the phone has. Through a chrooted environment it is possible to install and run the same deb packages that Fremantle uses. \\A chrooted environment is when a new directory is set as 'the root' of a filesystem in order to run a process in a modified environment so that the process does not have access to files outside of its current root. To have access to system devices and utilities, chrooted environments often have  /dev (device), /sys (system), /proc (process) mounted and bound as well, giving the impression of a full-fledged system within a system.}
+
 \subsubsection{Qt Framework} {
 Qt is an open-source cross-platform application framework developed by Nokia to facilitate in the creation of developing and testing apps.  It uses mainly C++ which even comes with the GCC toolchain, but also uses QML (Qt Meta Language) which is a Javascript-based language for building applications where fluid animations for widgets is desired. Qt also has bindings for Python, Ruby, Perl, Php, Java, and numerous other languages.\\
 
-Though Qt was mostly Maemo and Symbian based, the next version of Qt (version 5, currently v4.7) will be aimed at Android, iOS, and Windows 8 mobile devices in the near future. This was due to Digia buying Qt from Nokia in 2012\cite{nokiasell}.
+Though Qt was mostly Maemo and Symbian based, the next version of Qt (version 5, currently v4.7) will be aimed at Android, iOS, and Windows 8 mobile devices in the near future, making it possibly the tool for all applplication development in the future. This was due to Digia buying Qt from Nokia in 2012\cite{nokiasell}.
 }
 
 \paragraph{Qt SDK}{ 
-The QtSDK holds many similarities with the Android SDK in that they both have GUI for creating layouts (Qt Designer), both access unique resources v
-
-
- QObjects/strings management, Autogenerated files, MOC files, Qmake, Qt Designer, Resources, Similarity to Android SDK}
-
-\paragraph{Qt is well integrated with Scratchbox and is set up to have automatic access to the libraries defined in the /usr/lib/ directory of the chrooted rootstrap device.
+The QtSDK holds many similarities with the Android SDK in that they both have GUI for creating layouts (Qt Designer), both access unique assets via a resource management system (QResources) , and both autogenerate events for widgets. 
 }
+\subparagraph{Android vs Qt\\
+In Android, to create a click event the SDK adds an OnClickEvent within the source file which acts as a listener for that particular widget. In Qt, to create a click event a Signal and Slot pair are created, where the widget gives the signal that it has been clicked, and the slot reacts to the signal by performing the code written by the userin the slot method. XXX
+\\
+Qt also has external modules for SQL, comes with it's own WebKit (similar to Android SDK), and allows for CSS stylesheets to be used when styling widgets. The webkit and SQL modules are external to the base modules because they must be specified in .pro file of the project by appending them to QT+=sql webkit.
+\\
+Differences from Android SDK are more due to the differences in their base languages (e.g. Java vs C++), where multiple inheritance is not allowed in Java, and chaining constructors are not allowed in C++.\\
+User interfaces are split into three files: Ui source file, Ui header file, and Ui layout file. Like Android, the layout file is an XML-based heirarachy of tags which define layout order and parent/child widget. Unlike Android, the XML file itself cannot be editted from within the SDK (as of Qt version 2.XXX) and must be editted in the background by the Qt Designer interface.
+}
+\paragraph{
+Qt comes with it's own objects to help facilitate common tasks such as string handling via the QString class which lets the user manipulate strings without worrying about the memory management. Standard C++ libraries are included of course and if the user wishes to they can use the std::string module too (though they should remember to delete the string when it no longer needs to be used!)
+\\Using Qt's Meta-Object Compiler (moc), a lot of files are autogenerated to handle Qt's C++ extensions. The moc tool simply reads the C++ header file and looks for Q\_Object macros so that it can handle signals and slots which are native to Qt.
+}
+
+\paragraph{Qt is well integrated with the Scratchbox toolkit and is set up to have automatic access to the libraries defined in the /usr/lib/ directory of the chrooted rootstrap device. To use a new library in Qt, one can either append the directory to the LIBS += variable in the .pro file, or can natively install the ARM package in the rootstrap device using xdpkg, a dpkg clone, in the rootstrap directory via the command:\\
+/../QtSDK/Maemo/4.6.2/bin/mad-admin xdpkg -i <package\_name>\_armel.deb
+}
+
 \paragraph{Ubuntu vs Windows\\
 The QtSDK was developed in unix and ported over to windows. Linux binaries comes in 32-bit and 64-bit architectures, the latter of which is desirably faster than the former in terms of hardware emulation, building, packaging, and syntax detection.\\The Windows QtSDK is only 32 bit, mostly because of bugs in the Mingw64 project which aims to be a complete runtime environment for gcc which would support native Windows 64 and 32 bit binaries.\\
-Naturally, the windows version of the QtSDK builds slower due to the smaller architecture limitation, however it is a great deal more stable as shown later in the report.}
-\paragraph{Hardware Device, Emulator\\The QtSDK supports}
+Naturally, the windows version of the QtSDK builds slower due to the smaller architecture limitation, however it is a great deal more stable as shown later in the report.
+}
 
-
+\paragraph{Hardware Device, Emulator}{
+The QtSDK supports testing the application on both a Hardware Device and the QEMU Emulator often pre-packaged with Scratchbox (though in recent versions Qt it has been the other way around). Due to the 32-bit restriction of the QtSDK on Windows machines, the emulator can be very slow when run, however this is the opposite when run in 64-bit on Linux.\\
+For the duration of this project the code was tested on my own Hardware Device. This can be setup via regular networking over WLAN, or through USB networking. In order to do this the 'Madde Developer' app must be installed on the phone to enable this functionality, and to also ease in the generation and sharing of SSH keys between the phone and the SDK.}
 
 \subsubsection{Version Control}
 \paragraph{The QtSDK also comes shipped with integrated version control with good support for most of the popular versioning control systems such as Git, Mercurial, Subversion, Perforce, CVS, and Bazaar.\\
