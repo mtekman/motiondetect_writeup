@@ -250,8 +250,6 @@ Modern smartphones of today do often come equipped with camera's whose images ca
 \item[Frame]{Frames can be accessed from the sensor by calling the getFrame() function which performs blocking on any pending shots. The ease of API is shown here, as this is the \it{only} blocking call in the entire API.}
 \end{enumerate}
 
-\paragraph{It is optimized for taking High Dynamic Range (HDR) images and has a live histogram that can monitor the current scene so that the data can be used in autocorrection algorithms such as autofocus or autoexposure.
-}
 \begin{wrapfigure}{R}{0.5\textwidth}
 	\vspace{-40pt}
 	\begin{center}
@@ -260,22 +258,159 @@ Modern smartphones of today do often come equipped with camera's whose images ca
 	\vspace{-20pt}
 	\caption{FCam Architecture}
 \end{wrapfigure}
-
+\paragraph{It has an extermely simple API, since all the user has to do is set the shot parameters, call a new frame, and grab the image from the frame. This can be called any times in succession using the same parameters with comparitavely little lines of code.\\
+Despite being a relatively small project, the API was extremely detailed and had many examples that I could adopt. For these reasons, FCam was the acrhitecture used for the developement of this project.
+\\
+To use it, I had to add an -lfcam dependency to the LIBS+= heading in the .pro file, and fcam-dev\_1.2.deb had to be installed to the rootstrap device.
+\\
+FCam has different image sizes depending on the colorspace of the frame that it is being extracted from. For example RAW formats only allow an aspect ratio of 4:3 (2592x1968, 1296x984, 648x492, ...160x120). However using RAW images may be better for precise image processing, but the memory it uses has a lot of overhead and for frequent repetitive use it is not very practical.}
+\paragraph{Instead the FCam::UYVY colorspace was adopted which captures the image using three components: Y, U(Cb), and V(Cr). 
+Images in this format allow subsampling to reduce the color band resolution (U and V) with a constant brightness (Y) without affecting the image quality discerniable to the human eye. This is because the human eye percieves changes in colour much less significantly than changes in brightness. UYVY format adopts the 4:2:2(Y:U:V) scaling system, where Y is sampled at every pixel and U and V are sampled at every second pixel horinzontally on each line. This greatly reduces the memory size of the image and speeds up processing with very little difference in quality.\\
+Supported UYVY image sizes are: (2592x1968, 1280x960, 800x600, 640x480, 320x240, 160x120)}
 
 \subsection{OpenCV vs CImg}
-\paragraph{OpenCV and CImg are both common imaging libraries for C, C++, and Python, for use with real-time image proccessing. In terms of reducing the overhead on the size of the packaged app, OpenCV would be the ideal choice but}
+\subsubsection{OpenCV}
+\paragraph{Now that I had my camera driver configured, I needed to choose an appropriate image library to perform the processing. Technically I could have written my own library class to perform the simple image subtraction and addition functions that I wanted, but there may have been more to offer down the line and I wanted to see what was available}
+\paragraph{OpenCV and CImg are both common imaging libraries for C, C++, and Python, for use with real-time image proccessing. 
+Both are used widely in computer vision applications, and both contain approximately the same core capabilities, though OpenCV has more extraneous features.}
 \paragraph{The Open Source Computer Vision Library (or OpenCV) was developed by Intel for use with computer vision applications, but since was dropped and is now maintained by Willow Garage and Itseez.
-\\OpenCV comes with many useful functions for motion detection: image subtraction, image averaging, normalising, and even its own method for tracking movement. It
+\\OpenCV comes with many useful functions for motion detection: image subtraction, image averaging, normalising, and even its own method for tracking movement. It has an image format called IPLImage and inorder to preform operations I have to convert from FCam's relatively unknown Fcam::Image format to IPLImage. This proved difficult.
 }
-
+\paragraph{The FCam Image format is made up of:
+FCam::Image::Image(
+     int width,
+     int height,
+     Imageformat f,
+     unsigned char* data,
+     int srcByesPerRow
+)
+The IPLImage has BGR channel order (i.e the first channel is blue, second is green, third is red. This is different from standard RGB formats). I attempted to convert to a grayscale IPLImage by doing:}
+\lstinputlisting[title=\textbf{Source Code: IPLconvert.cpp}]{Code/API_Examples/IPLconvert.cpp}
+\paragraph{as taken from http://www.cs.cornell.edu/courses/cs4670/2010fa/projects/p1/codes/project1.tar.gz\\
+This took a reference to the FCam's Frame, extracted the image from it, and attempted to convert it into an unsigned 8-bit gresycale IPL image with 1 color channel. The unsigned 8-bit image would be limited to 0-255 range.\\
+Unfortunately several problems were encountered and almost three days were lost trying to get to the bottom of it:}
 \paragraph{
 A Maemo port of openCV does exist for Fremantle \cite{libcv} but despite installing libcv, libcv-dev, and many of it's dependencies (libcvcore, libhighgui) the SDK would complain about many missing dependencies when building the application. The culprit turned out to be missing dependencies for libhighgui-dev, but this was false since running a quit dpkg -L <dependency\_name> confirmed that the dependency was indeed installed. At one stage I copied my entire /usr/lib directory from the phone to the rootstrap but it would still fail when trying to build.\\
 A few hours of trawling through the Maemo reading lists came up with a bug report \cite{highgui-dev} from the original maintainer claiming a bug within the build system.\\
-For this reason OpenCV had to be abondoned
+For this reason OpenCV had to be abandoned and a new image processing library had to be used.
 }
+\subsubsection{CImg}
+\paragraph{CImg was suggested by my project supervisor after we discussed the bugs I had been experiencing. CImg is relateivly bug free since it does not exit in any packaged form. In fact all the functions and image processing capabilities are contained within a single 40,000 lined header file coming up to 2.54MB in size. \\Despite the jaw-dropping overhead of including this file in development process, Qt only had to parse the functions within it once and it was set to go.\\
+Another bonus is that it removes a dependency from the project, and makes it all that much more portable. One thing I had to do first was to convert from FCam to CImg.
+\\The CImg constructor is formed of: 
+CImg(const unsigned int width,
+     const unsigned int height,
+     const unsigned int size\_z=1, //depth
+     const unsigned int size\_c=1 //spectrum
+)
+And to construct a CImg, all one has to do is call CImg<T> name; where T is the type or size of each pixel value, and name is the name of the image. So for an image that that has 256 colorspace, T = unsigned char = 8bit.
+In CIMG, the color channels are in RGB format. OpenCV's IPLImage only supports up to 4 color channels but CImg supports up to any number and this provided a source of initial confusion for me:
+http://sph2grid.googlecode.com/svn-history/r14/trunk/CImg/plugins/cimg\_ipl.h:\\
+Using the same format as the cornell code I attempted to make:}
+\lstinputlisting[title=\textbf{Source Code: IPLconvert.cpp}]{Code/API_Examples/CImgConvertBad.cpp}
+\paragraph{This wasn't able to produce a consistent image (or any image at all) and I had to play around a wide variety of pixel values:}
+\begin{verbatim}
+//MAGENTA
+newimg1(i,j,0, 0) = pixels[0]; //red
+newimg1(i,j,0 ,1) = pixels[1]; //green
+newimg1(i,j,0, 2) = pixels[2]; //blue;
+//
+//BLACK IMAGE
+newimg2(i,j,0, 0) = pixels[0]/255; //red
+newimg2(i,j,0 ,1) = pixels[1]/255; //green
+newimg2(i,j,0, 2) = pixels[2]/255; //blue;
+//
+newimg3(i,j,0) = pixels[0]; //red
+newimg3(i,j,1) = pixels[1]; //green
+newimg3(i,j,2) = pixels[2]; //blue;
+//
+newimg4(i,j,0) = pixels[0]/255; //red
+newimg4(i,j,1) = pixels[1]/255; //green
+newimg4(i,j,2) = pixels[2]/255; //blue;
+//GREEN
+newimg5(i,j,32, 0) = pixels[0]; //red
+newimg5(i,j,32, 1) = pixels[1]; //green
+newimg5(i,j,32, 2) = pixels[2]; //blue;
+//BLACK IMAGE
+newimg6(i,j,32, 0) = pixels[0]/255; //red
+newimg6(i,j,32, 1) = pixels[1]/255; //green
+newimg6(i,j,32, 2) = pixels[2]/255; //blue
+\end{verbatim}
+\paragraph{The idea was that by specifying the (i,j) coordinates of the new image and grabbing the pixel values from the FCam image and sticking it into (i,j) coordinates of the new CImg. I attempted to divide by 255 in some of the tests because I wasn;t sure how large the FCam::Image was, and this was my idea of normalizing it. I later realised that the pixel values were already normalized to 8-bit values and that dividing by 255 limited the CImg to \{0,1\} values would ultimately produce a black image.}
+\paragraph{By digging around through the source of the original fcam application for the N900, I was able to find a function that converted FCam by accessing the image data and reading from it:}
+\lstinputlisting[title=\textbf{Source Code: CImgConvertFcam.cpp}]{Code/API_Examples/CImgConvertFcam.cpp}
+This resulted in images that looked like this:
+\begin{wrapfigure}{R}{0.3\textwidth}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{images/redbuffer1}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Very red image.}
+\end{wrapfigure}
+\paragraph{
+A similar image would appear using imgBuffer[1] instead of imgBuffer[0], and I didn't understand why until I looked up CImg's documentation and realised that out of the 32 channels I was initialising, the first channel is red and that was the only channel I was writing to.
+That is, for a greyscale image from 0-255 at pixel i,j - I was sticking it into CImg\{Red,0,0,0,0....32 times.\}, and thus ending up with a red image.
+\\
+Once I limited CImg to 1 color channel (i.e. black and white) then I got my desired image as shown by the real and greyscale comparison below:
+}
+\begin{wrapfigure}{R}{0.3\textwidth}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{images/realbuffer2}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Image saved by FCam}
+	\vspace{10pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{images/blackbuffer3}
+	\end{center}
+	\caption{Image saved by CImg}
+	\vspace{-20pt}
+\end{wrapfigure}
 
-
-\subsection{FFmpeg vs Mencoder vs ImageMagick}{CImg is actually well integrated with imagemagick}
+\subsection{ImageMagick vs FFMpeg vs VLC vs Mencoder}
+\paragraph{Now that the image processing side of this was underway, I needed a program that could convert a series of images into a movie format so that when the user returns to their motion detector, they can watch all the highlights in the movie file over the course of a few seconds rather than having to flit through each individual image.
+}
+\paragraph{Imagemagick is an open-source image software library for processing images. It can perform much of the same functions and CImg and OpenCV, but it was not considered as a suitabe image processing library because the development package had not been released for Maemo and compatibility was a concern. There is, however, a imagemagick package for Maemo that performs the functions from commandline and so accessing its functions would not be a problem if I was resigned to the fact that I would be calling a system process from Qt. CImg has good compatibility with Imagemagick since it's convertToJPEG command actually calls the 'convert' module of Imagemagick.\\
+According to the documentation, to convert a series of jpegs to a movie format, all one has to do is call:
+'convert -delay <frametime> input\_jpegs\_*.jpg output\_movie.mpg'\\
+But this failed with Maemo specific errors:}
+\begin{verbatim}
+Nokia-N900:/home/user/MyDocs/DCIM/MISC\# convert -delay 20 -monitor timelapse-0000*.jpg movie.mpg
+load image[timelapse-000001.jpg]: 479 of 480, 100\% complete
+load image[timelapse-000002.jpg]: 479 of 480, 100\% complete
+...
+load image[timelapse-000015.jpg]: 479 of 480, 100\% complete
+mogrify image[timelapse-000015.jpg]: 9 of 10, 100\% complete
+Composite/Image[movie.mpg]: 479 of 480, 100\% complete
+..
+Composite/Image[movie.mpg]: 479 of 480, 100\% complete
+Save/Image//var/tmp[magick-XX9TmsAd7.jpg]: 479 of 480, 100\% complete
+..
+Save/Image//var/tmp[magick-XX9TmsAd63.jpg]: 479 of 480, 100\% complete
+convert: Empty input file `timelapse-000001.jpg' @ error/jpeg.c/EmitMessage/233.
+..
+convert: Empty input file `timelapse-000010.jpg' @ error/jpeg.c/EmitMessage/233.
+Nokia-N900:/home/user/MyDocs/DCIM/MISC\# 
+\end{verbatim}
+\paragraph{so I was not able to use imagemagick on the device. This is perhaps a good thing since the imagemagick suite is very large and would be a hefty dependency to add to my project
+}
+\paragraph{FFmpeg was my next and most immediate option - I have used it countless times before to convert movie files and I have found it's libavcodec library a powerful and useful tool in the past. FFMpeg is one of the most popular free multimedia frameworks around, supporting every single codec and format under the sun. It has a fast release time too and when a new format is released it is not usually a long wait before ffmpeg has a supporting library for it. FFmpeg is primarily used to stream, convert, decode, mux, demux and transcode video files into different formats, but is not used for computer vision.\\
+For converting a series of images to a movie file the documentation states that one has to call:\\
+'ffmpeg -i name\_of\_files\_\%05d.jpg -y movie.mpg -r fps'\\
+It is key to note here that the y flag overwrites any output file that already exists, and that the frames-per-second flag '-r' must be placed at the end. The \%05d just notifies FFmpeg that the format for the image files are padded by zeros by up to 5 digits.\\
+Despite using different arrangements and different flags, this only partially worked, as the images would be compiled into a movie, but the framerate flag was temperamental and sometimes ignored.\\
+Additionally ffmpeg does not come installed as default by the device, since gstreamer is main multimedia framework used by the mediaplayer and this would also be a needlessly large dependency to have for my project
+}
+\paragraph{VLC is a comparitavely new open-source mediaplayer which can also perform transcoding, streaming, muxing and the same functions as FFMpeg. In fact alot of its codecs are actually taken from the ffmpeg project (e.g. libavcodec), but it also contains a lot of its own.\\
+VLC has only been very recenly ported to Maemo and is accessed by adding user Qole's repository to the /etc/apt/sources.list. It is very incomplete, lacking a decent GUI, but it has a working backend. Unfortunately nowhere in the documentation does it mention being able to convert a series of jpegs to a movie file and I soon had to abondon VLC too.\\ This is probably for the best since VLC is not available in the main repositories and users would find it hard to access. This leaves...}
+\paragraph{Mencoder is yet another multimedia framework released under GPL, and comes as a module with mplayer, a very stable open-source media player that comes with all the codecs and formats that mencoder can use.\\
+To convert a series of images to a movie file one simply has to call:\\
+'mencoder "mf://path/to/images*.jpg" -mf fps=<fps> -o movie.mpg -ovc lavc -lavcopts vcodec=mjpeg'\\
+which specifies the that libavcodec is to be used, the framerate and also that the output videocodex should be mpeg format.
+\\Mencoder is also not pre-installed with the device, but many Maemo users do tend to install it first chance they get due to the default Media Player's poor support for certain MPG formats, this is by far the most convenient of the four video processing libraries to use and best of all it actaully works.
+}
 \section{Image Processing Techniques}
 \subsection{Subtraction}
 \subsection{Accumulation}
