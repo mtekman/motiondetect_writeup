@@ -412,7 +412,31 @@ which specifies the that libavcodec is to be used, the framerate and also that t
 \\Mencoder is also not pre-installed with the device, but many Maemo users do tend to install it first chance they get due to the default Media Player's poor support for certain MPG formats, this is by far the most convenient of the four video processing libraries to use and best of all it actaully works.
 }
 \section{Image Processing Techniques}
+\paragraph{A motion detector works on the basic priniciple that there there exists some drastic difference between two images where motion has occred and motion has not occured. One way to see this represenation is to subtract one frame from another and look for the leftover pixels. Pixels where the image hasn't changed will have the same pixel value and will thus cancel each other out, whereas images where there is a difference between pixels at the same location will have values greater than zero. In the case of unsigned chars, any negative pixels will naturally wrap around and becomes high pixel values (white).}
 \subsection{Subtraction}
+\paragraph{Subtraction is the technique that performs this, and CImg handles this operation using the basic numerica operator '-', so that for example: CImg<T> diff = CImg<T>A - CImg<T> B;
+}
+\begin{wrapfigure}{R}{0.3\textwidth}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{images/subG}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Image subtraction between two consecutive frames where the scene has changed inbetween}
+	\vspace{10pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{images/subF}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Image subtraction between two consecutive static frames where no movement has occured}
+\end{wrapfigure}
+\paragraph{The images above were normalised to 2 discrete \{0,1\} values and then multiplied by 255 so that the 'hot pixels' could be viewed with the human eye. As you can see from the top figure, the whiteness indeicates that there was a significant difference between frames and so that one of the images had pixel values vastly greater than the other -- indicating a change in the scene.
+\\For the bottom image it can be seen that there is very little difference exists between the frames, yet you can almost quite clearly makeout the edge of the objects between the frames (a computer screen and speaker). Neither the speaker, the monitor, nor the camera moved between those two images but nonetheless a small difference was detected.\\
+This served as my first model for image detection by performing a small test to see how many of these sparse white pixels are detected for static frames. This would then serve as the basis for a threshold, so that any subtracted frames that are significantly above this threshold are flagged as 'movement' frames and those below or up to the threshold are not.
+\\EXPERIMENT 1: Finding the threshold
+\\There are two factors that would affect the threshold: Image size and thats it haha
+}
+
 \subsection{Accumulation}
 \paragraph{Results}
 \paragraph{Analysis}
