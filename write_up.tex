@@ -16,6 +16,7 @@
 %   read geometry.pdf for detailed page layout information
 
 \usepackage{graphicx} % support the \includegraphics command and options
+\usepackage{wrapfig} % Figure wrapping
 
 % \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
 
@@ -26,7 +27,35 @@
 \usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
 \usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
 \usepackage{url}
+\usepackage{enumerate}
 % These packages are all incorporated in the memoir class to one degree or another...
+
+%CODE LISTINGS
+\usepackage{color}
+\usepackage{listings}
+
+\lstset{
+	tabsize=4,
+%	language=matlab,
+        	basicstyle=\scriptsize,
+%     	upquote=true,
+        	aboveskip={1.5\baselineskip},
+        	columns=fixed,
+        	showstringspaces=false,
+        	extendedchars=true,
+        	breaklines=true,
+	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+	frame=single,
+        	showtabs=false,
+        	showspaces=false,
+        	showstringspaces=false,
+        	identifierstyle=\ttfamily,
+        	keywordstyle=\color[rgb]{0,0,1},
+        	commentstyle=\color[rgb]{0.133,0.545,0.133},
+        	stringstyle=\color[rgb]{0.627,0.126,0.941},
+	language=C++
+}
+
 
 %%% HEADERS & FOOTERS
 \usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
@@ -38,6 +67,11 @@
 %%% SECTION TITLE APPEARANCE
 \usepackage{sectsty}
 \allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+\usepackage{titlesec}
+%\titleformat{\subsection}[runin]{\mdseries\bf}{\thesubsection}{1em}{}
+%\titleformat{\subsubsection}[runin]{\mdseries\bf\underline\large}{\thesubsection}{1 em}{\vspace{-5 pt}}
+
+
 % (This matches ConTeXt defaults)
 
 %%% ToC (table of contents) APPEARANCE
@@ -46,12 +80,17 @@
 \renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
 \renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
 
+
 %%% END Article customizations
 
 %%% The "real" document content comes below...
 
 \title{\Huge Motion Detection and\\Other Imaging Operations\\ for the N900 }
 \author{\small By Mehmet Tekman\\\small Department of Computer Science\\\small University College London}
+
+
+
+%Maybe a section for Camera terminology: Exposure, Aperture, FrameTime?
 
 \begin{document}
 \maketitle 
@@ -70,20 +109,32 @@
 
 \part{Background}
 \section{Hardware}
-\begin{figure}
-\begin{picture}(300,200)(0,0)
-\put(300,20){\resizebox{4 cm}{!}{\includegraphics{images/wiki_n900}}}
-\end{picture}
-\caption{{\em The N900 Mobile Device}}
-\end{figure}
+
 \subsection{The Device}
 \paragraph{The N900 was Nokia's third attempt at producing an internet tablet phone after the initial success of the N810. Like it's predecessor it sported a hardware keyboard, a TFT touchscreen, accelerometer, 600 MHz ARM Corex CPU, and the same PowerVR SGX Graphics chip came with the iPhone 3GS.}
 \paragraph{At the time of it's release in 2009 it boasted competitive specs with every other smart phone on the market; supported flash (unlike the iPhone) and could multitask multiple apps at the same time. However it sold poorly due to unfamiliarity of its user interface and lack of 3rd party developers - indeed the only crowd it attracted was its already loyal Nokia fanbase from previous phones.}
 \paragraph{Despite these setbacks, the N900 has been heralded as one of the most well designed phones of its generation due to its open framework, native interation of Skype, fast boot time via Ubuntu's upstart daemon. It was also one of the first smartphone's to successfully port Android (the Nitdroid project) and could emulate other linux distros.}
 
+\begin{wrapfigure}{R}{0.3\textwidth}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{images/wiki_n900}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Front}
+	\vspace{10pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{images/N900back}
+	\end{center}
+	\caption{Back}
+	\vspace{-20pt}
+\end{wrapfigure}
+
 \subsection{Camera}
 \paragraph{The Nokia N900 came with a 5 MegaPixel resolution, with dual LED flash, and a Carl Zeiss lens with a 5.2mm focal length, a fixed aperture (regulator of light) and focus minimum of 10cm.}
+
 \paragraph{The camera sensor uses CMOS technology rather than CCD, which makes it better suited for video than for photo due to CMOS having a larger framerate because of its rolling shutter. CMOS also holds the advantage of being good for night vision, which is a useful feature for a motion detecting application to have.}
+
 \paragraph{ It supports the following resolutions:\\Image: (2576x1936),(2560x1440),(2048x1536),(1280x960)\\Video: (848x480),(640x480),(320x240) at 25fps}
 
 \section{Software}
@@ -167,9 +218,12 @@ Modern smartphones of today do often come equipped with camera's whose images ca
 \paragraph{To start a basic motion detector, the very least that I would need to do is take one frame and subtract it from another to see the difference. To do this I would need to store every pixel value in an array for each image and then perform a sweep over both arrays to compare their pixel values. There must be imaging libraries that I could use that would greatly facilitate such imaging techniques. But first I would need to be able to take a single photo.....}
 
 \subsection{QtMobility vs Gstreamer vs FCam}
+\paragraph{\bf{QtMobility}}
 \paragraph{QtMobility is a Qt library that enabed developers to have access to standard mobile functionality such as messaging, contacts, multimedia, and camera.  The camera is contained within a QCamera widget and simple calls can be made to the imaging device.
 \\Unfortunately the official stable version v1.1 had camera support for Symbian and Meego(Harmattan), but not Fremantle. There was an unstable version 1.2 which included Fremantle support, but once I had installed libqtm-dev\_1.2 on the rootstrap device, and tried to use the QCamera element from within a C++ class it did not work. This is because the QCamera element has to be accessed through QML, which would be doable but would not be optimized for speed. For this reason I dropped QtMobility.
 }
+\pagebreak %encourage
+\paragraph{\bf{GStreamer}}
 \paragraph{GStreamer is an open source multimedia framework that is already native to Fremantle since it is the library that the default mediaplayer uses and so would reduce the dependencies of my application. GStreamer makes use of pipelining, byt connecting a number of elements in an ordered fashion so that the output (source) of one element is fed into the input(sink) of another element and so on until it reaches the final element which is usually a file or a network stream.
 \\\\A previous app of mine was Gstreamer based and a typical command from it would be:
 }
@@ -183,6 +237,29 @@ Modern smartphones of today do often come equipped with camera's whose images ca
 \\On the recieving side, a gstreamer pipe would need to reverse the order of the elements (i.e. recieve from tcpserver, feed it into a jpeg decoder, and then specify an output window or file sink.
 \\Gstreamer is very well developed, and has a Good, Bad, and Ugly heirarchy of stable to unstable plugins that can be used to enable a wide array of different multimedia functionalities and formats.
 }
+\paragraph{Despite the speed and efficient usage of system resources, GStreamer has an extremely involved API but is difficult to work with since it is prone to cascading errors due to the every element being dependant on the previous element to function. An example of the C++ implementation of the same code as above is shown in the appendix.}
+
+
+\paragraph{\bf{FCam}}
+\paragraph{FrankenCamera (or FCam) is a very easy to use open-source C++ API for controlling digital cameras.  The FCam architecture was developed as a joint reasearch project between Stanford Computer Graphics and Nokia's Research Center for controlling the N900's camera, but has since been used to run their own F2 camera built in their labs\cite{fcamdoc}. Normally camera architectures are not so easily accessible and it is very fortunate that FCam chose the N900 to develop on.
+\\The FCam API is split into 4 components:}
+\begin{enumerate}
+\item[Device]{The camera device consists of a Lens, a Flash and other different devices. FCam has object classes for each of these with various functionlity enabled.}
+\item[Shot]{The shot object holds typical parameter settings such as exposure time, frame time, white balance, and gain for capturing and processing a single image. It is applied to the sensor object.}
+\item[Sensor]{The sensor object listens for calls for capture, and outputs a frame by performing all the image pipelining in it's own thread. Once pipeline exits (or the thread terminates) the sensor is ready to be configured for the next frame.}
+\item[Frame]{Frames can be accessed from the sensor by calling the getFrame() function which performs blocking on any pending shots. The ease of API is shown here, as this is the \it{only} blocking call in the entire API.}
+\end{enumerate}
+
+\paragraph{It is optimized for taking High Dynamic Range (HDR) images and has a live histogram that can monitor the current scene so that the data can be used in autocorrection algorithms such as autofocus or autoexposure.
+}
+\begin{wrapfigure}{R}{0.5\textwidth}
+	\vspace{-40pt}
+	\begin{center}
+		\includegraphics[width=0.5\textwidth]{images/fcam_arch}
+	\end{center}
+	\vspace{-20pt}
+	\caption{FCam Architecture}
+\end{wrapfigure}
 
 
 \subsection{OpenCV vs CImg}
@@ -285,6 +362,12 @@ For this reason OpenCV had to be abondoned
 \part{Bibliography}
 \begin{thebibliography}{9}
 
+\bibitem{fcamdoc} Adams, A., Talvala, E., Park, S. H., Jacobs, D. E., Ajdin, B., Gelfand, N., Dolson, J., Vaquero, D., Baek, J., Tico, M., Lensch, H. P., Matusik, W., Pulli, K., Horowitz, M., and Levoy, M.
+2010. The Frankencamera: an experimental platform for computational photography.
+In ACM SIGGRAPH 2010 Papers (Los Angeles, California, July 26 - 30, 2010).
+H. Hoppe, Ed. SIGGRAPH '10. ACM, New York, NY, 1-12.
+\url{DOI= http://doi.acm.org/10.1145/1833349.1778766}
+
 \bibitem{symb1} Blookmber Business
 \url{http://www.businessweek.com/globalbiz/content/nov2009/gb2009114_367401.htm}
 
@@ -307,6 +390,12 @@ LibCV
 \end{thebibliography}
 
 \part{Appendix}
+\section{API example usage}
+\subsection{GStreamer Pipelining in C++}
+\paragraph{ The following is just a small snippet from an example Camera class from the Maemo Documentation Wiki:
+http://wiki.maemo.org/Documentation/Maemo\_5\_Developer\_Guide/Using\_Multimedia\_Components/Camera\_API\_Usage}
+\lstinputlisting[title=\textbf{Source Code: gst\_class.cpp}]{Code/API_Examples/gst_class.cpp}
+\section{Application Code}
 \subsection{Motion Detector}
 \subsection{TimeLapse}
 \subsection{IP Streamer}
