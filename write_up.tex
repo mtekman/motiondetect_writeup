@@ -1,26 +1,16 @@
 % !TEX TS-program = pdflatex
 % !TEX encoding = UTF-8 Unicode
-
-% This is a simple template for a LaTeX document using the "article" class.
-% See "book", "report", "letter" for other types of document.
-
 \documentclass[11pt]{article} % use larger type; default would be 10pt
-
 \usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
 
 %%% PAGE DIMENSIONS
 \usepackage{geometry} % to change the page dimensions
 \geometry{a4paper} % or letterpaper (US) or a5paper or....
-% \geometry{margin=2in} % for example, change the margins to 2 inches all round
-% \geometry{landscape} % set up the page for landscape
-%   read geometry.pdf for detailed page layout information
-
-\usepackage{graphicx} % support the \includegraphics command and options
-\usepackage{wrapfig} % Figure wrapping
-
-% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
 
 %%% PACKAGES
+\usepackage{graphicx} % support the \includegraphics command and options
+\usepackage{wrapfig} % Figure wrapping
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
 \usepackage{booktabs} % for much better looking tables
 \usepackage{array} % for better arrays (eg matrices) in maths
 \usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
@@ -30,7 +20,8 @@
 \usepackage{enumerate}
 \usepackage{cleveref}  %cites figures intelligently
 \usepackage{import} % document structuring
-% These packages are all incorporated in the memoir class to one degree or another...
+\usepackage{float}  %These two ensure that table position follows text by specifcing {table}[H]
+\restylefloat{table}
 
 %CODE LISTINGS
 \usepackage{color}
@@ -57,7 +48,6 @@
         	stringstyle=\color[rgb]{0.627,0.126,0.941},
 	language=C++
 }
-
 
 %%% HEADERS & FOOTERS
 \usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
@@ -182,8 +172,8 @@ LibCV
 \part{Appendix}
 \section{API example usage}
 \subsection{GStreamer Pipelining in C++}
-\paragraph{ The following is just a small snippet from an example Camera class from the Maemo Documentation Wiki:
-http://wiki.maemo.org/Documentation/Maemo\_5\_Developer\_Guide/Using\_Multimedia\_Components/Camera\_API\_Usage}
+\paragraph{ The following is just a small snippet from an example Camera class from the Maemo Documentation Wiki:\\http://wiki.maemo.org/Documentation/Maemo\_5\_Developer\_Guide/Using\_Multimedia\_Components/Camera\_API\_Usage
+\\ test\\\\}
 \lstinputlisting[title=\textbf{Source Code: gst\_class.cpp}]{Code/API_Examples/gst_class.cpp}
 
 \section{Tables}

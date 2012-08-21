@@ -1,3 +1,80 @@
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+
+%%% PACKAGES
+\usepackage{graphicx} % support the \includegraphics command and options
+\usepackage{wrapfig} % Figure wrapping
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+\usepackage{url}
+\usepackage{enumerate}
+\usepackage{cleveref}  %cites figures intelligently
+\usepackage{import} % document structuring
+\usepackage{float}  %These two ensure that table position follows text by specifcing {table}[H]
+\restylefloat{table}
+
+%CODE LISTINGS
+\usepackage{color}
+\usepackage{listings}
+
+\lstset{
+	tabsize=4,
+%	language=matlab,
+        	basicstyle=\scriptsize,
+%     	upquote=true,
+       	aboveskip={\baselineskip},
+        	columns=fixed,
+        	showstringspaces=false,
+        	extendedchars=true,
+        	breaklines=true,
+	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+	frame=single,
+        	showtabs=false,
+        	showspaces=false,
+        	showstringspaces=false,
+        	identifierstyle=\ttfamily,
+        	keywordstyle=\color[rgb]{0,0,1},
+        	commentstyle=\color[rgb]{0.133,0.545,0.133},
+        	stringstyle=\color[rgb]{0.627,0.126,0.941},
+	language=C++
+}
+
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+\usepackage{titlesec}
+%\titleformat{\subsection}[runin]{\mdseries\bf}{\thesubsection}{1em}{}
+%\titleformat{\subsubsection}[runin]{\mdseries\bf\underline\large}{\thesubsection}{1 em}{\vspace{-5 pt}}
+
+
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+\begin{document}
+%%% END Article customizations
+
+
+
 \part{Motion Detector}
 \paragraph{A Motion Detector is a camera device that uses hardware or software to detect a significant change between scenes and flag that movement has occurred. The first motion detector was invented by Samuel Bagno in the 1950s as a burglar alarm, making use of ultrasonic waves to measure the Doppler change in frequencies to measure movement. Modern day motion detectors make use of the same technology; using infrared to measure changes in heat, or microwave lasers to measure the distance of a scene.\\
 Mobile phone's however do not come equipped with microwave lasers nor ultrasonic emitters, and though a significant amount of mobile phones have infra-red sensors and bluetooth radio sensors, the poor resolution of these sensors makes using them as reliable motion detectors somewhat tricky.\\
@@ -45,7 +122,7 @@ Modern smartphones of today do often come equipped with camera's whose images ca
 \begin{wrapfigure}{R}{0.5\textwidth}
 	\vspace{-40pt}
 	\begin{center}
-		\includegraphics[width=0.5\textwidth]{images/fcam_arch}
+		\includegraphics[width=0.5\textwidth]{../images/fcam_arch}
 	\end{center}
 	\vspace{-20pt}
 	\caption{FCam Architecture}
@@ -77,7 +154,7 @@ FCam::Image::Image(
      int srcByesPerRow
 )
 The IPLImage has BGR channel order (i.e the first channel is blue, second is green, third is red. This is different from standard RGB formats). I attempted to convert to a grayscale IPLImage by doing:}
-\lstinputlisting[title=\textbf{Source Code: IPLconvert.cpp}]{Code/API_Examples/IPLconvert.cpp}
+\lstinputlisting[title=\textbf{Source Code: IPLconvert.cpp}]{../Code/API_Examples/IPLconvert.cpp}
 \paragraph{as taken from http://www.cs.cornell.edu/courses/cs4670/2010fa/projects/p1/codes/project1.tar.gz\\
 This took a reference to the FCam's Frame, extracted the image from it, and attempted to convert it into an unsigned 8-bit gresycale IPL image with 1 color channel. The unsigned 8-bit image would be limited to 0-255 range.\\
 Unfortunately several problems were encountered and almost three days were lost trying to get to the bottom of it:}
@@ -99,7 +176,7 @@ And to construct a CImg, all one has to do is call CImg<T> name; where T is the 
 In CIMG, the color channels are in RGB format. OpenCV's IPLImage only supports up to 4 color channels but CImg supports up to any number and this provided a source of initial confusion for me:
 http://sph2grid.googlecode.com/svn-history/r14/trunk/CImg/plugins/cimg\_ipl.h:\\
 Using the same format as the cornell code I attempted to make:}
-\lstinputlisting[title=\textbf{Source Code: IPLconvert.cpp}]{Code/API_Examples/CImgConvertBad.cpp}
+\lstinputlisting[title=\textbf{Source Code: IPLconvert.cpp}]{../Code/API_Examples/CImgConvertBad.cpp}
 \paragraph{This wasn't able to produce a consistent image (or any image at all) and I had to play around a wide variety of pixel values:}
 \begin{verbatim}
 //MAGENTA
@@ -130,12 +207,12 @@ newimg6(i,j,32, 2) = pixels[2]/255; //blue
 \end{verbatim}
 \paragraph{The idea was that by specifying the (i,j) coordinates of the new image and grabbing the pixel values from the FCam image and sticking it into (i,j) coordinates of the new CImg. I attempted to divide by 255 in some of the tests because I wasn;t sure how large the FCam::Image was, and this was my idea of normalizing it. I later realised that the pixel values were already normalized to 8-bit values and that dividing by 255 limited the CImg to \{0,1\} values would ultimately produce a black image.}
 \paragraph{By digging around through the source of the original fcam application for the N900, I was able to find a function that converted FCam by accessing the image data and reading from it:}
-\lstinputlisting[title=\textbf{Source Code: CImgConvertFcam.cpp}]{Code/API_Examples/CImgConvertFcam.cpp}
+\lstinputlisting[title=\textbf{Source Code: CImgConvertFcam.cpp}]{../Code/API_Examples/CImgConvertFcam.cpp}
 This resulted in images that looked like this:
 \begin{wrapfigure}{R}{0.3\textwidth}
 	\vspace{-20pt}
 	\begin{center}
-		\includegraphics[width=0.3\textwidth]{images/redbuffer1}
+		\includegraphics[width=0.3\textwidth]{../images/redbuffer1}
 	\end{center}
 	\vspace{-20pt}
 	\caption{Very red image.}
@@ -149,13 +226,13 @@ Once I limited CImg to 1 color channel (i.e. black and white) then I got my desi
 \begin{wrapfigure}{R}{0.3\textwidth}
 	\vspace{-20pt}
 	\begin{center}
-		\includegraphics[width=0.3\textwidth]{images/realbuffer2}
+		\includegraphics[width=0.3\textwidth]{../images/realbuffer2}
 	\end{center}
 	\vspace{-20pt}
 	\caption{Image saved by FCam}
 	\vspace{10pt}
 	\begin{center}
-		\includegraphics[width=0.3\textwidth]{images/blackbuffer3}
+		\includegraphics[width=0.3\textwidth]{../images/blackbuffer3}
 	\end{center}
 	\caption{Image saved by CImg}
 	\vspace{-20pt}
@@ -211,13 +288,13 @@ which specifies the that libavcodec is to be used, the framerate and also that t
 \begin{wrapfigure}{R}{0.3\textwidth}
 	\vspace{-20pt}
 	\begin{center}
-		\includegraphics[width=0.3\textwidth]{images/subG}
+		\includegraphics[width=0.3\textwidth]{../images/subG}
 	\end{center}
 	\vspace{-20pt}
 	\caption{Image subtraction between two consecutive frames where the scene has changed inbetween}
 	\vspace{10pt}
 	\begin{center}
-		\includegraphics[width=0.3\textwidth]{images/subF}
+		\includegraphics[width=0.3\textwidth]{../images/subF}
 	\end{center}
 	\vspace{-20pt}
 	\caption{Image subtraction between two consecutive static frames where no movement has occured}
@@ -226,12 +303,13 @@ which specifies the that libavcodec is to be used, the framerate and also that t
 \\For the bottom image it can be seen that there is very little difference exists between the frames, yet you can almost quite clearly makeout the edge of the objects between the frames (a computer screen and speaker). Neither the speaker, the monitor, nor the camera moved between those two images but nonetheless a small difference was detected.\\
 This served as my first model for image detection by performing a small test to see how many of these sparse white pixels are detected for static frames. This would then serve as the basis for a threshold, so that any subtracted frames that are significantly above this threshold are flagged as 'movement' frames and those below or up to the threshold 
 are not.}
-\underline{Experiment 1: Determining a suitable threshold for subtracted images}
+\pagebreak
+\underline{\\Experiment 1: Determining a suitable threshold for subtracted images}
 \paragraph{To find a suitable threshold I used the following pseudocode to determine a threshold for a static frame:\\\\}
-\lstinputlisting[title=\textbf{Source Code: subtract1.pseudo}]{Code/pseudo/subtract1.pseudo}
+\lstinputlisting[title=\textbf{Source Code: subtract1.pseudo}]{../Code/pseudo/subtract1.pseudo}
 \paragraph{It essentially grabs an image and subtracts it subtracted one image from another and totalled up all the pixels with a value greater than zero. This gave the following table of results:}
 \begin{center}
-\begin{table}
+\begin{table}[!htbp]
 	\begin{tabular}{| c | l | l | l | l | l | }
 \hline
 \multicolumn{6}{|c|}{\bf Non-Zero Counts from Subtracted Images} \\
@@ -257,11 +335,11 @@ So Why is there so much fluctuation? For one, the average pixel values of one sc
 Scene1:  45-40.5 = 4.5, and Scene2: 90-81 = 9 --- which are proportionately different counts for the same reduction in ambient light.\\
  }
 \paragraph{My second attempt addresses the proportion problem, and inserts extra code into lines 5 and 7.}
-\lstinputlisting[title=\textbf{Source Code: subtract2.pseudo}]{Code/pseudo/subtract2.pseudo}
+\lstinputlisting[title=\textbf{Source Code: subtract2.pseudo}]{../Code/pseudo/subtract2.pseudo}
 \paragraph{Here it normalise the current frame into [0,1] binary colorspace after taking it. It then performs the subtraction, but this subtraction may result in pixel values greater than 1 due to overflow (i.e. 0-1 = -1 = 255 for 8-bit unsigned pixel), so a normalisation is performed on subtracted image as well. \\
 This results in non-zero counts of subtracted images that are far more stabler as shown in the table}
 \begin{center}
-\begin{table}
+\begin{table}[!htbp]
 	\begin{tabular}{| c | l | l | l | l | l | }
 \hline
 \multicolumn{6}{|c|}{\bf Non-Zero Counts from Subtracted Images} \\
@@ -284,9 +362,19 @@ Average	&22313.8	&21821	&20985	&22306	&21315.9	\\ \hline
 \end{center}
 \paragraph{Using the results from this table I decided to set a threshold of less than 26000 (i.e. a white-pixel count of less than 26000 will NOT trigger a movement flag. Anything above will). 
 \\However this threshold was purely for 320x240 images. At that stage I had not considered using different image sizes  for motion detection, but since FCam supported larger sizes I decided to test thresholds for these too, expecting a linear relationship between image size and non-zero count.
-\\For this experiment I repeated the same experiment for the five different image sizes, but have only included the average counts per }
+\\For this experiment I repeated the same experiment for the five different image sizes, but have only included the average counts per image size. See \ref{tab:normalised-images} in the Appendix for the complete table.\\
+}
+\import{../tables/}{normalised_subtracted_image_size_SHORT.tex}
+\paragraph{The chart below \cref{chart:thresholds} is based upon the data in the short table. It takes the maximum averages for each image size and plots them against the image size, with error bars as standard deviation. It then plots a linear trendline, as well as a more relevant logarithmic trendline because the threshold for 0x0 image sizes should tend towards 0, and not have a y coefficient.}
+\begin{figure}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.95\textwidth]{../images/chart-threshold-with-varying-image}
+		\label{chart:thresholds}
+	\end{center}
+\end{figure}
 
-
+%Talk about the equation and how it's meaningless.
 
 
 
@@ -303,14 +391,14 @@ or by simply normalising the image in [0,255] colorspace.
 \begin{wrapfigure}{R}{0.3\textwidth}
 	\vspace{-20pt}
 	\begin{center}
-		\includegraphics[width=0.3\textwidth]{images/accumstatic}
+		\includegraphics[width=0.3\textwidth]{../images/accumstatic}
 		\label{accumst}
 	\end{center}
 	\vspace{-20pt}
 	\caption{10 frame accumulation for static scene}
 	\vspace{10pt}
 	\begin{center}
-		\includegraphics[width=0.3\textwidth]{images/accumdynamic}
+		\includegraphics[width=0.3\textwidth]{../images/accumdynamic}
 		\label{accumdy}
 	\end{center}
 	\vspace{-20pt}
@@ -342,3 +430,5 @@ or by simply normalising the image in [0,255] colorspace.
 \subsection{Multiple Inheritance}{QObject and QThread}
 \subsection{Optimisations/Error Proofing}
 \subsubsection{Kernel Compatibility}
+
+\end{document}
