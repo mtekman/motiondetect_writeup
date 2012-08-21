@@ -1,0 +1,13 @@
+1. previous_frame := takePhoto().getFrame();
+2. count := 10
+3. while count>0
+4.	current_frame = takePhoto().getFrame()
+5.
+6.	subtracted_image = current_frame - previous_frame;
+7.	
+8.	white_pixel_num = countPixelsOverZero(subtracted_image);
+9.	print white_pixel_num
+10.	
+11.	previous_frame = current_frame;
+12.	count --;
+13. finish

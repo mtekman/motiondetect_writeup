@@ -28,6 +28,8 @@
 \usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
 \usepackage{url}
 \usepackage{enumerate}
+\usepackage{cleveref}  %cites figures intelligently
+\usepackage{import} % document structuring
 % These packages are all incorporated in the memoir class to one degree or another...
 
 %CODE LISTINGS
@@ -39,7 +41,7 @@
 %	language=matlab,
         	basicstyle=\scriptsize,
 %     	upquote=true,
-        	aboveskip={1.5\baselineskip},
+       	aboveskip={\baselineskip},
         	columns=fixed,
         	showstringspaces=false,
         	extendedchars=true,
@@ -85,7 +87,7 @@
 
 %%% The "real" document content comes below...
 
-\title{\Huge Motion Detection and\\Other Imaging Operations\\ for the N900 }
+\title{\Huge Motion Detection and\\Other Imaging Operations for\\Debian-Based Mobile Devices }
 \author{\small By Mehmet Tekman\\\small Department of Computer Science\\\small University College London}
 
 
@@ -165,7 +167,7 @@
 \subsubsection{Qt Framework} {
 Qt is an open-source cross-platform application framework developed by Nokia to facilitate in the creation of developing and testing apps.  It uses mainly C++ which even comes with the GCC toolchain, but also uses QML (Qt Meta Language) which is a Javascript-based language for building applications where fluid animations for widgets is desired. Qt also has bindings for Python, Ruby, Perl, Php, Java, and numerous other languages.\\
 
-Though Qt was mostly Maemo and Symbian based, the next version of Qt (version 5, currently v4.7) will be aimed at Android, iOS, and Windows 8 mobile devices in the near future, making it possibly the tool for all applplication development in the future. This was due to Digia buying Qt from Nokia in 2012\cite{nokiasell}.
+Though Qt was mostly Maemo and Symbian based, the next version of Qt (version 5, currently v4.7) will be aimed at Android, iOS, and Windows 8 mobile devices in the near future, making it possibly the tool for all applplication development in the future. This was due to Digia buying Qt from Nokia in 2012\cite{nokiasell}. This is a good thing, since it means that alot of applications will be extremely portable between platforms, and assuming that Tizen has the same open framework as Maemo, may perhaps greatly extend the shelf life and portability of my own aplpication.
 }
 
 \paragraph{Qt SDK}{ 
@@ -432,16 +434,106 @@ which specifies the that libavcodec is to be used, the framerate and also that t
 \end{wrapfigure}
 \paragraph{The images above were normalised to 2 discrete \{0,1\} values and then multiplied by 255 so that the 'hot pixels' could be viewed with the human eye. As you can see from the top figure, the whiteness indeicates that there was a significant difference between frames and so that one of the images had pixel values vastly greater than the other -- indicating a change in the scene.
 \\For the bottom image it can be seen that there is very little difference exists between the frames, yet you can almost quite clearly makeout the edge of the objects between the frames (a computer screen and speaker). Neither the speaker, the monitor, nor the camera moved between those two images but nonetheless a small difference was detected.\\
-This served as my first model for image detection by performing a small test to see how many of these sparse white pixels are detected for static frames. This would then serve as the basis for a threshold, so that any subtracted frames that are significantly above this threshold are flagged as 'movement' frames and those below or up to the threshold are not.
-\\EXPERIMENT 1: Finding the threshold
-\\There are two factors that would affect the threshold: Image size and thats it haha
+This served as my first model for image detection by performing a small test to see how many of these sparse white pixels are detected for static frames. This would then serve as the basis for a threshold, so that any subtracted frames that are significantly above this threshold are flagged as 'movement' frames and those below or up to the threshold 
+are not.}
+\underline{Experiment 1: Determining a suitable threshold for subtracted images}
+\paragraph{To find a suitable threshold I used the following pseudocode to determine a threshold for a static frame:\\\\}
+\lstinputlisting[title=\textbf{Source Code: subtract1.pseudo}]{Code/pseudo/subtract1.pseudo}
+\paragraph{It essentially grabs an image and subtracts it subtracted one image from another and totalled up all the pixels with a value greater than zero. This gave the following table of results:}
+\begin{center}
+\begin{table}
+	\begin{tabular}{| c | l | l | l | l | l | }
+\hline
+\multicolumn{6}{|c|}{\bf Non-Zero Counts from Subtracted Images} \\
+\hline
+\bf Test	&\bf Scene 1	&\bf Scene 2	&\bf Scene 3	&\bf Scene 4	&\bf Scene 5	\\ \hline
+1	&30747	&47298	&37881	&18801	&678\\
+2	&9067	&9129	&33326	&7645	&8488\\
+3	&798	&35861	&17947	&6433	&444\\
+4	&3841	&30449	&8273	&23614	&13385\\
+5	&34379	&25246	&6303	&41523	&23474\\
+6	&9144	&256	&14960	&31458	&25138\\
+7	&333474	&312598	&771731	&33779	&725415\\
+8	&34488	&2676	&14522	&1256	&12165\\
+9	&36351	&12497	&472	&1036	&18955\\
+10	&6133	&23077	&12343	&31430	&25410\\ \hline
+\bf Average	&49842.2	&49909	&91776	&19698	&85355\\ \hline
+	\end{tabular}
+	\label{tab:sub1}
+\end{table}
+\end{center}
+\paragraph{as shown in \cref{tab:sub1} the Average white pixel count is extremely high and varies greatly from scene to scene. Setting a threshold of less than 90000 would work for the five different scenes tested in my experiment, but there’s no gauruntee that the fluctuation between frames would not be higher than 90000 for another scene. \\
+So Why is there so much fluctuation? For one, the average pixel values of one scene can be radically different to another scene. If the average pixel value for Scene1 is 45 and the average pixel value for Scene2 is 90, then assuming that the ambient light in a scene is decreased by 10\%, then this would result in:\\
+Scene1:  45-40.5 = 4.5, and Scene2: 90-81 = 9 --- which are proportionately different counts for the same reduction in ambient light.\\
+ }
+\paragraph{My second attempt addresses the proportion problem, and inserts extra code into lines 5 and 7.}
+\lstinputlisting[title=\textbf{Source Code: subtract2.pseudo}]{Code/pseudo/subtract2.pseudo}
+\paragraph{Here it normalise the current frame into [0,1] binary colorspace after taking it. It then performs the subtraction, but this subtraction may result in pixel values greater than 1 due to overflow (i.e. 0-1 = -1 = 255 for 8-bit unsigned pixel), so a normalisation is performed on subtracted image as well. \\
+This results in non-zero counts of subtracted images that are far more stabler as shown in the table}
+\begin{center}
+\begin{table}
+	\begin{tabular}{| c | l | l | l | l | l | }
+\hline
+\multicolumn{6}{|c|}{\bf Non-Zero Counts from Subtracted Images} \\
+\hline
+\bf Test	&\bf Scene 1	&\bf Scene 2	&\bf Scene 3	&\bf Scene 4	&\bf Scene 5	\\ \hline
+1	&24272	&18049	&19899	&19746	&18833\\
+2	&23691	&21275	&19730	&21381	&20744\\
+3	&20607	&23001	&19261	&19711	&24503\\
+4	&19134	&22938	&23231	&21930	&21096\\
+5	&22282	&20143	&19616	&24927	&22492\\
+6	&23242	&18886	&19865	&20627	&21682\\
+7	&23769	&24513	&23851	&23883	&20993\\
+8	&21132	&22961	&23835	&24969	&23704\\
+9	&22978	&23870	&21845	&21534	&18847\\
+10	&22031	&22578	&18717	&24348	&20265\\ \hline
+Average	&22313.8	&21821	&20985	&22306	&21315.9	\\ \hline
+	\end{tabular}
+	\label{tab:sub2}
+\end{table}
+\end{center}
+\paragraph{Using the results from this table I decided to set a threshold of less than 26000 (i.e. a white-pixel count of less than 26000 will NOT trigger a movement flag. Anything above will). 
+\\However this threshold was purely for 320x240 images. At that stage I had not considered using different image sizes  for motion detection, but since FCam supported larger sizes I decided to test thresholds for these too, expecting a linear relationship between image size and non-zero count.
+\\For this experiment I repeated the same experiment for the five different image sizes, but have only included the average counts per }
+
+
+
+
+
+%\\EXPERIMENT 1: Finding the threshold
+%\\There are two factors that would affect the threshold: Image size and thats it haha
+\subsection{Running Average}
+\paragraph{The running average method is the process of adding up the pixel values of several frames and storing them in an accumulator. This accumulated image is then normalised and the image is converted into regular colorspace. This can be done either by dividing the pixel values by the number of frames added, 
+}
+\footnote{CImg facilities this very easily by using standard operators to perform operations over all pixel values.\\ E.g.  CImg<T2> average =  (CImg<T1>one + CImg<T1> two + CImg<T1> three) / 3; // Where: sizeof(T2)>sizeof(T1)} 
+\paragraph{
+or by simply normalising the image in [0,255] colorspace.
+\\It should be noted once again that greyscale image sizes are unsigned chars with a maximum and minimum values from 0 to 255, so appending a series of pixel values will result in in values that overflow this range. For this reason, the accumulator needs to have pixel sizes that can contain accumulated pixel sum amounts.
+}
+\begin{wrapfigure}{R}{0.3\textwidth}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{images/accumstatic}
+		\label{accumst}
+	\end{center}
+	\vspace{-20pt}
+	\caption{10 frame accumulation for static scene}
+	\vspace{10pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{images/accumdynamic}
+		\label{accumdy}
+	\end{center}
+	\vspace{-20pt}
+	\caption{10 frame accumulation for dynamic scene}
+\end{wrapfigure}
+\paragraph{As shown in ~\cref{accumst} a static scene shows very little difference from one scene to the next so that the image is coherent. For a dynamic scene, \cref{accumdy} shows a wildly different image with traces of many different scenes superimposed.
+\\This approach has a lot less overhead than the subtraction method since it doesn’t require the program to subtract every frame with the previous. It also introduces the concept of having a background or reference, since by the subtraction method of motion detection we would have no knowledge of the background since we would only be comparing two temporally adjacent frames.
 }
 
-\subsection{Accumulation}
 \paragraph{Results}
 \paragraph{Analysis}
 \subsection{Determining a Threshold for Detection}
-\paragraph{Counting white pixels (ineffective bt itself, scatter}
+\paragraph{Counting white pixels (ineffective by itself, scatter}
 \paragraph{Noise}
 \subparagraph{Thermal Noise, CCD clocking up/down}
 \subparagraph{Oversaturation, filtering, compression}
@@ -554,6 +646,11 @@ LibCV
 \paragraph{ The following is just a small snippet from an example Camera class from the Maemo Documentation Wiki:
 http://wiki.maemo.org/Documentation/Maemo\_5\_Developer\_Guide/Using\_Multimedia\_Components/Camera\_API\_Usage}
 \lstinputlisting[title=\textbf{Source Code: gst\_class.cpp}]{Code/API_Examples/gst_class.cpp}
+
+\section{Tables}
+\import{tables/}{normalised_subtracted_image_size.tex}
+
+
 \section{Application Code}
 \subsection{Motion Detector}
 \subsection{TimeLapse}
@@ -568,18 +665,3 @@ Transcript of commits
 
 Section: Future features
 Plan to have a 'night mode' that can be used for detecting movement at night using a longer exposure on the CMOS chip
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
