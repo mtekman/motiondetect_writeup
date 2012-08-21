@@ -154,7 +154,9 @@ FCam::Image::Image(
      int srcByesPerRow
 )
 The IPLImage has BGR channel order (i.e the first channel is blue, second is green, third is red. This is different from standard RGB formats). I attempted to convert to a grayscale IPLImage by doing:}
+\begin{frame}[fragile]
 \lstinputlisting[title=\textbf{Source Code: IPLconvert.cpp}]{../Code/API_Examples/IPLconvert.cpp}
+\end{frame}
 \paragraph{as taken from http://www.cs.cornell.edu/courses/cs4670/2010fa/projects/p1/codes/project1.tar.gz\\
 This took a reference to the FCam's Frame, extracted the image from it, and attempted to convert it into an unsigned 8-bit gresycale IPL image with 1 color channel. The unsigned 8-bit image would be limited to 0-255 range.\\
 Unfortunately several problems were encountered and almost three days were lost trying to get to the bottom of it:}
@@ -176,8 +178,11 @@ And to construct a CImg, all one has to do is call CImg<T> name; where T is the 
 In CIMG, the color channels are in RGB format. OpenCV's IPLImage only supports up to 4 color channels but CImg supports up to any number and this provided a source of initial confusion for me:
 http://sph2grid.googlecode.com/svn-history/r14/trunk/CImg/plugins/cimg\_ipl.h:\\
 Using the same format as the cornell code I attempted to make:}
+\begin{frame}[fragile]
 \lstinputlisting[title=\textbf{Source Code: IPLconvert.cpp}]{../Code/API_Examples/CImgConvertBad.cpp}
+\end{frame}
 \paragraph{This wasn't able to produce a consistent image (or any image at all) and I had to play around a wide variety of pixel values:}
+\begin{frame}[fragile]
 \begin{verbatim}
 //MAGENTA
 newimg1(i,j,0, 0) = pixels[0]; //red
@@ -205,9 +210,12 @@ newimg6(i,j,32, 0) = pixels[0]/255; //red
 newimg6(i,j,32, 1) = pixels[1]/255; //green
 newimg6(i,j,32, 2) = pixels[2]/255; //blue
 \end{verbatim}
+\end{frame}
 \paragraph{The idea was that by specifying the (i,j) coordinates of the new image and grabbing the pixel values from the FCam image and sticking it into (i,j) coordinates of the new CImg. I attempted to divide by 255 in some of the tests because I wasn;t sure how large the FCam::Image was, and this was my idea of normalizing it. I later realised that the pixel values were already normalized to 8-bit values and that dividing by 255 limited the CImg to \{0,1\} values would ultimately produce a black image.}
 \paragraph{By digging around through the source of the original fcam application for the N900, I was able to find a function that converted FCam by accessing the image data and reading from it:}
+\begin{frame}[fragile]
 \lstinputlisting[title=\textbf{Source Code: CImgConvertFcam.cpp}]{../Code/API_Examples/CImgConvertFcam.cpp}
+\end{frame}
 This resulted in images that looked like this:
 \begin{wrapfigure}{R}{0.3\textwidth}
 	\vspace{-20pt}
@@ -220,8 +228,7 @@ This resulted in images that looked like this:
 \paragraph{
 A similar image would appear using imgBuffer[1] instead of imgBuffer[0], and I didn't understand why until I looked up CImg's documentation and realised that out of the 32 channels I was initialising, the first channel is red and that was the only channel I was writing to.
 That is, for a greyscale image from 0-255 at pixel i,j - I was sticking it into CImg\{Red,0,0,0,0....32 times.\}, and thus ending up with a red image.
-\\
-Once I limited CImg to 1 color channel (i.e. black and white) then I got my desired image as shown by the real and greyscale comparison below:
+\\Once I limited CImg to 1 color channel (i.e. black and white) then I got my desired image as shown by the real and greyscale comparison below:
 }
 \begin{wrapfigure}{R}{0.3\textwidth}
 	\vspace{-20pt}
@@ -304,9 +311,11 @@ which specifies the that libavcodec is to be used, the framerate and also that t
 This served as my first model for image detection by performing a small test to see how many of these sparse white pixels are detected for static frames. This would then serve as the basis for a threshold, so that any subtracted frames that are significantly above this threshold are flagged as 'movement' frames and those below or up to the threshold 
 are not.}
 \pagebreak
-\underline{\\Experiment 1: Determining a suitable threshold for subtracted images}
+\underline{Experiment 1: Determining a suitable threshold for subtracted images}
 \paragraph{To find a suitable threshold I used the following pseudocode to determine a threshold for a static frame:\\\\}
-\lstinputlisting[title=\textbf{Source Code: subtract1.pseudo}]{../Code/pseudo/subtract1.pseudo}
+\begin{frame}[fragile]
+	\lstinputlisting[title=\textbf{Source Code: subtract1.pseudo}]{../Code/pseudo/subtract1.pseudo}
+\end{frame}
 \paragraph{It essentially grabs an image and subtracts it subtracted one image from another and totalled up all the pixels with a value greater than zero. This gave the following table of results:}
 \begin{center}
 \begin{table}[!htbp]
@@ -373,6 +382,7 @@ Average	&22313.8	&21821	&20985	&22306	&21315.9	\\ \hline
 		\label{chart:thresholds}
 	\end{center}
 \end{figure}
+
 
 %Talk about the equation and how it's meaningless.
 
