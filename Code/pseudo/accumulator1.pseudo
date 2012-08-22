@@ -1,0 +1,33 @@
+00. threshold := predefineThreshold();  
+01. REFERENCE_FRAME;
+02. 
+03. function UpdateReferenceFrame(){
+04.    count := 0;
+05.    accumulator;	       //Holds pixel values
+06.    camera.setFrameTime(0); //As fast as possible
+07.    do{
+08.       current_frame = takePhoto().getFrame();
+09.	  accumulator = accumulator + current_frame;               
+10.
+11.       count = count + 1;
+12.    }while(count< predefineCount())
+14.       
+15.    REFERENCE_FRAME = normalise(accumulator);
+14. }
+15.
+16. //Main:
+17. loop
+18.     current_frame = takePhoto().getFrame()
+19.	current_frame = normalize(current_frame); //to 0,1
+20.
+21.	subtracted_image = current_frame - REFERENCE_FRAME;
+22.	subtracted_image = normalize(subtracted_image); //to 0,1
+23.	white_pixel_num = countPixelsOverZero(subtracted_image);
+24.
+25.     if( white_pixel_num > threshold){
+26.             print "Movement!"
+27.             subtracted_image.savetoFile(DIR/FILE)
+28.
+29.             UpdateReferenceFrame()
+30.     }
+31.     // Continue looping

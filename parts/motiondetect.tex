@@ -311,7 +311,7 @@ which specifies the that libavcodec is to be used, the framerate and also that t
 This served as my first model for image detection by performing a small test to see how many of these sparse white pixels are detected for static frames. This would then serve as the basis for a threshold, so that any subtracted frames that are significantly above this threshold are flagged as 'movement' frames and those below or up to the threshold 
 are not.}
 \pagebreak
-\underline{Experiment 1: Determining a suitable threshold for subtracted images}
+\subsubsection{Experiment 1: Determining a suitable threshold for subtracted images}
 \paragraph{To find a suitable threshold I used the following pseudocode to determine a threshold for a static frame:\\\\}
 \begin{frame}[fragile]
 	\lstinputlisting[title=\textbf{Source Code: subtract1.pseudo}]{../Code/pseudo/subtract1.pseudo}
@@ -374,7 +374,7 @@ Average	&22313.8	&21821	&20985	&22306	&21315.9	\\ \hline
 \\For this experiment I repeated the same experiment for the five different image sizes, but have only included the average counts per image size. See \ref{tab:normalised-images} in the Appendix for the complete table.\\
 }
 \import{../tables/}{normalised_subtracted_image_size_SHORT.tex}
-\paragraph{The chart below \cref{chart:thresholds} is based upon the data in the short table. It takes the maximum averages for each image size and plots them against the image size, with error bars as standard deviation. It then plots a linear trendline, as well as a more relevant logarithmic trendline because the threshold for 0x0 image sizes should tend towards 0, and not have a y coefficient.}
+\paragraph{The chart below \cref{chart:thresholds} is based upon the data in the short table. It takes the maximum averages for each image size and plots them against the image size, with error bars as standard deviation.}
 \begin{figure}
 	\vspace{-20pt}
 	\begin{center}
@@ -382,17 +382,52 @@ Average	&22313.8	&21821	&20985	&22306	&21315.9	\\ \hline
 		\label{chart:thresholds}
 	\end{center}
 \end{figure}
+\paragraph{As can be seen in \cref{chart:thresholds}, two trendlines ave been plotted - a linear one, as well as a more relevant logarithmic trendline because the threshold for 0x0 image sizes should tend towards 0, and not have a y coefficient.\\
+It should be noted that the standard deviation in the average threshold grew as the image size grew, meaning that this was not the most accurate scale for determining a threshold. I did try setting a threshold with image size using the formula of:\\
+ Thresh = 26297*ln(image_width) - 131544(+10000 as a max limiter),  giving appropriate theshold sizes of:\\
+30145 (320), 48373(640), 54241 (800), 66600 (1280), 85155 (2592).\\
+This method did work, but there were a fair few amount of false positives being flagged.
+%DISPLAY FALSE POSITIVE IMAGES WITH LOTS OF SCATTER
+
+The random scatter of pixels between static frames is caused by Noise, and I needed to find a way to get rid of it.
+}
+\subsection{Noise}
+\subsubsection{Thermal Noise, CCD clocking up/down}
+\paragraph{Oversaturation, filtering, compression}
+
+\subsection {Noise Removal}
+\subsubsection{Running Average}
+\paragraph{In this method, a \bf{reference frame} is created by capturing a quick succesion of frames. The pixel values from these frames are added to an accumulator and then divided by the number of frames. This 'average frame' now becomes the reference image which all incoming frames are now checked against it, as shown the pesudo code bwlow
+\begin{frame}[fragile]
+	\lstinputlisting[title=\textbf{Source Code: UpdateReference.pseudo}]{../Code/pseudo/updatereference1.pseudo}
+\end{frame}
+
+%% In the pseudocode below, the current frame is subtracted from the reference frame, and if the non-zero pixel count from the subtracted frame is over the (new) threshold amount, then the movement is flagged and the reference frame is updated by another quick burst of frames.
+
+\begin{frame}[fragile]
+	%accumulator1 -- includes the running code as well as a CORRECTed update reference frame method
+\end{frame}
 
 
-%Talk about the equation and how it's meaningless.
 
-
-
-%\\EXPERIMENT 1: Finding the threshold
-%\\There are two factors that would affect the threshold: Image size and thats it haha
-\subsection{Running Average}
 \paragraph{The running average method is the process of adding up the pixel values of several frames and storing them in an accumulator. This accumulated image is then normalised and the image is converted into regular colorspace. This can be done either by dividing the pixel values by the number of frames added, 
 }
+
+    The second method I tried yesterday - The threshold is now determined by a
+    quick succession of frames. The pixels from these frames are added to an
+    accumulator and then divided by the number of frames.
+    This is then stored as an average frame.
+
+    In the checkMovement function, the current frame is subtracted from the
+    average frame, and if the non-zero pixel count from the subtracted is over
+    a certain amount, movement is flagged and the average frame is re-updated.
+
+    All frames are Normalised. This produces less diference between one frame
+    and the next.
+
+
+
+
 \footnote{CImg facilities this very easily by using standard operators to perform operations over all pixel values.\\ E.g.  CImg<T2> average =  (CImg<T1>one + CImg<T1> two + CImg<T1> three) / 3; // Where: sizeof(T2)>sizeof(T1)} 
 \paragraph{
 or by simply normalising the image in [0,255] colorspace.
@@ -416,19 +451,66 @@ or by simply normalising the image in [0,255] colorspace.
 \end{wrapfigure}
 \paragraph{As shown in ~\cref{accumst} a static scene shows very little difference from one scene to the next so that the image is coherent. For a dynamic scene, \cref{accumdy} shows a wildly different image with traces of many different scenes superimposed.
 \\This approach has a lot less overhead than the subtraction method since it doesn’t require the program to subtract every frame with the previous. It also introduces the concept of having a background or reference, since by the subtraction method of motion detection we would have no knowledge of the background since we would only be comparing two temporally adjacent frames.
+\\For this I used the following pseudo code
 }
+\begin{frame}[fragile]
+	\lstinputlisting[title=\textbf{Source Code: subtract1.pseudo}]{../Code/pseudo/subtract1.pseudo}
+\end{frame}
+
+
+
+\subsubsection{Image Morphology}
+\paragraph{Kernel Mask}
+\subparagraph{Diamond,Square}
+\subpargraph{Erode, Dilate}{Open/Close}
+
+
+
+    The second method I tried yesterday - The threshold is now determined by a
+    quick succession of frames. The pixels from these frames are added to an
+    accumulator and then divided by the number of frames.
+    This is then stored as an average frame.
+
+    In the checkMovement function, the current frame is subtracted from the
+    average frame, and if the non-zero pixel count from the subtracted is over
+    a certain amount, movement is flagged and the average frame is re-updated.
+
+    All frames are Normalised. This produces less diference between one frame
+    and the next.
+
+
+Great, I believe we should stick with this method. By computing a running average you are in fact learning from previous frames. However, when the scene changes dramatically, you should reset you average frame and start back, as your background might have changed (i.e. a new large object enters the scene).
+ 
+
+
+    Here are some of the resultant images:
+    sub = (current_frame - last_determined_average_frame)   //All normalized
+
+    subF is the difference between two frames where the scene hasn't changed,
+    and subG is the difference between two frames where the scene has changed.
+
+    One has a higher white-pixel count than the other, but in some instances
+    you can't always tell (e.g. when the pixels are spread about a bit).
+
+
+    Are there any methods that can help distinguish between white pixels that
+    are spread about, and ones that are more closely compacted?
+
+
+Yes, they are called morphological operations:
+
+http://ostermiller.org/dilate_and_erode.html
+
+You want to "erode" your difference image (i.e. subF or subG) to get rid of spurious pixels. This ideally removes a large part of false positives, assuming you use a small enough kernel. Have a read at the link I have sent you, and if you are lost, no worries, we can talk about this tomorrow!
+
+If you managed to use OpenCV, then erosion and dilation are implemented. if you are using CImg, then we can write it ourselves:
+
+http://stackoverflow.com/questions/1472768/implementing-erosion-dilation-in-c-c
 
 \paragraph{Results}
 \paragraph{Analysis}
 \subsection{Determining a Threshold for Detection}
 \paragraph{Counting white pixels (ineffective by itself, scatter}
-\paragraph{Noise}
-\subparagraph{Thermal Noise, CCD clocking up/down}
-\subparagraph{Oversaturation, filtering, compression}
-\subsection{Image Morphology}{Noise Removal}
-\subsubsection{Kernel Mask}
-\paragraph{Diamond,Square}
-\subsubsection{Erode, Dilate}{Open/Close}
 \section{Threads}
 \subsection{Camera Thread}
 \subsubsection{Signal/Slots}

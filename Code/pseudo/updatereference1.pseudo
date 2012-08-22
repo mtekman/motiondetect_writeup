@@ -1,0 +1,16 @@
+01. REFERENCE_FRAME;
+02.
+03. function UpdateReferenceFrame(){
+04.    count :=0
+05.    accumulator;	       //Holds pixel values
+06.    camera.setFrameTime(0); //As fast as possible
+07.    do{
+08.       current_frame = takePhoto().getFrame();
+09.	  accumulator = accumulator + current_frame;               
+10.
+11.       count = count + 1;
+12.    }while(count<10)
+14.    accumulator = accumulator / 10;
+15.    REFERENCE_FRAME = normalise(accumulator);
+14. }
+
