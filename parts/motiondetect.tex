@@ -4,6 +4,7 @@
 %%% PAGE DIMENSIONS
 \usepackage{geometry} % to change the page dimensions
 \geometry{a4paper} % or letterpaper (US) or a5paper or....
+\newcommand{\tab}{\hspace*{2em}}
 
 %%% PACKAGES
 \usepackage{graphicx} % support the \includegraphics command and options
@@ -384,12 +385,11 @@ Average	&22313.8	&21821	&20985	&22306	&21315.9	\\ \hline
 \end{figure}
 \paragraph{As can be seen in \cref{chart:thresholds}, two trendlines ave been plotted - a linear one, as well as a more relevant logarithmic trendline because the threshold for 0x0 image sizes should tend towards 0, and not have a y coefficient.\\
 It should be noted that the standard deviation in the average threshold grew as the image size grew, meaning that this was not the most accurate scale for determining a threshold. I did try setting a threshold with image size using the formula of:\\
- Thresh = 26297*ln(image_width) - 131544(+10000 as a max limiter),  giving appropriate theshold sizes of:\\
+ Thresh = 26297*ln(image\_width) - 131544(+10000 as a max limiter),  giving appropriate theshold sizes of:\\
 30145 (320), 48373(640), 54241 (800), 66600 (1280), 85155 (2592).\\
 This method did work, but there were a fair few amount of false positives being flagged.
-%DISPLAY FALSE POSITIVE IMAGES WITH LOTS OF SCATTER
-
-The random scatter of pixels between static frames is caused by Noise, and I needed to find a way to get rid of it.
+%DISPLAY FALSE POSITIVE IMAGES WITH LOTS OF SCATTE\\
+\\The random scatter of pixels between static frames is caused by Noise, and I needed to find a way to get rid of it.
 }
 \subsection{Noise}
 \subsubsection{Thermal Noise, CCD clocking up/down}
@@ -397,41 +397,28 @@ The random scatter of pixels between static frames is caused by Noise, and I nee
 
 \subsection {Noise Removal}
 \subsubsection{Running Average}
-\paragraph{In this method, a \bf{reference frame} is created by capturing a quick succesion of frames. The pixel values from these frames are added to an accumulator and then divided by the number of frames. This 'average frame' now becomes the reference image which all incoming frames are now checked against it, as shown the pesudo code bwlow
+In this method, a reference frame is created by capturing a quick succesion of frames. The pixel values from these frames are added to an accumulator and then divided by the number of frames  
+\footnote{CImg facilities this very easily by using standard operators to perform operations over all pixel values.
+\\ E.g.  CImg<T2> average =  (CImg<T1>one + CImg<T1> two + CImg<T1> three) / 3; \\
+Where: sizeof(T2)>sizeof(T1).
+\\The size of the image types is significant. It should be noted once again that greyscale image sizes are 8-bit unsigned chars with a maximum and minimum values from 0 to 255, so appending a series of pixel values will result in in values that overflow this range. For this reason, the accumulator needs to have pixel sizes that can contain accumulated pixel sum amounts. In this project the accumulator had long (64-bit) pixel values, and were then normalised in [0,1] colorspace when being assigned to the reference frame.}
+ 
+\paragraph{
+ This 'average frame' now becomes the reference image which all incoming frames are now checked against it, as shown the pesudo code below}
 \begin{frame}[fragile]
 	\lstinputlisting[title=\textbf{Source Code: UpdateReference.pseudo}]{../Code/pseudo/updatereference1.pseudo}
 \end{frame}
-
-%% In the pseudocode below, the current frame is subtracted from the reference frame, and if the non-zero pixel count from the subtracted frame is over the (new) threshold amount, then the movement is flagged and the reference frame is updated by another quick burst of frames.
-
-\begin{frame}[fragile]
-	%accumulator1 -- includes the running code as well as a CORRECTed update reference frame method
-\end{frame}
-
-
-
-\paragraph{The running average method is the process of adding up the pixel values of several frames and storing them in an accumulator. This accumulated image is then normalised and the image is converted into regular colorspace. This can be done either by dividing the pixel values by the number of frames added, 
-}
-
-    The second method I tried yesterday - The threshold is now determined by a
-    quick succession of frames. The pixels from these frames are added to an
-    accumulator and then divided by the number of frames.
-    This is then stored as an average frame.
-
-    In the checkMovement function, the current frame is subtracted from the
-    average frame, and if the non-zero pixel count from the subtracted is over
-    a certain amount, movement is flagged and the average frame is re-updated.
-
-    All frames are Normalised. This produces less diference between one frame
-    and the next.
-
-
-
-
-\footnote{CImg facilities this very easily by using standard operators to perform operations over all pixel values.\\ E.g.  CImg<T2> average =  (CImg<T1>one + CImg<T1> two + CImg<T1> three) / 3; // Where: sizeof(T2)>sizeof(T1)} 
+\paragraph{The reason a method like this is used to reduce noise is because the noise over several frames is 'blurred' out and only the significant motion stands out. This blurring effect reduces the amplitude of the random noise, since it is unlikely that a noisy pixel will occur at the same position across all frames , thus for 100 frames: \\\t if a noisy pixel occurs at position [10,5] with a value of 255 (white), then this will be reduced to a pixel value of 3 after the running average method is applied, since due to the arbitrary nature of noise, the noisy pixel is unlikely to occupy the same pixel position in successive frames. Pixels which retain their values over more than a few frames can then be said to be significant, since it is unlikely for random noise to strike the same pixel twice (unless the scene is generally very noisy)\\
+It should be noted that this blurring effect occurs for all pixels and not just noisy ones, and so there is a slight - but generally acceptable - reduction in sharpness of the image.\\
+The amount of noise reduction is proportional to the square-root of the number of frames being averaged, so in the 100 frame example the reduction of noise would be a factor of 10.}
 \paragraph{
-or by simply normalising the image in [0,255] colorspace.
-\\It should be noted once again that greyscale image sizes are unsigned chars with a maximum and minimum values from 0 to 255, so appending a series of pixel values will result in in values that overflow this range. For this reason, the accumulator needs to have pixel sizes that can contain accumulated pixel sum amounts.
+In the pseudocode below, the current frame is subtracted from the reference frame, and if the non-zero pixel count from the subtracted frame is over the (new) threshold amount, then the movement is flagged and the reference frame is updated by another quick burst of frames.
+}
+\begin{frame}[fragile]
+	\lstinputlisting[title=\textbf{Source Code: accumulator.pseudo}]{../Code/pseudo/accumulator1.pseudo}
+\end{frame}
+\paragraph{Note that the updateReference function has changed so that the reference frame is the accumulated normalisation over any number of frames. \\
+All frames are normalised to [0,1]  binary colorspace, as this flattens the image and produces less diference between one frame and the next, which helps distinguish where movement has occured.
 }
 \begin{wrapfigure}{R}{0.3\textwidth}
 	\vspace{-20pt}
@@ -450,67 +437,111 @@ or by simply normalising the image in [0,255] colorspace.
 	\caption{10 frame accumulation for dynamic scene}
 \end{wrapfigure}
 \paragraph{As shown in ~\cref{accumst} a static scene shows very little difference from one scene to the next so that the image is coherent. For a dynamic scene, \cref{accumdy} shows a wildly different image with traces of many different scenes superimposed.
-\\This approach has a lot less overhead than the subtraction method since it doesn’t require the program to subtract every frame with the previous. It also introduces the concept of having a background or reference, since by the subtraction method of motion detection we would have no knowledge of the background since we would only be comparing two temporally adjacent frames.
-\\For this I used the following pseudo code
+\\This approach introduces the concept of having a background or reference, since by the subtraction method of motion detection we would have no knowledge of the background since we would only be comparing two temporally adjacent frames.
 }
-\begin{frame}[fragile]
-	\lstinputlisting[title=\textbf{Source Code: subtract1.pseudo}]{../Code/pseudo/subtract1.pseudo}
-\end{frame}
+Running repeated tests under this model confirms that the threshold value is much lower than it used to be due to the reduction in the noise, but there is still large growth of standard deviation as the image size increases. This is due to the scatter of noise that still persists the images, even averaging over 30 frames or more \footnote{Averaging over higher even using the fastest frame times causes a significant delay in the application and can also cause segmentation faults.}
+leaves noise behind which are counted as non-zero white pixels in a normalised image.
 
+\begin{wrapfigure}{R}{0.3\textwidth}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{../images/scatter1}
+		\label{img:scatter1}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Scatter of noise for a 1-frame running average}
+	\vspace{10pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{../images/scatter2}
+		\label{img:scatter2}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Scatter of noise for a 10-frame running average}
+\end{wrapfigure}
+The images above show how the running average method reduces the localised noise within certain regions, but increases the overall scatter of the noise as it accumulates around certain individual pixels as it is 'flattened' over several frames.\\
+In \cref{img:scatter1} the noise is clustered together and makes up a significant part of the static image. But in \cref{img:scatter2} the noise is much more sparsely spread and most of the noisy white-pixels are surrounded by empty neighbours.\\
 
+Clearly another technique is needed to smooth the images so that sparse pixels surrounded by emptiness can be ignored and not contribute to the threshold count. Such techniques are called \bf{morphological operations}
+%    The second method I tried yesterday - The threshold is now determined by a
+%    quick succession of frames. The pixels from these frames are added to an
+%    accumulator and then divided by the number of frames.
+%    This is then stored as an average frame.
+%
+%    In the checkMovement function, the current frame is subtracted from the
+%    average frame, and if the non-zero pixel count from the subtracted is over
+%    a certain amount, movement is flagged and the average frame is re-updated.
+%
+%    All frames are Normalised. This produces less diference between one frame
+%    and the next.
+%
+%
+%Great, I believe we should stick with this method. By computing a running average you are in fact learning from previous frames. However, when the scene changes dramatically, you should reset you average frame and start back, as your background might have changed (i.e. a new large object enters the scene).
+% 
+%
+%
+%    Here are some of the resultant images:
+%    sub = (current\_frame - last\_determined\_average\_frame)   //All normalized
+%
+%    subF is the difference between two frames where the scene hasn't changed,
+%    and subG is the difference between two frames where the scene has changed.
+%
+%    One has a higher white-pixel count than the other, but in some instances
+%    you can't always tell (e.g. when the pixels are spread about a bit).
+%
+%
+%    Are there any methods that can help distinguish between white pixels that
+%    are spread about, and ones that are more closely compacted?
+%
+%
+%Yes, they are called morphological operations:
+%
+%http://ostermiller.org/dilate\_and\_erode.html
+%
+%You want to "erode" your difference image (i.e. subF or subG) to get rid of spurious pixels. This ideally removes a large part of false positives, assuming you use a small enough kernel. Have a read at the link I have sent you, and if you are lost, no worries, we can talk about this tomorrow!
+%
+%If you managed to use OpenCV, then erosion and dilation are implemented. if you are using CImg, then we can write it ourselves:
+%
+%http://stackoverflow.com/questions/1472768/implementing-erosion-dilation-in-c-c
 
 \subsubsection{Image Morphology}
-\paragraph{Kernel Mask}
-\subparagraph{Diamond,Square}
-\subpargraph{Erode, Dilate}{Open/Close}
+Another way to reduce noise in an image is to 'smooth out' random white pixels, so that an image dotted sparsely with noise is converted into an image that contains only the most concentrated of clusters.  To do this one needs to smooth the pixels.
+In binary colorspace, smoothing a pixel requires considering the values of the neighbouring pixels. If pixel A has 8 neighbours (adjacent/diagonal), then the 0 or 1 value of pixel A is determined by the value of its neighbours.\\
+To \bf{Dilate} a pixel is to set its value to 1 if all (or most) of it's neighbouts are also 1.\\
+To \bf{Erode} a pixel is to set its value to 0 if all (or most) of it's neighbours are also 0.\\
+A simple example is shown below:
+\begin{center}
+\begin{frame}
+.\\
+Original\tab	Dilate\tab	Erode\tab\\
+\tiny{
+0000000\tab	0000000\tab	0000000\\
+0000000\tab	0011100\tab	0000000\\
+0011100\tab	0111110\tab	0011100\\
+0010100\tab	0111110\tab	0011100\\
+0011100\tab	0111110\tab	0011100\\
+0000000\tab	0011100\tab	0000000\\
+0000000\tab	0000000\tab	0000000\\
+}
+\end{frame}
+\end{center}
+
+To specify the level of smoothing, one needs to consider a \bf{kernel}
+\paragraph{In algebra a kernel is a linear operator which performs an operation upon a set of data. In imaging, the data is a matrix of pixels, and the operator is a much smaller matrix of predefined size that acts as a structuring element and performs basic matrix superimposition upon the pixels and it's neighbours. \\
+A kernel is therefore the size of the neighbourhood being considered when performing Erosion or Dilation operations. Generally a kernel is an nxn square matrix applied as a mask over each pixel, but it is not bound to this shape and can take any nxm best suited.
+A 2x2 kernel will consider the three surrounding neighbours of a pixel, a 3x3 kernel will consider 8 surrounding neigbours of a pixel, a 4x4 kernel will consider 15 surrounding neighbours and so on.
+}
+\paragraph{For  image processing, a kernel normally comes in two shapes: A Diamond structure or a Square structure. A diamond structure kernel is the least discriminating as it considers only the genreally adjacent neighbours of a pixel and not the corners. A square structure  is the most discriminating as it considers all the neighbours and will only affect the centre pixel if all the neighbours confirm to the rule of the operation.
+\\
+Diamond kernels produce softer edges on images, and Square kernels produce blocky edges. Generally a square kernel is likely to remove more pixels than a diamond will, though a diamond is more likely to preserve the overall shape of the image.
+}
 
 
-
-    The second method I tried yesterday - The threshold is now determined by a
-    quick succession of frames. The pixels from these frames are added to an
-    accumulator and then divided by the number of frames.
-    This is then stored as an average frame.
-
-    In the checkMovement function, the current frame is subtracted from the
-    average frame, and if the non-zero pixel count from the subtracted is over
-    a certain amount, movement is flagged and the average frame is re-updated.
-
-    All frames are Normalised. This produces less diference between one frame
-    and the next.
-
-
-Great, I believe we should stick with this method. By computing a running average you are in fact learning from previous frames. However, when the scene changes dramatically, you should reset you average frame and start back, as your background might have changed (i.e. a new large object enters the scene).
- 
-
-
-    Here are some of the resultant images:
-    sub = (current_frame - last_determined_average_frame)   //All normalized
-
-    subF is the difference between two frames where the scene hasn't changed,
-    and subG is the difference between two frames where the scene has changed.
-
-    One has a higher white-pixel count than the other, but in some instances
-    you can't always tell (e.g. when the pixels are spread about a bit).
-
-
-    Are there any methods that can help distinguish between white pixels that
-    are spread about, and ones that are more closely compacted?
-
-
-Yes, they are called morphological operations:
-
-http://ostermiller.org/dilate_and_erode.html
-
-You want to "erode" your difference image (i.e. subF or subG) to get rid of spurious pixels. This ideally removes a large part of false positives, assuming you use a small enough kernel. Have a read at the link I have sent you, and if you are lost, no worries, we can talk about this tomorrow!
-
-If you managed to use OpenCV, then erosion and dilation are implemented. if you are using CImg, then we can write it ourselves:
-
-http://stackoverflow.com/questions/1472768/implementing-erosion-dilation-in-c-c
 
 \paragraph{Results}
 \paragraph{Analysis}
-\subsection{Determining a Threshold for Detection}
-\paragraph{Counting white pixels (ineffective by itself, scatter}
+
+
+
 \section{Threads}
 \subsection{Camera Thread}
 \subsubsection{Signal/Slots}
@@ -522,5 +553,6 @@ http://stackoverflow.com/questions/1472768/implementing-erosion-dilation-in-c-c
 \subsection{Multiple Inheritance}{QObject and QThread}
 \subsection{Optimisations/Error Proofing}
 \subsubsection{Kernel Compatibility}
+
 
 \end{document}
