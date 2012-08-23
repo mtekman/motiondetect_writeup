@@ -534,7 +534,76 @@ A 2x2 kernel will consider the three surrounding neighbours of a pixel, a 3x3 ke
 \\
 Diamond kernels produce softer edges on images, and Square kernels produce blocky edges. Generally a square kernel is likely to remove more pixels than a diamond will, though a diamond is more likely to preserve the overall shape of the image.
 }
+\paragraph{A common technique in image smoothing is to perform 'opening/closing', which is simply an dilation followed by an erosion. This accentuates the important parts of the image and also filters out any sparse pixels.}
 
+\subsubsection{Experiments}
+\paragraph{As of version 1.1.2, CImg comes with its own dilate and erode functions, and the kernel can be specified by a simple array. A series of tests were performed:
+}
+Starting image:
+\\
+\begin{wrapfigure}{R}{0.3\textwidth}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{../images/ImageOps/uneditedsub}
+		\label{img:uneditsub1}
+	\end{center}
+	\vspace{-20pt}
+	\caption{A subtraction image showing the difference between two  completely different frames. A white pixel count of 87516 is given.}
+\end{wrapfigure}
+
+\\Test 1: Seeing how the white pixel count is affected by repeated Erosion/Dilation using a 2x2 mask\\
+\begin{wrapfigure}{R}{0.3\textwidth}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{../images/ImageOps/test1}
+		\label{img:erode1}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Erosion, Dilation, Erosion followed by Dilation, and Dilation followed by Erosion all repeated k times}
+\end{wrapfigure}
+See the appendix for the code used.
+
+As we can see from figure \cref{img:erode1} -- repeated uses of Erosion/Dilation (or vice versa) does not affect the white pixel count for repeated usage as they do independently.
+
+\\It is interesting to note that EroDil produces a more solid image (i.e. black parts dont have white spots within) than DilEro. This is most likely because the sparse pixels have been filtered out first, and then accentuated. If it were the other way then the sparse pixels would have been accentuated first by the dilation, and then persisted under the erosion.
+
+\\One thing to note is that not much has been clustered. It seemed like the 2x2 mask was too small and so I repeated the experiment with increasing mask sizes
+
+\\ Test 2: Seeing how white pixel count varied with repeated Erosion/Dilation using an increasing mask size from 2 to 6, using the same starting image.
+\begin{wrapfigure}{R}{0.3\textwidth}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{../images/ImageOps/test2}
+		\label{img:erode2}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Erosion, Dilation, Erosion followed by Dilation, and Dilation followed by Erosion using kxk mask size}
+\end{wrapfigure}
+
+\\As expected the white pixel count increased in the EroDil and DilEro techniques with increasing square masks, however EroDil seemed to give the best quality bunching out of all the technique. Dilate by itself seemed pretty effective too, but this alone would not remove noise effectively. Dilero had to be dropped as useful image processing method since it seemed to be removing significant parts of the image and not retaining the overall blobby structure.
+
+\\Test 3: Seeing how white pixel count varies with repeated seperate calls to Erosion and Dilation
+\begin{wrapfigure}{R}{0.3\textwidth}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{../images/ImageOps/test2A}
+		\label{img:erode3}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Dilation and Erosion varying with a kxk mask}
+\end{wrapfigure}
+As expected, the white pixel count diminishes under the repeated Erosion calls, then grows under the repeated Dilation calls. Clearly using these techniques seperately serves no purpose other than accentuating white and black respectively. However combined together into an EroDil method, the structure of the image itself is accentuated and not just one specific color:
+\begin{wrapfigure}{R}{0.3\textwidth}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{../images/ImageOps/test2B}
+		\label{img:erode4}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Dilation and Erosion varying with a kxk mask}
+\end{wrapfigure}
+
+The erodil images were taken at bi-intervals, but the intermediate mask sizes were performed.  EroDil increases the white pixel count, but gradually -- and this makes sense since the image is mostly white, so the increasing white pixel count is representative of this. In terms of tidiness, EroDil seems to produce a smoother image, and gives a white pixel count that is closer to the true white pixel count of 67164, than anything that Eroding or Dilating could do by themselves.
 
 
 \paragraph{Results}
