@@ -605,10 +605,44 @@ As expected, the white pixel count diminishes under the repeated Erosion calls, 
 
 The erodil images were taken at bi-intervals, but the intermediate mask sizes were performed.  EroDil increases the white pixel count, but gradually -- and this makes sense since the image is mostly white, so the increasing white pixel count is representative of this. In terms of tidiness, EroDil seems to produce a smoother image, and gives a white pixel count that is closer to the true white pixel count of 67164, than anything that Eroding or Dilating could do by themselves.
 
+\\Test 4: Seeing how White-Pixel count varies with increasing Mask Size using EroDil method:
+\begin{wrapfigure}{R}{0.3\textwidth}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{../images/ImageOps/chartMask}
+		\label{img:maskChart}
+	\end{center}
+\end{wrapfigure}
+As seen in \cref{img:maskChart} the white-pixel count follows a downward logarithmic trend that is very well approximated by the equation:\\
+WhitePixelCount = 68991.3 - 7914.3 ln(MaskSize)
 
-\paragraph{Results}
-\paragraph{Analysis}
+It should be well noted that applying a larger mask filter to an image that has been affected by a smaller mask filter, is EXCATLY THE SAME as simply just applying the larger filter.  In my code in the appendix what I tended to do was repeatly loop over and update the existing image with each increasing mask, such that the input for mask B would be the output for mask A, where BxB > AxA.  The reason why I did this was to prevent the application from constantly replacing the current image in the memory, rather than having to duplicate from the original for each mask.
 
+\\Various other tests were performed: See Testing section in the appendix, but these core 4 tests demonstrated all I really needed to know about opening/closing an image - i.e. As the mask size increases the white-pixel count converges downwards at an ever decreasing rate.
+
+\\Mask sizes have to get very large (to the same order as the image dimensions!) before a subtracted image for differing scenes can  fully converge to a single colour:
+\begin{wrapfigure}{R}{0.3\textwidth}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{../images/ImageOps/Diff1}
+		\label{img:diff1}
+	\end{center}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{../images/ImageOps/Diff2}
+		\label{img:diff2}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Base image undergoing EroDil to large mask sizes. Even with 97x97 mask size (~1/2 of the image height) the scene still hasn't completely vanished.
+\end{wrapfigure}
+Since the mask size required to completely ignore a scene change is probably on the same order of the dimensions of the image.  To ignore a scene change, it would probably be apt to simply set a lower limit on the White Pixel count (e.g <25000 is good enough)
+
+Using this knowledge I then set on detecting different kinds of movement:
+
+\subsection{Movement Types}
+I broke movement down into 5 different types:  Scene change (80\% of the image), Large movement (40\% of the image), Medium movement (10\% of the image), and Small movement.
+
+\\To detect large movement %INSERT LARGE image, then do medium, small
 
 
 \section{Threads}
