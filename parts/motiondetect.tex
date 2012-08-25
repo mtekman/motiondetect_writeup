@@ -698,16 +698,68 @@ To do this I adjusted the shell script from \cref{code:shell1} to adjust just th
 \begin{frame}[fragile]
 	\lstinputlisting[title=\textbf{Source Code: shell2.cpp}\label{code:shell2}]{../Code/qpix/shell2.cpp}
 \end{frame}
+This resulted in yet another flurry of badly aligned images as shown in \cref{img:shell2}
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{../images/qpix/shell1}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Usable images are where ‘div’ amount equals 2 and format is 0, 1, or 11}
+	\label{fig:shell2}
+\end{figure}
+Out of all the images in \cref{img:shell2} , only three were actually usable - all ocurring where the image dimensions were halved. This put to rest my earlier unfounded suspicions that image size was affect by the image color format. The usable image formats were QImage::Format_ARGB32, QImage::Format_ARGB32_Premultiplied, and QImage::Format_RGB32.  Once again, the color was slightly off again, appearing more magenta than it actually was.
 
+Wondering if the problem was to do with RGB channels being in different order for QImage’s (the idea came to me after remembering that OpenCV’s IPLImage format was by default BGR), I swapped the blue and red channels using QImage’s swapRGB() function. To my surprise this produced very little difference in the outputted images as shown in \cref{fig:swaprgb}
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.7\textwidth]{../images/qpix/rgbswap}
+	\end{center}
+	\vspace{-20pt}
+	\caption{}
+	\label{fig:swaprgb}
+\end{figure}
+
+ The difference between RGB32 and ARGB32 is that the latter has an Alpha channel which is used for image types that support transparancy such as PNG. The Alpha channel itself holds the pixel value of the pixel behind the current image itself, enabling it to seem as though it is transparent.  The premultiplied version is almost identical to the standard ARGB32 format, but the red green and blue channels are ‘premultiplied’ by the alpha channel so that the image can softly fade into transparency instead of the transparency suddenly cutting into the image. It produces very gradual and precise images, but with lots of processing overhead.
+
+Considering how my application has no need for transparency I dropped these two formats to save image storage overhead, leaving me with RGB32. 
+
+This in itself was wasteful, since in CImg the format I was using was an 8-bit unsigned format, and so the image I should be passing should be the 8-bit CImg. Unfortunately Qt did not agree with me on this point since in order to pass it as a valid signal I would have to include the CImg header file in the header file of my camera class. Qt did not like this and only let me place the CImg header in the source file, and so I was not able to pass the CImg has the signal.
+
+This meant I had to use FCam, and since I was only passing a reference to the FCam::Image, it made no difference how big the actual image was or what format it was. In fact it would have wasted more processing time, converting the FCam::Image into an 8-bit format to then be signalled. So instead I used the RGB32 format, a format that was 4 sizes larger than the 8-bit unsigned format I was using with CImg. 
+
+As of yet I have not found a way to display a movement image without the color problem, but this is not something that is essential to the backend functionality of the app, and so it is something that will be rectified as a hotfix in future releases.
 
 \subsection{Email Thread}
-\paragraph{Setting up an SMTP Server}
-\paragraph{Existing Frameworks}{QTCPSocket from version 3.x}
-\paragraph{Adoption of mailcmd}
-\subsection{Multiple Inheritance}{QObject and QThread}
+A major selling point of the application is the feature to email the user in real time upon movement detection. This ensures that the user does not have to be within the same vicinity as the phone to be notified that movement has occured, and is therefore a useful tool in security and privacy concerns.
+
+Before starting the camera the user can choose to set an email address, message, subject, and can also choose to attach an image to the email, so that they can catch the latest image with the movement occuring within it. As a burglar alarm, this would be the method of catching the culprit red-handed so to speak.
+
+In order to do this a framework needed to be used to send the email.
+Qt provided an example in version 3.x of a class that could send emails to a specified SMTP server using QTCPSocket objects http://lists.trolltech.com/qt-interest/2006-10/thread01158-0.html, but this was dropped in recent versions of Qt and despite trawlng the forums very few users had managed to use this class file effectively in Qt4.7. So I was unable to use this framework to send an email. This was not neccesarily a bad thing, since the SMTP server would have to be defined by me and I would have had to have some kind of address book of every SMTP address in order to send an email to gmail or hotmail or whatnot.
+
+Instead I looked at the phone itself for a framework.  QtMobility looked promising, but several problems were reported for Maemo http://www.developer.nokia.com/Community/Discussion/showthread.php?201846-Sending-Email-Using-Qt-Mobility which was confirmed by several users, and so I had to look at another alternative.
+
+A veteran user on the Maemo community site had written an app called ‘mailcmd’ http://talk.maemo.org/showthread.php?t=82918 that was a simple commandline utility that sent emails using the default email account setup on the phone. It even allowed for attaching images and the sheer simplicity of its usage was exactly what I needed.
+
+This added the ‘mailcmd’ dependency to my project, but it is a small package and I don’t think users would mind too much. I created a class file that inherited a QThread which ran a QProcess to execute the mailcmd command in a new thread.
+
+This means that any time during the application, there will be at maximum three threads running: UI, Camera, and Email. Email needed to be run on it’s own thread, otherwise the camera thread would hang between frames as it waits for confirmation of the email to be sent. I wanted the application to be as responsive as possible and so I created a seperate thread for Email to avoid this problem.
+
 \subsection{Optimisations/Error Proofing}
-Autoexpose on updateReference (drastic changes in brightness levels), interval method
+Autoexpose on updateReference (drastic changes in brightness levels), interval scaling, lens open check.
 \subsubsection{Kernel Compatibility}
+Early on in the development of the app, I came across problems where the FCam driver would not initialize properly, and no warning messages were given. Upon reboot it sometimes worked, but it would tend to work the most when I used the default phone kernel PR-1.3.
+
+For this reason I enabled a kernel check at the start of the Camera thread which would issue out a warning whenever a kernel different from the PR-1.3 kernel was being used. This was a simple shell call to ‘uname -r’. However the root of the problem turned out to be that I was not initializing the camera properly when I started the thread, and so when I fixed this problem, the kernelCheck function became redundant and I deleted it from the source.
+
+
+
+
+
+
+
+
+
 
 
 \end{document}
