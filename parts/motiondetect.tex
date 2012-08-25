@@ -162,7 +162,7 @@ The IPLImage has BGR channel order (i.e the first channel is blue, second is gre
 This took a reference to the FCam's Frame, extracted the image from it, and attempted to convert it into an unsigned 8-bit gresycale IPL image with 1 color channel. The unsigned 8-bit image would be limited to 0-255 range.\\
 Unfortunately several problems were encountered and almost three days were lost trying to get to the bottom of it:}
 \paragraph{
-A Maemo port of openCV does exist for Fremantle \cite{libcv} but despite installing libcv, libcv-dev, and many of it's dependencies (libcvcore, libhighgui) the SDK would complain about many missing dependencies when building the application. The culprit turned out to be missing dependencies for libhighgui-dev, but this was false since running a quit dpkg -L <dependency\_name> confirmed that the dependency was indeed installed. At one stage I copied my entire /usr/lib directory from the phone to the rootstrap but it would still fail when trying to build.\\
+A Maemo port of openCV does exist for Fremantle \cite{libcv} but despite installing libcv, libcv-dev, and many of it's dependencies (libcvcore, libhighgui) the SDK would complain about many missing dependencies when building the application. The culprit turned out to be missing dependencies for libhighgui-dev, but this was false since running a quit dpkg -L \(\langle\)dependency\_name\(\rangle\) confirmed that the dependency was indeed installed. At one stage I copied my entire /usr/lib directory from the phone to the rootstrap but it would still fail when trying to build.\\
 A few hours of trawling through the Maemo reading lists came up with a bug report \cite{highgui-dev} from the original maintainer claiming a bug within the build system.\\
 For this reason OpenCV had to be abandoned and a new image processing library had to be used.
 }
@@ -175,7 +175,7 @@ CImg(const unsigned int width,
      const unsigned int size\_z=1, //depth
      const unsigned int size\_c=1 //spectrum
 )
-And to construct a CImg, all one has to do is call CImg<T> name; where T is the type or size of each pixel value, and name is the name of the image. So for an image that that has 256 colorspace, T = unsigned char = 8bit.
+And to construct a CImg, all one has to do is call CImg\(\langle\)T\(\rangle\) name; where T is the type or size of each pixel value, and name is the name of the image. So for an image that that has 256 colorspace, T = unsigned char = 8bit.
 In CIMG, the color channels are in RGB format. OpenCV's IPLImage only supports up to 4 color channels but CImg supports up to any number and this provided a source of initial confusion for me:
 http://sph2grid.googlecode.com/svn-history/r14/trunk/CImg/plugins/cimg\_ipl.h:\\
 Using the same format as the cornell code I attempted to make:}
@@ -251,7 +251,7 @@ That is, for a greyscale image from 0-255 at pixel i,j - I was sticking it into 
 }
 \paragraph{Imagemagick is an open-source image software library for processing images. It can perform much of the same functions and CImg and OpenCV, but it was not considered as a suitabe image processing library because the development package had not been released for Maemo and compatibility was a concern. There is, however, a imagemagick package for Maemo that performs the functions from commandline and so accessing its functions would not be a problem if I was resigned to the fact that I would be calling a system process from Qt. CImg has good compatibility with Imagemagick since it's convertToJPEG command actually calls the 'convert' module of Imagemagick.\\
 According to the documentation, to convert a series of jpegs to a movie format, all one has to do is call:
-'convert -delay <frametime> input\_jpegs\_*.jpg output\_movie.mpg'\\
+'convert -delay \(\langle\)frametime\(\rangle\) input\_jpegs\_*.jpg output\_movie.mpg'\\
 But this failed with Maemo specific errors:}
 \begin{verbatim}
 Nokia-N900:/home/user/MyDocs/DCIM/MISC\# convert -delay 20 -monitor timelapse-0000*.jpg movie.mpg
@@ -284,14 +284,14 @@ Additionally ffmpeg does not come installed as default by the device, since gstr
 VLC has only been very recenly ported to Maemo and is accessed by adding user Qole's repository to the /etc/apt/sources.list. It is very incomplete, lacking a decent GUI, but it has a working backend. Unfortunately nowhere in the documentation does it mention being able to convert a series of jpegs to a movie file and I soon had to abondon VLC too.\\ This is probably for the best since VLC is not available in the main repositories and users would find it hard to access. This leaves...}
 \paragraph{Mencoder is yet another multimedia framework released under GPL, and comes as a module with mplayer, a very stable open-source media player that comes with all the codecs and formats that mencoder can use.\\
 To convert a series of images to a movie file one simply has to call:\\
-'mencoder "mf://path/to/images*.jpg" -mf fps=<fps> -o movie.mpg -ovc lavc -lavcopts vcodec=mjpeg'\\
+'mencoder "mf://path/to/images*.jpg" -mf fps=\(\langle\)fps\(\rangle\) -o movie.mpg -ovc lavc -lavcopts vcodec=mjpeg'\\
 which specifies the that libavcodec is to be used, the framerate and also that the output videocodex should be mpeg format.
 \\Mencoder is also not pre-installed with the device, but many Maemo users do tend to install it first chance they get due to the default Media Player's poor support for certain MPG formats, this is by far the most convenient of the four video processing libraries to use and best of all it actaully works.
 }
 \section{Image Processing Techniques}
 \paragraph{A motion detector works on the basic priniciple that there there exists some drastic difference between two images where motion has occred and motion has not occured. One way to see this represenation is to subtract one frame from another and look for the leftover pixels. Pixels where the image hasn't changed will have the same pixel value and will thus cancel each other out, whereas images where there is a difference between pixels at the same location will have values greater than zero. In the case of unsigned chars, any negative pixels will naturally wrap around and becomes high pixel values (white).}
 \subsection{Subtraction}
-\paragraph{Subtraction is the technique that performs this, and CImg handles this operation using the basic numerica operator '-', so that for example: CImg<T> diff = CImg<T>A - CImg<T> B;
+\paragraph{Subtraction is the technique that performs this, and CImg handles this operation using the basic numerica operator '-', so that for example: CImg\(\langle\)T\(\rangle\) diff = CImg\(\langle\)T\(\rangle\)A - CImg\(\langle\)T\(\rangle\) B;
 }
 \begin{wrapfigure}{R}{0.3\textwidth}
 	\vspace{-20pt}
@@ -399,8 +399,8 @@ This method did work, but there were a fair few amount of false positives being 
 \subsubsection{Running Average}
 In this method, a reference frame is created by capturing a quick succesion of frames. The pixel values from these frames are added to an accumulator and then divided by the number of frames  
 \footnote{CImg facilities this very easily by using standard operators to perform operations over all pixel values.
-\\ E.g.  CImg<T2> average =  (CImg<T1>one + CImg<T1> two + CImg<T1> three) / 3; \\
-Where: sizeof(T2)>sizeof(T1).
+\\ E.g.  CImg\(\langle\)T2\(\rangle\) average =  (CImg\(\langle\)T1\(\rangle\)one + CImg\(\langle\)T1\(\rangle\) two + CImg\(\langle\)T1\(\rangle\) three) / 3; \\
+Where: sizeof(T2)\(\rangle\)sizeof(T1).
 \\The size of the image types is significant. It should be noted once again that greyscale image sizes are 8-bit unsigned chars with a maximum and minimum values from 0 to 255, so appending a series of pixel values will result in in values that overflow this range. For this reason, the accumulator needs to have pixel sizes that can contain accumulated pixel sum amounts. In this project the accumulator had long (64-bit) pixel values, and were then normalised in [0,1] colorspace when being assigned to the reference frame.}
  
 \paragraph{
@@ -462,46 +462,6 @@ The images above show how the running average method reduces the localised noise
 In \cref{img:scatter1} the noise is clustered together and makes up a significant part of the static image. But in \cref{img:scatter2} the noise is much more sparsely spread and most of the noisy white-pixels are surrounded by empty neighbours.\\
 
 Clearly another technique is needed to smooth the images so that sparse pixels surrounded by emptiness can be ignored and not contribute to the threshold count. Such techniques are called \bf{morphological operations}
-%    The second method I tried yesterday - The threshold is now determined by a
-%    quick succession of frames. The pixels from these frames are added to an
-%    accumulator and then divided by the number of frames.
-%    This is then stored as an average frame.
-%
-%    In the checkMovement function, the current frame is subtracted from the
-%    average frame, and if the non-zero pixel count from the subtracted is over
-%    a certain amount, movement is flagged and the average frame is re-updated.
-%
-%    All frames are Normalised. This produces less diference between one frame
-%    and the next.
-%
-%
-%Great, I believe we should stick with this method. By computing a running average you are in fact learning from previous frames. However, when the scene changes dramatically, you should reset you average frame and start back, as your background might have changed (i.e. a new large object enters the scene).
-% 
-%
-%
-%    Here are some of the resultant images:
-%    sub = (current\_frame - last\_determined\_average\_frame)   //All normalized
-%
-%    subF is the difference between two frames where the scene hasn't changed,
-%    and subG is the difference between two frames where the scene has changed.
-%
-%    One has a higher white-pixel count than the other, but in some instances
-%    you can't always tell (e.g. when the pixels are spread about a bit).
-%
-%
-%    Are there any methods that can help distinguish between white pixels that
-%    are spread about, and ones that are more closely compacted?
-%
-%
-%Yes, they are called morphological operations:
-%
-%http://ostermiller.org/dilate\_and\_erode.html
-%
-%You want to "erode" your difference image (i.e. subF or subG) to get rid of spurious pixels. This ideally removes a large part of false positives, assuming you use a small enough kernel. Have a read at the link I have sent you, and if you are lost, no worries, we can talk about this tomorrow!
-%
-%If you managed to use OpenCV, then erosion and dilation are implemented. if you are using CImg, then we can write it ourselves:
-%
-%http://stackoverflow.com/questions/1472768/implementing-erosion-dilation-in-c-c
 
 \subsubsection{Image Morphology}
 Another way to reduce noise in an image is to 'smooth out' random white pixels, so that an image dotted sparsely with noise is converted into an image that contains only the most concentrated of clusters.  To do this one needs to smooth the pixels.
@@ -551,7 +511,7 @@ Starting image:
 	\caption{A subtraction image showing the difference between two  completely different frames. A white pixel count of 87516 is given.}
 \end{wrapfigure}
 
-\\Test 1: Seeing how the white pixel count is affected by repeated Erosion/Dilation using a 2x2 mask\\
+Test 1: Seeing how the white pixel count is affected by repeated Erosion/Dilation using a 2x2 mask\\
 \begin{wrapfigure}{R}{0.3\textwidth}
 	\vspace{-20pt}
 	\begin{center}
@@ -564,11 +524,8 @@ Starting image:
 See the appendix for the code used.
 
 As we can see from figure \cref{img:erode1} -- repeated uses of Erosion/Dilation (or vice versa) does not affect the white pixel count for repeated usage as they do independently.
-
 \\It is interesting to note that EroDil produces a more solid image (i.e. black parts dont have white spots within) than DilEro. This is most likely because the sparse pixels have been filtered out first, and then accentuated. If it were the other way then the sparse pixels would have been accentuated first by the dilation, and then persisted under the erosion.
-
 \\One thing to note is that not much has been clustered. It seemed like the 2x2 mask was too small and so I repeated the experiment with increasing mask sizes
-
 \\ Test 2: Seeing how white pixel count varied with repeated Erosion/Dilation using an increasing mask size from 2 to 6, using the same starting image.
 \begin{wrapfigure}{R}{0.3\textwidth}
 	\vspace{-20pt}
@@ -579,9 +536,7 @@ As we can see from figure \cref{img:erode1} -- repeated uses of Erosion/Dilation
 	\vspace{-20pt}
 	\caption{Erosion, Dilation, Erosion followed by Dilation, and Dilation followed by Erosion using kxk mask size}
 \end{wrapfigure}
-
-\\As expected the white pixel count increased in the EroDil and DilEro techniques with increasing square masks, however EroDil seemed to give the best quality bunching out of all the technique. Dilate by itself seemed pretty effective too, but this alone would not remove noise effectively. Dilero had to be dropped as useful image processing method since it seemed to be removing significant parts of the image and not retaining the overall blobby structure.
-
+As expected the white pixel count increased in the EroDil and DilEro techniques with increasing square masks, however EroDil seemed to give the best quality bunching out of all the technique. Dilate by itself seemed pretty effective too, but this alone would not remove noise effectively. Dilero had to be dropped as useful image processing method since it seemed to be removing significant parts of the image and not retaining the overall blobby structure.
 \\Test 3: Seeing how white pixel count varies with repeated seperate calls to Erosion and Dilation
 \begin{wrapfigure}{R}{0.3\textwidth}
 	\vspace{-20pt}
@@ -604,7 +559,6 @@ As expected, the white pixel count diminishes under the repeated Erosion calls, 
 \end{wrapfigure}
 
 The erodil images were taken at bi-intervals, but the intermediate mask sizes were performed.  EroDil increases the white pixel count, but gradually -- and this makes sense since the image is mostly white, so the increasing white pixel count is representative of this. In terms of tidiness, EroDil seems to produce a smoother image, and gives a white pixel count that is closer to the true white pixel count of 67164, than anything that Eroding or Dilating could do by themselves.
-
 \\Test 4: Seeing how White-Pixel count varies with increasing Mask Size using EroDil method:
 \begin{wrapfigure}{R}{0.3\textwidth}
 	\vspace{-20pt}
@@ -616,11 +570,11 @@ The erodil images were taken at bi-intervals, but the intermediate mask sizes we
 As seen in \cref{img:maskChart} the white-pixel count follows a downward logarithmic trend that is very well approximated by the equation:\\
 WhitePixelCount = 68991.3 - 7914.3 ln(MaskSize)
 
-It should be well noted that applying a larger mask filter to an image that has been affected by a smaller mask filter, is EXCATLY THE SAME as simply just applying the larger filter.  In my code in the appendix what I tended to do was repeatly loop over and update the existing image with each increasing mask, such that the input for mask B would be the output for mask A, where BxB > AxA.  The reason why I did this was to prevent the application from constantly replacing the current image in the memory, rather than having to duplicate from the original for each mask.
+It should be well noted that applying a larger mask filter to an image that has been affected by a smaller mask filter, is EXCATLY THE SAME as simply just applying the larger filter.  In my code in the appendix what I tended to do was repeatly loop over and update the existing image with each increasing mask, such that the input for mask B would be the output for mask A, where BxB \(\rangle\) AxA.  The reason why I did this was to prevent the application from constantly replacing the current image in the memory, rather than having to duplicate from the original for each mask.
 
-\\Various other tests were performed: See Testing section in the appendix, but these core 4 tests demonstrated all I really needed to know about opening/closing an image - i.e. As the mask size increases the white-pixel count converges downwards at an ever decreasing rate.
+Various other tests were performed: See Testing section in the appendix, but these core 4 tests demonstrated all I really needed to know about opening/closing an image - i.e. As the mask size increases the white-pixel count converges downwards at an ever decreasing rate.
 
-\\Mask sizes have to get very large (to the same order as the image dimensions!) before a subtracted image for differing scenes can  fully converge to a single colour:
+Mask sizes have to get very large (to the same order as the image dimensions!) before a subtracted image for differing scenes can  fully converge to a single colour:
 \begin{wrapfigure}{R}{0.3\textwidth}
 	\vspace{-20pt}
 	\begin{center}
@@ -633,28 +587,126 @@ It should be well noted that applying a larger mask filter to an image that has 
 		\label{img:diff2}
 	\end{center}
 	\vspace{-20pt}
-	\caption{Base image undergoing EroDil to large mask sizes. Even with 97x97 mask size (~1/2 of the image height) the scene still hasn't completely vanished.
+	\caption{Base image undergoing EroDil to large mask sizes. Even with 97x97 mask size (almost half the image height) the scene still hasn't completely vanished.}
 \end{wrapfigure}
-Since the mask size required to completely ignore a scene change is probably on the same order of the dimensions of the image.  To ignore a scene change, it would probably be apt to simply set a lower limit on the White Pixel count (e.g <25000 is good enough)
+Since the mask size required to completely ignore a scene change is probably on the same order of the dimensions of the image.  To ignore a scene change, it would probably be apt to simply set a lower limit on the White Pixel count (e.g \(\langle\)25000 is good enough)
 
 Using this knowledge I then set on detecting different kinds of movement:
 
 \subsection{Movement Types}
-I broke movement down into 5 different types:  Scene change (80\% of the image), Large movement (40\% of the image), Medium movement (10\% of the image), and Small movement.
+I broke movement down into 5 different types:  Scene change (80\% of the image), Medium movement (40\% of the image), Small movement (10\% of the image), and Tiny movement ( less than 3\%).
+To detect medium movement I placed the camera to face the screen of a computer and dragged a window across the screen. \cref{img:medium} shows the drop in white pixel count as the Mask size increased until vanished completely for a 16x16 mask size
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{../images/ImageOps/LARGE}
+		\label{img:medium}
+	\end{center}
+\end{figure}
 
-\\To detect large movement %INSERT LARGE image, then do medium, small
+To detect small movement I repeated the same experiment, but this time made the contents within the window change (i.e. a movie) without moving the window itself.  A small window in the computer screen will change between the images, but the overall scene wont change. This test will determine for which mask sizes movement is no longer detected.
+For filename reasons, the masks increase in multiples of (4*i)+2  (e.g 2,6,10,14,18,etc). \cref{img:small} shows that movement is ignored up to a mask size of 5x5:
+\begin{figure}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{../images/ImageOps/SMALL}
+	\end{center}
+	\caption{}
+	\label{img:small}
+\end{figure}
+
+To  detect tiny movement I placed a single blinking cursor on the screen. The experiment was repeated twice.
+\begin{figure}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{../images/ImageOps/CURSOR1}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Blinking Cursor}
+	\label{img:curse1}
+\end{figure}
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{../images/ImageOps/CURSOR2}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Static scene - Noise}
+	\label{fig:curse2}
+\end{figure}
+
+As shown in \cref{img:curse1} and \cref{fig:curse2}, something appears to be picked up for a 2x2 mask, but both are ignored for a 3x3 mask. This means that tiny movement is of the same order as noise, and so a 3\% difference between images cannot be accurately flagged as movement.
+
 
 
 \section{Threads}
+Threads are processes that appear to run at the same time to other processes. On multi-core devices, the illusion is true: two processes genuinely can run in different cores at the same time. On a single-core device such as this, the illusion is false: the OS scheduler switches between different processes to allocate time-slices to each process at regular intervals.\\
+\\In mobile applications, threading is necessary as often a background task needs to be run which will halt the user interface until the task is complete. In the first draft of my application, this was the case - the buttons and widgets that controlled the camera execution would become unresponsive until the camera had finished its process, where control would then flow back to the user-interface.
+\\This is fine in the situation that the user presses a button and walks away from the phone, but if more control is desired (i.e. the ability to terminate the application while it is running) then threading is necessary.
+
 \subsection{Camera Thread}
+Originally my Camera Class was simply an object class. I would create a Camera object, and tell it to perform functions, and then delete it when it was no longer needed. To place it into a thread, I had to change it from an QObject class to a QThread class. In Java this would be a problem, since only single-parent inheritance heirarchies are permitted, and so the class would lose it's object methods (clone(), ~delete()), but in C++ a class can have many parents, and so I was able to inherit both QObject and QThread classes.
+However, this caused many conflicts as errors sprung up detailing multipled definitions of the same function. By going through the Qt API I discovered that QThread actually already inherits QObject (as do all Q Classes) and so the Object methods that my Camera class originally had would not be lost if I simply inherited from QThread.
+
+QThread has a protected method called start() which is the same as Java Thread's run(), which is a method that must be called to run the thread after the thread object is created. Originally this just performed the standard functions from before:  initialise camera, check for movement, and terminate. But I wanted to be able to stop the thread safely at any point from the UI without crashing the application. In order to do this I had to use Qt's Signals/Slot's framework.
+
 \subsubsection{Signal/Slots}
+Signals and slots are a core mechanism in Qt that sets itself apart from all the others. It is essentially a notification framework, so that when Object A performs something then Object B can know about it.  Traditionally, these are enabled through the use of callbacks, where a global pointer to a function is passed between objects to enable communication. However callback's are not very type-safe since the pointer can reference anything and there is no gauruntee that the callback will be called with the correct parameters.
+
+Signal and slots provide an alternative to this. When a particular event occurs in Object A, then A emits a signal for that event. A slot  is then called to handle the signal, where a slot is simply a function which has the extended ability to listen for signals. If Object B has a slot that is paired with a signal from Object A, then  B will run it's slot when A emits its signal.
+
+Pairing signals to slots is a relatively simple process: One simply calls:   connect(ObjectA, SIGNAL(mySignal), ObjectB, SLOT(mySlot)).
+It should be noted that this is type-safe, such that the argument of mySignal must be of the same type as the argument of mySlot. Both are void functions.
+connect is a function of QObject, and so to enable signals/slots, one must inherit a QObject (or any one of it's subclasses). A Q\_OBJECT macro will then have to be declared in the header file of that class to enable signal/slot functionality. 
+
+Pairing usually occurs automatically: When a button is clicked, Qt creates a slot for it in the source file and the user can then edit the slot to perform some task. The connect:: script is never seen in the source file, but is included in the autogenerated MOC files and so the implementation is seamless.
+
+Custom slots are another story. Though this mechanism is completely native to Qt, it can very temperamental trying to create custom slots. Often you will need to clean, rebuild, make, clean, rebuild, make, and so forth until the custom signal or slot is accepted. This is undoubdetly a bug of Qt and has been reported by previous users: https://bugreports.qt-project.org/browse/QTBUG-17072.
+
+For the Camera thread, I paired a stop button signal from the UI thread with a stop() slot in the camera thread. The stop() slot in the camera thread simply changed a class boolean variable called 'stopNow' to True.  In every function within the camera thread, whenever a loop occurred  stopNow!=True would be a condition that would terminate the loop. This would exit the function early and cause the Camera Thread to perform its Deletion function and stop the camera thread safely without crashing the application.
+
+As I got more used to the mechanism, I started to harness it more effectively to the point where I began passing whole images from the camera thread back to the UI. A useful feature of signals and slots is that it's not just a flagging system, but can also transport data between threads.  To pass a whole image, one simply defines the argument of the Signal in the camera thread as having an argument of type FCam::Image, then when one wants to emit the signal, one simply calls' emit mySignal(image\_arg)'. In order for Qt to recognize the type of object being passed between threads, the argument type needs to be registered via 'qRegisterMetaType\(\langle\)FCam::Image\(\rangle\)("FCam::Image")'.
+
+Passing whole images can be wasteful however, since it requires cloning the current image to memory and passing it to the UI. For small images this is not much of a problem, but for large image sizes this can cause significant overhead since cloning will take a long time and two copies of the same image will take up a significant amount of memory. Instead I passed a reference to the image '\&image'. This is risky because that reference may refer to an address where the image used is to be hed until another thread changes it. Technically a mutex variable would prevent the camerathread from changing the address of the image while the Ui thread is still reading it, and Qt comes with it’s own QMutex object which can lock and unlock critical sections of code so that only one thread can be performing something critical to the same object at any one time.
+
+I dedided against using this since I managed to get a stable application by specifying that the new frame was to be at a constant address and that the newImage signal was also constant ‘const FCam::Image’. This made sure that I no longer needed to delete frames after I had processed them, since any new frames would simply be loaded into the same address overwriting the old frame. The only time I needed to delete an image was on thread exit and in the long intervals between frames. This greatly saved on system resources and reduced the size of the signal.
+
+The newImage signal was only ever emitted when movement occurred, otherwise it lay dormant between regular unmoving frames.
+To save further overhead, Qt allows for signal/slot pairing to be unpaired with ‘unconnect’, so I created a tickbox in the Ui thread which when unticked would unpair the newImage signal with the slot, and when ticked would pair the two.
+
 \subsubsection{QImage, QPixMap, and CImg}
+Once I was sure that the image was being recieved in the UI, I needed to display it in my main window. This proved harded than originally anticipated. To display an image in Qt, one needs to create a QLabel widget and apply a pixmap to it. A pixmap (or QPixmap) can be created from a resource file specified at build time, or can be specifed from a QImage. Since a QImage is merely a container and does not need to be an absolute resource, I decided to convert CImg to QImage. 
+
+My initial attempts brought about images that were misaligned, badly coloured, and often times blank. To get the root of the problem I attempted many different size configurations:
+\begin{frame}[fragile]
+	\lstinputlisting[title=\textbf{Source Code: shell1.cpp}\label{code:shell1}]{../Code/qpix/shell1.cpp}
+\end{frame}
+This attempted to make a thumbnail out of the image recieved from the signal and convert it into the appropriate format in a QImage. This would then be converted into a pixmap and assigned to Label for dispaying.
+
+Arguments from commandline were passed in generated from a shell script to vary the image size slightly so that both the width and height of the original image were divided a ‘mod’ factor and ‘offset’ by a certain amount, as well as being offset from the top left of the image by pixel amounts of ‘top’ and ‘left’, varying from 0 to 50 in increments of 1. ‘offset’ was varied from 0 to 100 in steps of 10, and ‘mod’ was varied from 1 to 3 in increments of 0.3.
+
+Needless to say the script took a long while to finish executing, but I wanted to be as thorough as possible in finding a suitable image size and alignment that displayed a usable image. Most of the images came out horribly deformed and squished, except those that had a mod value of 2 and offset 0. As shown in \cref{fig:shell1} I also quickly learned that the top and left arguments simply state where the starting pixel to start drawing the image should start.
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{../images/qpix/shell1}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Two usable images with width and height divided by 2. The left has no offsets, but the right has a vertical offset of 17 pixels. }
+	\label{fig:shell1}
+\end{figure}
+
+It seemed strange that the QPicture needs image boundaries at half the actual image size it is containing, but despite scouring through the QPicture API I could find no reasoning for it. Nonetheless, a usable image was found, I just needed to adjust the color channels for it.
+To do this I adjusted the shell script from \cref{code:shell1} to adjust just the Image format and size, just in case size was somehow dependent on the format (it shouldn’t be since they are two completely different entities, but I wanted to cover all bases).
+\begin{frame}[fragile]
+	\lstinputlisting[title=\textbf{Source Code: shell2.cpp}\label{code:shell2}]{../Code/qpix/shell2.cpp}
+\end{frame}
+
+
 \subsection{Email Thread}
 \paragraph{Setting up an SMTP Server}
 \paragraph{Existing Frameworks}{QTCPSocket from version 3.x}
 \paragraph{Adoption of mailcmd}
 \subsection{Multiple Inheritance}{QObject and QThread}
 \subsection{Optimisations/Error Proofing}
+Autoexpose on updateReference (drastic changes in brightness levels), interval method
 \subsubsection{Kernel Compatibility}
 
 
