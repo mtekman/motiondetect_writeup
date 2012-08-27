@@ -1,78 +1,78 @@
-\documentclass[11pt]{article} % use larger type; default would be 10pt
-\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+%\documentclass[11pt]{article} % use larger type; default would be 10pt
+%\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+%
+%%%% PAGE DIMENSIONS
+%\usepackage{geometry} % to change the page dimensions
+%\geometry{a4paper} % or letterpaper (US) or a5paper or....
+%\newcommand{\tab}{\hspace*{2em}}
+%
+%%%% PACKAGES
+%\usepackage{graphicx} % support the \includegraphics command and options
+%\usepackage{wrapfig} % Figure wrapping
+%% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{booktabs} % for much better looking tables
+%\usepackage{array} % for better arrays (eg matrices) in maths
+%\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+%\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+%\usepackage{url}
+%\usepackage{enumerate}
+%\usepackage{cleveref}  %cites figures intelligently
+%\usepackage{import} % document structuring
+%\usepackage{float}  %These two ensure that table position follows text by specifying {table}[H]
+%\restylefloat{table}
+%
+%%CODE LISTINGS
+%\usepackage{color}
+%\usepackage{listings}
+%
+%\lstset{
+%	tabsize=4,
+%%	language=matlab,
+%        	basicstyle=\scriptsize,
+%%     	upquote=true,
+%       	aboveskip={\baselineskip},
+%        	columns=fixed,
+%        	showstringspaces=false,
+%        	extendedchars=true,
+%        	breaklines=true,
+%	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+%	frame=single,
+%        	showtabs=false,
+%        	showspaces=false,
+%        	showstringspaces=false,
+%        	identifierstyle=\ttfamily,
+%        	keywordstyle=\color[rgb]{0,0,1},
+%        	commentstyle=\color[rgb]{0.133,0.545,0.133},
+%        	stringstyle=\color[rgb]{0.627,0.126,0.941},
+%	language=C++
+%}
+%
+%%%% HEADERS & FOOTERS
+%\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+%\pagestyle{fancy} % options: empty , plain , fancy
+%\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{}
+%\lfoot{}\cfoot{\thepage}\rfoot{}
+%
+%%%% SECTION TITLE APPEARANCE
+%\usepackage{sectsty}
+%\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+%\usepackage{titlesec}
+%%\titleformat{\subsection}[runin]{\mdseries\bf}{\thesubsection}{1em}{}
+%%\titleformat{\subsubsection}[runin]{\mdseries\bf\underline\large}{\thesubsection}{1 em}{\vspace{-5 pt}}
+%
+%\usepackage{footbib}
+%
+%% (This matches ConTeXt defaults)
+%
+%%%% ToC (table of contents) APPEARANCE
+%%\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+%\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+%\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+%\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
 
-%%% PAGE DIMENSIONS
-\usepackage{geometry} % to change the page dimensions
-\geometry{a4paper} % or letterpaper (US) or a5paper or....
-\newcommand{\tab}{\hspace*{2em}}
-
-%%% PACKAGES
-\usepackage{graphicx} % support the \includegraphics command and options
-\usepackage{wrapfig} % Figure wrapping
-% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
-\usepackage{booktabs} % for much better looking tables
-\usepackage{array} % for better arrays (eg matrices) in maths
-\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
-\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
-\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
-\usepackage{url}
-\usepackage{enumerate}
-\usepackage{cleveref}  %cites figures intelligently
-\usepackage{import} % document structuring
-\usepackage{float}  %These two ensure that table position follows text by specifying {table}[H]
-\restylefloat{table}
-
-%CODE LISTINGS
-\usepackage{color}
-\usepackage{listings}
-
-\lstset{
-	tabsize=4,
-%	language=matlab,
-        	basicstyle=\scriptsize,
-%     	upquote=true,
-       	aboveskip={\baselineskip},
-        	columns=fixed,
-        	showstringspaces=false,
-        	extendedchars=true,
-        	breaklines=true,
-	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
-	frame=single,
-        	showtabs=false,
-        	showspaces=false,
-        	showstringspaces=false,
-        	identifierstyle=\ttfamily,
-        	keywordstyle=\color[rgb]{0,0,1},
-        	commentstyle=\color[rgb]{0.133,0.545,0.133},
-        	stringstyle=\color[rgb]{0.627,0.126,0.941},
-	language=C++
-}
-
-%%% HEADERS & FOOTERS
-\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
-\pagestyle{fancy} % options: empty , plain , fancy
-\renewcommand{\headrulewidth}{0pt} % customise the layout...
-\lhead{}\chead{}\rhead{}
-\lfoot{}\cfoot{\thepage}\rfoot{}
-
-%%% SECTION TITLE APPEARANCE
-\usepackage{sectsty}
-\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
-\usepackage{titlesec}
-%\titleformat{\subsection}[runin]{\mdseries\bf}{\thesubsection}{1em}{}
-%\titleformat{\subsubsection}[runin]{\mdseries\bf\underline\large}{\thesubsection}{1 em}{\vspace{-5 pt}}
-
-\usepackage{footbib}
-
-% (This matches ConTeXt defaults)
-
-%%% ToC (table of contents) APPEARANCE
-%\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
-\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
-\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
-\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
-
-\begin{document}
+%\begin{document}
 %%% END Article customizations
 
 
@@ -340,7 +340,7 @@ Using the results from this table I decided to set a threshold of less than 2600
 \\However this threshold was purely for 320x240 images. At that stage I had not considered using different image sizes  for motion detection, but since FCam supported larger sizes I decided to test thresholds for these too, expecting a linear relationship between image size and non-zero count.
 \\For this experiment I repeated the same experiment for the five different image sizes, but have only included the average counts per image size. See \ref{tab:normalised-images} in the Appendix for the complete table.\\
 
-\import{../tables/}{normalised_subtracted_image_size_SHORT.tex}
+\import{tables/}{normalised_subtracted_image_size_SHORT.tex}
 
 The chart below in ~\cref{chart:thresholds} is based upon the data in the short table. It takes the maximum averages for each image size and plots them against the image size, with error bars as standard deviation.\\
 
@@ -554,58 +554,61 @@ WhitePixelCount = 68991.3 - 7914.3 ln(MaskSize)
 
 It should be well noted that applying a larger mask filter to an image that has been affected by a smaller mask filter, is {\bf exactly the same} as simply just applying the larger filter.  In my code in the appendix what I tended to do was repeatly loop over and update the existing image with each increasing mask, such that the input for mask B would be the output for mask A, where BxB \(\rangle\) AxA.  The reason why I did this was to prevent the application from constantly replacing the current image in the memory, rather than having to duplicate from the original for each mask.
 
-Various other tests were performed: See Testing section in the appendix, but these core 4 tests demonstrated all I really needed to know about opening/closing an image - i.e. As the mask size increases the white-pixel count converges downwards at an ever decreasing rate.
+Various other tests were performed: See Testing section in the appendix, but these core 4 tests demonstrated all I really needed to know about opening/closing an image - i.e. As the mask size increases the white-pixel count converges downwards at an ever decreasing rate. Using this knowledge I then set on detecting different kinds of movement.
 
-Mask sizes have to get very large (to the same order as the image dimensions!) before a subtracted image for differing scenes can  fully converge to a single colour:
+\subsection{Movement Types}
+I broke movement down into 5 different types:  Scene change (80\% of the image), Medium movement (40\%), Small movement (10\%), and Tiny movement ( less than 3\%).
 
-Since the mask size required to completely ignore a scene change is probably on the same order of the dimensions of the image.  To ignore a scene change, it would probably be apt to simply set a lower limit on the White Pixel count (e.g \(\langle\)25000 is good enough)
-
-Using this knowledge I then set on detecting different kinds of movement:
+For scene changes, I moved the camera from one position to another between frames. As implied in Mask sizes have to get very large (to the same order as the image dimensions!) before a subtracted image for differing scenes can  fully converge to a single colour:
 
 %LARGE
 \begin{figure}[H]
-	\vspace{-80pt}
-	\begin{center}
-		\includegraphics[width=0.7\textwidth]{../images/ImageOps/Diff1}
-		\label{img:diff1}
-	\end{center}
-	\vspace{-20pt}
-	\begin{center}
-		\includegraphics[width=0.7\textwidth]{../images/ImageOps/Diff2}
-		\label{img:diff2}
-	\end{center}
-	\vspace{-20pt}
-	\caption{Base image undergoing EroDil to large mask sizes. Even with 97x97 mask size (almost half the image height) the scene still hasn't completely vanished.}
+        \vspace{-20pt}
+        \begin{center}
+                \includegraphics[width=0.7\textwidth]{../images/ImageOps/Diff1}
+                \label{img:diff1}
+        \end{center}
+        \vspace{-20pt}
+        \begin{center}
+                \includegraphics[width=0.7\textwidth]{../images/ImageOps/Diff2}
+                \label{img:diff2}
+        \end{center}
+        \vspace{-20pt}
+        \caption{Base image undergoing EroDil to large mask sizes. Even a 97x97 mask couldn’t fully vanish the scene}
+	\vspace{-40pt}
 \end{figure}
 
-
-\subsection{Movement Types}
-I broke movement down into 5 different types:  Scene change (80\% of the image), Medium movement (40\% of the image), Small movement (10\% of the image), and Tiny movement ( less than 3\%).
-To detect medium movement I placed the camera to face the screen of a computer and dragged a window across the screen. \cref{img:medium} shows the drop in white pixel count as the Mask size increased until vanished completely for a 16x16 mask size
+Since the mask size required to completely ignore a scene change is probably on the same order of the dimensions of the image.  To ignore a scene change, it seemed apt to simply set a lower limit on the White Pixel count (e.g \(\langle\)25000 is good enough).
+\\To detect medium movement I placed the camera to face the screen of a computer and dragged a window across the screen. \cref{img:medium} shows the drop in white pixel count as the Mask size increased until vanished completely for a 16x16 mask size
 %MEDIUM
 \begin{figure}[H]
+	\vspace{-12pt}
 	\begin{center}
-		\includegraphics[width=0.3\textwidth]{../images/ImageOps/LARGE}
-		\label{img:medium}
+		\includegraphics[width=0.8\textwidth]{../images/ImageOps/LARGE}
 	\end{center}
+	\vspace{-30pt}
+	\caption{Medium movement, ignored at 16x16 mask}
+	\label{img:medium}
+	\vspace{-40pt}
 \end{figure}
 
 To detect small movement I repeated the same experiment, but this time made the contents within the window change (i.e. a movie) without moving the window itself.  A small window in the computer screen will change between the images, but the overall scene wont change. This test will determine for which mask sizes movement is no longer detected.
-For filename reasons, the masks increase in multiples of (4*i)+2  (e.g 2,6,10,14,18,etc). \cref{img:small} shows that movement is ignored up to a mask size of 5x5:
-\pagebreak
+For filename reasons, the masks increase in multiples of (4*i)+2  (e.g 2,6,10,14,18,etc). \Cref{img:small} shows that movement is ignored up to a mask size of 5x5:
 %SMALL
 \begin{figure}[H]
-	\vspace{-20pt}
+	\vspace{30pt}
 	\begin{center}
-		\includegraphics[width=0.8\textwidth]{../images/ImageOps/SMALL}
+		\includegraphics[width=0.9\textwidth]{../images/ImageOps/SMALL}
 	\end{center}
-	\caption{}
+	\vspace{10pt}
+	\caption{Small  movement, ignored at 5x5 mask}	
 	\label{img:small}
+	\vspace{20pt}
 \end{figure}
-
+\pagebreak
 To  detect tiny movement I placed a single blinking cursor on the screen. The experiment was repeated twice.
-\begin{figure}
-	\vspace{-20pt}
+\begin{figure}[H]
+	\vspace{-10pt}
 	\begin{center}
 		\includegraphics[width=0.8\textwidth]{../images/ImageOps/CURSOR1}
 	\end{center}
@@ -613,7 +616,7 @@ To  detect tiny movement I placed a single blinking cursor on the screen. The ex
 	\caption{Blinking Cursor}
 	\label{img:curse1}
 \end{figure}
-\begin{figure}
+\begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=0.8\textwidth]{../images/ImageOps/CURSOR2}
 	\end{center}
@@ -666,7 +669,9 @@ Once I was sure that the image was being recieved in the UI, I needed to display
 
 My initial attempts brought about images that were misaligned, badly coloured, and often times blank. To get the root of the problem I attempted many different size configurations:
 \begin{frame}[fragile]
-	\lstinputlisting[title=\textbf{Source Code: shell1.cpp}\label{code:shell1}]{../Code/qpix/shell1.cpp}
+	\vspace{-20pt}
+	\lstinputlisting[title=\textbf{Source Code: shell1.cpp}]{../Code/qpix/shell1.cpp}
+	\label{code:shell1}
 \end{frame}
 This attempted to make a thumbnail out of the image recieved from the signal and convert it into the appropriate format in a QImage. This would then be converted into a pixmap and assigned to Label for dispaying.
 
@@ -684,19 +689,20 @@ Needless to say the script took a long while to finish executing, but I wanted t
 
 It seemed strange that the QPicture needs image boundaries at half the actual image size it is containing, but despite scouring through the QPicture API I could find no reasoning for it. Nonetheless, a usable image was found, I just needed to adjust the color channels for it.
 To do this I adjusted the shell script from \cref{code:shell1} to adjust just the Image format and size, just in case size was somehow dependent on the format (it shouldn’t be since they are two completely different entities, but I wanted to cover all bases).
+\pagebreak
 \begin{frame}[fragile]
 	\lstinputlisting[title=\textbf{Source Code: shell2.cpp}\label{code:shell2}]{../Code/qpix/shell2.cpp}
 \end{frame}
-This resulted in yet another flurry of badly aligned images as shown in \cref{img:shell2}
+This resulted in yet another flurry of badly aligned images as shown in \cref{fig:shell2}
 \begin{figure}
 	\begin{center}
-		\includegraphics[width=0.8\textwidth]{../images/qpix/shell1}
+		\includegraphics[width=0.8\textwidth]{../images/qpix/shell2}
 	\end{center}
 	\vspace{-20pt}
 	\caption{Usable images are where ‘div’ amount equals 2 and format is 0, 1, or 11}
 	\label{fig:shell2}
 \end{figure}
-Out of all the images in \cref{img:shell2} , only three were actually usable - all ocurring where the image dimensions were halved. This put to rest my earlier unfounded suspicions that image size was affect by the image color format. The usable image formats were QImage::Format\_ARGB32, QImage::Format\_ARGB32\_Premultiplied, and QImage::Format\_RGB32.  Once again, the color was slightly off again, appearing more magenta than it actually was.
+Out of all the images in \cref{fig:shell2} , only three were actually usable - all ocurring where the image dimensions were halved. This put to rest my earlier unfounded suspicions that image size was affect by the image color format. The usable image formats were QImage::Format\_ARGB32, QImage::Format\_ARGB32\_Premultiplied, and QImage::Format\_RGB32.  Once again, the color was slightly off again, appearing more magenta than it actually was.
 
 Wondering if the problem was to do with RGB channels being in different order for QImage’s (the idea came to me after remembering that OpenCV’s IPLImage format was by default BGR), I swapped the blue and red channels using QImage’s swapRGB() function. To my surprise this produced very little difference in the outputted images as shown in \cref{fig:swaprgb}
 \begin{figure}
@@ -741,9 +747,9 @@ Early on in the development of the app, I came across problems where the FCam dr
 
 For this reason I enabled a kernel check at the start of the Camera thread which would issue out a warning whenever a kernel different from the PR-1.3 kernel was being used. This was a simple shell call to ‘uname -r’. However the root of the problem turned out to be that I was not initializing the camera properly when I started the thread, and so when I fixed this problem, the kernelCheck function became redundant and I deleted it from the source.
 
-\footbibliographystyle{plain}
-\footbibliography{citers}
+%\footbibliographystyle{plain}
+%\footbibliography{citers}
 
 
 
-\end{document}
+%\end{document}
