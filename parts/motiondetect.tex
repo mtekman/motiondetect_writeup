@@ -188,14 +188,15 @@ Using the same format as the cornell code I attempted to make:}
 \lstinputlisting[title=\textbf{Source Code: CImgConvertFcam.cpp}]{../Code/API_Examples/CImgConvertFcam.cpp}
 \end{frame}
 This resulted in images that looked like this:
+\begin{center}
 \begin{wrapfigure}{R}{0.5\textwidth}
-	\begin{center}
 	\vspace{-20pt}
+	\hspace{70pt}
 		\includegraphics[width=0.5\textwidth]{../images/redbuffer1}
 	\vspace{-20pt}
 	\caption{Very red image.}
-	\end{center}
 \end{wrapfigure}
+\end{center}
 \paragraph{
 A similar image would appear using imgBuffer[1] instead of imgBuffer[0], and I didn't understand why until I looked up CImg's documentation and realised that out of the 32 channels I was initialising, the first channel is red and that was the only channel I was writing to.
 That is, for a greyscale image from 0-255 at pixel i,j - I was sticking it into CImg\{Red,0,0,0,0....32 times.\}, and thus ending up with a red image.
@@ -248,10 +249,8 @@ which specifies the that libavcodec is to be used, the framerate and also that t
 \section{Image Processing Techniques}
 \paragraph{A motion detector works on the basic priniciple that there there exists some drastic difference between two images where motion has occred and motion has not occured. One way to see this represenation is to subtract one frame from another and look for the leftover pixels. Pixels where the image hasn't changed will have the same pixel value and will thus cancel each other out, whereas images where there is a difference between pixels at the same location will have values greater than zero. In the case of unsigned chars, any negative pixels will naturally wrap around and becomes high pixel values (white).}
 \subsection{Subtraction}
-\paragraph{Subtraction is the technique that performs this, and CImg handles this operation using the basic numerica operator '-', so that for example: CImg\(\langle\)T\(\rangle\) diff = CImg\(\langle\)T\(\rangle\)A - CImg\(\langle\)T\(\rangle\) B;
-}
 \begin{wrapfigure}{R}{0.3\textwidth}
-	\vspace{-20pt}
+	\vspace{-40pt}
 	\begin{center}
 		\includegraphics[width=0.3\textwidth]{../images/subG}
 	\end{center}
@@ -264,19 +263,23 @@ which specifies the that libavcodec is to be used, the framerate and also that t
 	\vspace{-20pt}
 	\caption{Image subtraction between two consecutive static frames where no movement has occured}
 \end{wrapfigure}
-\paragraph{The images above were normalised to 2 discrete \{0,1\} values and then multiplied by 255 so that the 'hot pixels' could be viewed with the human eye. As you can see from the top figure, the whiteness indeicates that there was a significant difference between frames and so that one of the images had pixel values vastly greater than the other -- indicating a change in the scene.
+Subtraction is the technique that performs this, and CImg handles this operation using the basic numerica operator '-', so that for example: CImg\(\langle\)T\(\rangle\) diff = CImg\(\langle\)T\(\rangle\)A - CImg\(\langle\)T\(\rangle\) B;
+
+The images above were normalised to 2 discrete \{0,1\} values and then multiplied by 255 so that the 'hot pixels' could be viewed with the human eye. As you can see from the top figure, the whiteness indeicates that there was a significant difference between frames and so that one of the images had pixel values vastly greater than the other -- indicating a change in the scene.
 \\For the bottom image it can be seen that there is very little difference exists between the frames, yet you can almost quite clearly makeout the edge of the objects between the frames (a computer screen and speaker). Neither the speaker, the monitor, nor the camera moved between those two images but nonetheless a small difference was detected.\\
 This served as my first model for image detection by performing a small test to see how many of these sparse white pixels are detected for static frames. This would then serve as the basis for a threshold, so that any subtracted frames that are significantly above this threshold are flagged as 'movement' frames and those below or up to the threshold 
-are not.}
+are not.
 \pagebreak
 \subsubsection{Experiment 1: Determining a suitable threshold for subtracted images}
 \paragraph{To find a suitable threshold I used the following pseudocode to determine a threshold for a static frame:\\\\}
 \begin{frame}[fragile]
+	\vspace{-40pt}
 	\lstinputlisting[title=\textbf{Source Code: subtract1.pseudo}]{../Code/pseudo/subtract1.pseudo}
 \end{frame}
 \paragraph{It essentially grabs an image and subtracts it subtracted one image from another and totalled up all the pixels with a value greater than zero. This gave the following table of results:}
 \begin{center}
 \begin{table}[!htbp]
+	\begin{center}
 	\begin{tabular}{| c | l | l | l | l | l | }
 \hline
 \multicolumn{6}{|c|}{\bf Non-Zero Counts from Subtracted Images} \\
@@ -294,17 +297,21 @@ are not.}
 10	&6133	&23077	&12343	&31430	&25410\\ \hline
 \bf Average	&49842.2	&49909	&91776	&19698	&85355\\ \hline
 	\end{tabular}
+	\end{center}
+	\caption{}
 	\label{tab:sub1}
 \end{table}
 \end{center}
-\paragraph{as shown in \cref{tab:sub1} the Average white pixel count is extremely high and varies greatly from scene to scene. Setting a threshold of less than 90000 would work for the five different scenes tested in my experiment, but there’s no gauruntee that the fluctuation between frames would not be higher than 90000 for another scene. \\
+\paragraph{as shown in \Cref{tab:sub1} the Average white pixel count is extremely high and varies greatly from scene to scene. Setting a threshold of less than 90000 would work for the five different scenes tested in my experiment, but there’s no gauruntee that the fluctuation between frames would not be higher than 90000 for another scene. \\
 So Why is there so much fluctuation? For one, the average pixel values of one scene can be radically different to another scene. If the average pixel value for Scene1 is 45 and the average pixel value for Scene2 is 90, then assuming that the ambient light in a scene is decreased by 10\%, then this would result in:\\
 Scene1:  45-40.5 = 4.5, and Scene2: 90-81 = 9 --- which are proportionately different counts for the same reduction in ambient light.\\
  }
 \paragraph{My second attempt addresses the proportion problem, and inserts extra code into lines 5 and 7.}
+\begin{frame}[fragile]
 \lstinputlisting[title=\textbf{Source Code: subtract2.pseudo}]{../Code/pseudo/subtract2.pseudo}
+\end{frame}
 \paragraph{Here it normalise the current frame into [0,1] binary colorspace after taking it. It then performs the subtraction, but this subtraction may result in pixel values greater than 1 due to overflow (i.e. 0-1 = -1 = 255 for 8-bit unsigned pixel), so a normalisation is performed on subtracted image as well. \\
-This results in non-zero counts of subtracted images that are far more stabler as shown in the table}
+This results in non-zero counts of subtracted images that are far more stabler as shown in \Cref{tab:sub2}}
 \begin{center}
 \begin{table}[!htbp]
 	\begin{tabular}{| c | l | l | l | l | l | }
@@ -324,30 +331,38 @@ This results in non-zero counts of subtracted images that are far more stabler a
 10	&22031	&22578	&18717	&24348	&20265\\ \hline
 Average	&22313.8	&21821	&20985	&22306	&21315.9	\\ \hline
 	\end{tabular}
-	\label{tab:sub2}
+\caption{}
+\vspace{-8pt}
+\label{tab:sub2}
 \end{table}
 \end{center}
-\paragraph{Using the results from this table I decided to set a threshold of less than 26000 (i.e. a white-pixel count of less than 26000 will NOT trigger a movement flag. Anything above will). 
+Using the results from this table I decided to set a threshold of less than 26000 (i.e. a white-pixel count of less than 26000 will NOT trigger a movement flag. Anything above will). 
 \\However this threshold was purely for 320x240 images. At that stage I had not considered using different image sizes  for motion detection, but since FCam supported larger sizes I decided to test thresholds for these too, expecting a linear relationship between image size and non-zero count.
 \\For this experiment I repeated the same experiment for the five different image sizes, but have only included the average counts per image size. See \ref{tab:normalised-images} in the Appendix for the complete table.\\
-}
+
 \import{../tables/}{normalised_subtracted_image_size_SHORT.tex}
-\paragraph{The chart below \cref{chart:thresholds} is based upon the data in the short table. It takes the maximum averages for each image size and plots them against the image size, with error bars as standard deviation.}
-\begin{figure}
-	\vspace{-20pt}
+
+The chart below in ~\cref{chart:thresholds} is based upon the data in the short table. It takes the maximum averages for each image size and plots them against the image size, with error bars as standard deviation.\\
+
+\begin{wrapfigure}{L}{300pt}
+	\vspace{-10pt}
 	\begin{center}
-		\includegraphics[width=0.95\textwidth]{../images/chart-threshold-with-varying-image}
-		\label{chart:thresholds}
+		\includegraphics[width=0.7\textwidth]{../images/chart-threshold-with-varying-image}
 	\end{center}
-\end{figure}
-\paragraph{As can be seen in \cref{chart:thresholds}, two trendlines ave been plotted - a linear one, as well as a more relevant logarithmic trendline because the threshold for 0x0 image sizes should tend towards 0, and not have a y coefficient.\\
+	\vspace{-15pt}
+	\caption{}
+	\label{chart:thresholds}
+	\vspace{-10pt}
+\end{wrapfigure}
+
+As can be seen in Chart~\cref{chart:thresholds}, two trendlines have been plotted - a linear one, as well as a more relevant logarithmic trendline because the threshold for 0x0 image sizes should tend towards 0, and not have a y coefficient.\\
 It should be noted that the standard deviation in the average threshold grew as the image size grew, meaning that this was not the most accurate scale for determining a threshold. I did try setting a threshold with image size using the formula of:\\
  Thresh = 26297*ln(image\_width) - 131544(+10000 as a max limiter),  giving appropriate theshold sizes of:\\
 30145 (320), 48373(640), 54241 (800), 66600 (1280), 85155 (2592).\\
 This method did work, but there were a fair few amount of false positives being flagged.
 %DISPLAY FALSE POSITIVE IMAGES WITH LOTS OF SCATTE\\
 \\The random scatter of pixels between static frames is caused by Noise, and I needed to find a way to get rid of it.
-}
+
 \subsection{Noise}
 \subsubsection{Thermal Noise, CCD clocking up/down}
 \paragraph{Oversaturation, filtering, compression}
@@ -360,14 +375,17 @@ In this method, a reference frame is created by capturing a quick succesion of f
 Where: sizeof(T2)\(\rangle\)sizeof(T1).
 \\The size of the image types is significant. It should be noted once again that greyscale image sizes are 8-bit unsigned chars with a maximum and minimum values from 0 to 255, so appending a series of pixel values will result in in values that overflow this range. For this reason, the accumulator needs to have pixel sizes that can contain accumulated pixel sum amounts. In this project the accumulator had long (64-bit) pixel values, and were then normalised in [0,1] colorspace when being assigned to the reference frame.}
  
-\paragraph{
- This 'average frame' now becomes the reference image which all incoming frames are now checked against it, as shown the pesudo code below}
+This 'average frame' now becomes the reference image which all incoming frames are now checked against it, as shown the pesudo code below
+
 \begin{frame}[fragile]
+	\vspace{-20pt}
 	\lstinputlisting[title=\textbf{Source Code: UpdateReference.pseudo}]{../Code/pseudo/updatereference1.pseudo}
 \end{frame}
-\paragraph{The reason a method like this is used to reduce noise is because the noise over several frames is 'blurred' out and only the significant motion stands out. This blurring effect reduces the amplitude of the random noise, since it is unlikely that a noisy pixel will occur at the same position across all frames , thus for 100 frames: \\\t if a noisy pixel occurs at position [10,5] with a value of 255 (white), then this will be reduced to a pixel value of 3 after the running average method is applied, since due to the arbitrary nature of noise, the noisy pixel is unlikely to occupy the same pixel position in successive frames. Pixels which retain their values over more than a few frames can then be said to be significant, since it is unlikely for random noise to strike the same pixel twice (unless the scene is generally very noisy)\\
+
+The reason a method like this is used to reduce noise is because the noise over several frames is 'blurred' out and only the significant motion stands out. This blurring effect reduces the amplitude of the random noise, since it is unlikely that a noisy pixel will occur at the same position across all frames , thus for 100 frames: \\\t if a noisy pixel occurs at position [10,5] with a value of 255 (white), then this will be reduced to a pixel value of 3 after the running average method is applied, since due to the arbitrary nature of noise, the noisy pixel is unlikely to occupy the same pixel position in successive frames. Pixels which retain their values over more than a few frames can then be said to be significant, since it is unlikely for random noise to strike the same pixel twice (unless the scene is generally very noisy)\\
 It should be noted that this blurring effect occurs for all pixels and not just noisy ones, and so there is a slight - but generally acceptable - reduction in sharpness of the image.\\
-The amount of noise reduction is proportional to the square-root of the number of frames being averaged, so in the 100 frame example the reduction of noise would be a factor of 10.}
+The amount of noise reduction is proportional to the square-root of the number of frames being averaged, so in the 100 frame example the reduction of noise would be a factor of 10.
+
 \paragraph{
 In the pseudocode below, the current frame is subtracted from the reference frame, and if the non-zero pixel count from the subtracted frame is over the (new) threshold amount, then the movement is flagged and the reference frame is updated by another quick burst of frames.
 }
@@ -377,46 +395,48 @@ In the pseudocode below, the current frame is subtracted from the reference fram
 \paragraph{Note that the updateReference function has changed so that the reference frame is the accumulated normalisation over any number of frames. \\
 All frames are normalised to [0,1]  binary colorspace, as this flattens the image and produces less diference between one frame and the next, which helps distinguish where movement has occured.
 }
-\begin{wrapfigure}{R}{0.3\textwidth}
-	\vspace{-20pt}
-	\begin{center}
-		\includegraphics[width=0.3\textwidth]{../images/accumstatic}
-		\label{accumst}
-	\end{center}
-	\vspace{-20pt}
-	\caption{10 frame accumulation for static scene}
-	\vspace{10pt}
-	\begin{center}
-		\includegraphics[width=0.3\textwidth]{../images/accumdynamic}
-		\label{accumdy}
-	\end{center}
-	\vspace{-20pt}
-	\caption{10 frame accumulation for dynamic scene}
-\end{wrapfigure}
 \paragraph{As shown in ~\cref{accumst} a static scene shows very little difference from one scene to the next so that the image is coherent. For a dynamic scene, \cref{accumdy} shows a wildly different image with traces of many different scenes superimposed.
 \\This approach introduces the concept of having a background or reference, since by the subtraction method of motion detection we would have no knowledge of the background since we would only be comparing two temporally adjacent frames.
 }
-Running repeated tests under this model confirms that the threshold value is much lower than it used to be due to the reduction in the noise, but there is still large growth of standard deviation as the image size increases. This is due to the scatter of noise that still persists the images, even averaging over 30 frames or more \footnote{Averaging over higher even using the fastest frame times causes a significant delay in the application and can also cause segmentation faults.}
-leaves noise behind which are counted as non-zero white pixels in a normalised image.
-
-\begin{wrapfigure}{R}{0.3\textwidth}
-	\vspace{-20pt}
+\begin{wrapfigure}{R}{0.45\textwidth}
+	\vspace{-30pt}
 	\begin{center}
-		\includegraphics[width=0.3\textwidth]{../images/scatter1}
-		\label{img:scatter1}
+		\includegraphics[width=0.45\textwidth]{../images/accumstatic}
 	\end{center}
 	\vspace{-20pt}
-	\caption{Scatter of noise for a 1-frame running average}
+	\caption{10 frame accumulation for static scene}
+	\label{accumst}
 	\vspace{10pt}
 	\begin{center}
-		\includegraphics[width=0.3\textwidth]{../images/scatter2}
-		\label{img:scatter2}
+		\includegraphics[width=0.45\textwidth]{../images/accumdynamic}
 	\end{center}
 	\vspace{-20pt}
-	\caption{Scatter of noise for a 10-frame running average}
+	\caption{10 frame accumulation for dynamic scene}
+	\label{accumdy}
+	\vspace{30pt}
 \end{wrapfigure}
-The images above show how the running average method reduces the localised noise within certain regions, but increases the overall scatter of the noise as it accumulates around certain individual pixels as it is 'flattened' over several frames.\\
-In \cref{img:scatter1} the noise is clustered together and makes up a significant part of the static image. But in \cref{img:scatter2} the noise is much more sparsely spread and most of the noisy white-pixels are surrounded by empty neighbours.\\
+Running repeated tests under this model confirms that the threshold value is much lower than it used to be due to the reduction in the noise, but there is still large growth of standard deviation as the image size increases. This is due to the scatter of noise that still persists 
+\begin{wrapfigure}{R}{0.35\textwidth}
+	\vspace{-40pt}
+	\begin{center}
+		\includegraphics[width=0.35\textwidth]{../images/scatter1}
+	\end{center}
+	\vspace{-30pt}
+	\caption{Scatter of noise for a 1-frame running average}\label{img:scatter1}
+	\vspace{10pt}
+	\begin{center}
+		\includegraphics[width=0.35\textwidth]{../images/scatter2}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Scatter of noise for a 10-frame running average}\label{img:scatter2}
+	\vspace{-20pt}
+\end{wrapfigure}
+
+the images, even averaging over 30 frames or more \footnote{Averaging over higher even using the fastest frame times causes a significant delay in the application and can also cause segmentation faults.}
+leaves noise behind which are counted as non-zero white pixels in a normalised image.
+
+The images above show how the running average method reduces the localised noise within certain regions, but increases the overall scatter of the noise as it accumulates around certain individual pixels as it is 'flattened' over several frames.\\\linebreak
+\pagebreak In \cref{img:scatter1} the noise is clustered together and makes up a significant part of the static image. But in \cref{img:scatter2} the noise is much more sparsely spread and most of the noisy white-pixels are surrounded by empty neighbours.\\
 
 Clearly another technique is needed to smooth the images so that sparse pixels surrounded by emptiness can be ignored and not contribute to the threshold count. Such techniques are called {\bf morphological operations}
 
@@ -458,98 +478,112 @@ Diamond kernels produce softer edges on images, and Square kernels produce block
 }
 Starting image \cref{img:uneditsub1} shows the difference between two  completely different frames:
 \begin{figure}[H]
-		\includegraphics[width=0.3\textwidth]{../images/ImageOps/uneditedsub}
+	\hspace{0.24\textwidth}
+	\includegraphics[width=0.5\textwidth]{../images/ImageOps/uneditedsub}
 	\caption{White pixel count of 87516.}
 	\label{img:uneditsub1}
 \end{figure}
 
-Test 1: Seeing how the white pixel count is affected by repeated Erosion/Dilation using a 2x2 mask\\
-\begin{wrapfigure}{R}{0.8\textwidth}
-	\vspace{-100pt}
+\pagebreak
+{\hspace{-20pt} \bf Test 1:}{\underline{White pixel count variation with repeated Erosion/Dilation using a 2x2 mask}}\\
+(See the appendix for the code used.)
+\begin{figure}[H]
+	\vspace{-10pt}
 	\begin{center}
 		\includegraphics[width=0.8\textwidth]{../images/ImageOps/test1}
 	\end{center}
 	\vspace{-20pt}
-	\caption{Erosion, Dilation, Erosion followed by Dilation, and Dilation followed by Erosion all repeated k times}
+	\caption{\small Erosion, Dilation, Erosion followed by Dilation, and Dilation followed by Erosion all repeated k times}
 	\label{img:erode1}
-	\vspace{20pt}
-\end{wrapfigure}
-See the appendix for the code used.
+	\vspace{-10pt}
+\end{figure}
 
 As we can see from \cref{img:erode1} -- repeated uses of Erosion/Dilation (or vice versa) does not affect the white pixel count for repeated usage as they do independently.
 \\It is interesting to note that EroDil produces a more solid image (i.e. black parts dont have white spots within) than DilEro. This is most likely because the sparse pixels have been filtered out first, and then accentuated. If it were the other way then the sparse pixels would have been accentuated first by the dilation, and then persisted under the erosion.
-\\One thing to note is that not much has been clustered. It seemed like the 2x2 mask was too small and so I repeated the experiment with increasing mask sizes
-\\ Test 2: Seeing how white pixel count varied with repeated Erosion/Dilation using an increasing mask size from 2 to 6, using the same starting image.
-\begin{wrapfigure}{R}{0.5\textwidth}
-	\vspace{-20pt}
+One thing to note is that not much has been clustered. It seemed like the 2x2 mask was too small and so I repeated the experiment with increasing mask sizes\\
+
+{\hspace{-20pt} \bf Test 2:}{\underline{White pixel count variation with repeated Erosion/Dilation using an increasing mask}}\\
+The same starting image is used, as loaded in from a previous save.
+\begin{figure}[H]
+	\vspace{-10pt}
 	\begin{center}
-		\includegraphics[width=0.5\textwidth]{../images/ImageOps/test2}
+		\includegraphics[width=0.8\textwidth]{../images/ImageOps/test2}
 		\label{img:erode2}
 	\end{center}
 	\vspace{-20pt}
 	\caption{Erosion, Dilation, Erosion followed by Dilation, and Dilation followed by Erosion using kxk mask size}
-\end{wrapfigure}
+\end{figure}
 As expected the white pixel count increased in the EroDil and DilEro techniques with increasing square masks, however EroDil seemed to give the best quality bunching out of all the technique. Dilate by itself seemed pretty effective too, but this alone would not remove noise effectively. Dilero had to be dropped as useful image processing method since it seemed to be removing significant parts of the image and not retaining the overall blobby structure.
-\\Test 3: Seeing how white pixel count varies with repeated seperate calls to Erosion and Dilation
-\begin{wrapfigure}{R}{0.5\textwidth}
-	\vspace{-20pt}
+
+{\hspace{-20pt} \bf Test 3:}{\underline {Seeing how white pixel count varies with repeated seperate calls to Erosion and Dilation}}
+\begin{figure}[H]
+	\vspace{-10pt}
 	\begin{center}
-		\includegraphics[width=0.5\textwidth]{../images/ImageOps/test2A}
+		\includegraphics[width=0.6\textwidth]{../images/ImageOps/test2A}
 		\label{img:erode3}
 	\end{center}
 	\vspace{-20pt}
 	\caption{Dilation and Erosion varying with a kxk mask}
-\end{wrapfigure}
-As expected, the white pixel count diminishes under the repeated Erosion calls, then grows under the repeated Dilation calls. Clearly using these techniques seperately serves no purpose other than accentuating white and black respectively. However combined together into an EroDil method, the structure of the image itself is accentuated and not just one specific color:
-\begin{wrapfigure}{R}{0.3\textwidth}
-	\vspace{-20pt}
+\end{figure}
+
+As expected, the white pixel count diminishes under the repeated Erosion calls, then grows under the repeated Dilation calls. Clearly using these techniques seperately serves no purpose other than accentuating white and black respectively. However combined together into an EroDil method, the structure of the image itself is accentuated and not just one specific color as shown in \cref{img:erode4}
+\begin{figure}[H]
+	\vspace{-40pt}
 	\begin{center}
-		\includegraphics[width=0.3\textwidth]{../images/ImageOps/test2B}
-		\label{img:erode4}
+		\includegraphics[width=0.6\textwidth]{../images/ImageOps/test2B}
 	\end{center}
 	\vspace{-20pt}
 	\caption{Dilation and Erosion varying with a kxk mask}
-\end{wrapfigure}
+		\label{img:erode4}
+\end{figure}
 
 The erodil images were taken at bi-intervals, but the intermediate mask sizes were performed.  EroDil increases the white pixel count, but gradually -- and this makes sense since the image is mostly white, so the increasing white pixel count is representative of this. In terms of tidiness, EroDil seems to produce a smoother image, and gives a white pixel count that is closer to the true white pixel count of 67164, than anything that Eroding or Dilating could do by themselves.
-\\Test 4: Seeing how White-Pixel count varies with increasing Mask Size using EroDil method:
-\begin{wrapfigure}{R}{0.3\textwidth}
-	\vspace{-20pt}
+
+\pagebreak
+{\hspace{-20pt} \bf Test 4:}{\underline {Seeing how White-Pixel count varies with increasing Mask Size using EroDil method:}}
+\begin{figure}[H]
+	\vspace{0pt}
 	\begin{center}
-		\includegraphics[width=0.3\textwidth]{../images/ImageOps/chartMask}
+		\includegraphics[width=0.8\textwidth]{../images/ImageOps/chartMask}
+		\caption{}
 		\label{img:maskChart}
 	\end{center}
-\end{wrapfigure}
+\end{figure}
 As seen in \cref{img:maskChart} the white-pixel count follows a downward logarithmic trend that is very well approximated by the equation:\\
 WhitePixelCount = 68991.3 - 7914.3 ln(MaskSize)
 
-It should be well noted that applying a larger mask filter to an image that has been affected by a smaller mask filter, is EXCATLY THE SAME as simply just applying the larger filter.  In my code in the appendix what I tended to do was repeatly loop over and update the existing image with each increasing mask, such that the input for mask B would be the output for mask A, where BxB \(\rangle\) AxA.  The reason why I did this was to prevent the application from constantly replacing the current image in the memory, rather than having to duplicate from the original for each mask.
+It should be well noted that applying a larger mask filter to an image that has been affected by a smaller mask filter, is {\bf exactly the same} as simply just applying the larger filter.  In my code in the appendix what I tended to do was repeatly loop over and update the existing image with each increasing mask, such that the input for mask B would be the output for mask A, where BxB \(\rangle\) AxA.  The reason why I did this was to prevent the application from constantly replacing the current image in the memory, rather than having to duplicate from the original for each mask.
 
 Various other tests were performed: See Testing section in the appendix, but these core 4 tests demonstrated all I really needed to know about opening/closing an image - i.e. As the mask size increases the white-pixel count converges downwards at an ever decreasing rate.
 
 Mask sizes have to get very large (to the same order as the image dimensions!) before a subtracted image for differing scenes can  fully converge to a single colour:
-\begin{wrapfigure}{R}{0.3\textwidth}
-	\vspace{-20pt}
-	\begin{center}
-		\includegraphics[width=0.3\textwidth]{../images/ImageOps/Diff1}
-		\label{img:diff1}
-	\end{center}
-	\vspace{-20pt}
-	\begin{center}
-		\includegraphics[width=0.3\textwidth]{../images/ImageOps/Diff2}
-		\label{img:diff2}
-	\end{center}
-	\vspace{-20pt}
-	\caption{Base image undergoing EroDil to large mask sizes. Even with 97x97 mask size (almost half the image height) the scene still hasn't completely vanished.}
-\end{wrapfigure}
+
 Since the mask size required to completely ignore a scene change is probably on the same order of the dimensions of the image.  To ignore a scene change, it would probably be apt to simply set a lower limit on the White Pixel count (e.g \(\langle\)25000 is good enough)
 
 Using this knowledge I then set on detecting different kinds of movement:
 
+%LARGE
+\begin{figure}[H]
+	\vspace{-80pt}
+	\begin{center}
+		\includegraphics[width=0.7\textwidth]{../images/ImageOps/Diff1}
+		\label{img:diff1}
+	\end{center}
+	\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.7\textwidth]{../images/ImageOps/Diff2}
+		\label{img:diff2}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Base image undergoing EroDil to large mask sizes. Even with 97x97 mask size (almost half the image height) the scene still hasn't completely vanished.}
+\end{figure}
+
+
 \subsection{Movement Types}
 I broke movement down into 5 different types:  Scene change (80\% of the image), Medium movement (40\% of the image), Small movement (10\% of the image), and Tiny movement ( less than 3\%).
 To detect medium movement I placed the camera to face the screen of a computer and dragged a window across the screen. \cref{img:medium} shows the drop in white pixel count as the Mask size increased until vanished completely for a 16x16 mask size
-\begin{figure}
+%MEDIUM
+\begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=0.3\textwidth]{../images/ImageOps/LARGE}
 		\label{img:medium}
@@ -558,7 +592,9 @@ To detect medium movement I placed the camera to face the screen of a computer a
 
 To detect small movement I repeated the same experiment, but this time made the contents within the window change (i.e. a movie) without moving the window itself.  A small window in the computer screen will change between the images, but the overall scene wont change. This test will determine for which mask sizes movement is no longer detected.
 For filename reasons, the masks increase in multiples of (4*i)+2  (e.g 2,6,10,14,18,etc). \cref{img:small} shows that movement is ignored up to a mask size of 5x5:
-\begin{figure}
+\pagebreak
+%SMALL
+\begin{figure}[H]
 	\vspace{-20pt}
 	\begin{center}
 		\includegraphics[width=0.8\textwidth]{../images/ImageOps/SMALL}
