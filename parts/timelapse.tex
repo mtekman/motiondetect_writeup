@@ -22,6 +22,8 @@
 \usepackage{float}  %These two ensure that table position follows text by specifying {table}[H]
 \restylefloat{table}
 
+%\usepackage[T1]{fontenc} % Enables foreign symbols
+
 %CODE LISTINGS
 \usepackage{color}
 \usepackage{listings}
@@ -90,6 +92,9 @@ The second approach is the same as the first; waste of RAM over an extended peri
 This leaves the third option, which is to set scheduled events for the app so that it starts and stops at specific times with minimal usage of system resources. The question now is how to enable the MotionDetector to do this.
 
 \section{Command Line Switches}
+
+Commandline switches enable the user to issue commands to a program through a line of text. It is essentially a text-based user interface and the user can specify the level of control through arguments, which are extra text appended (with spaces) to the program name. By convention 'flags' or 'switches' are often used which specify arguments using dash or double-dash notation such as '--flag'.
+
 \subsection{Argument parser}
 
 Qt (like most SDk's) places all the arguments to a program in a list of some kind. In Qt, the arguments are accessed via QApplication::arguments() which returns the arguments in a QStringList (very similar to an ArrayList in Java).
@@ -126,6 +131,9 @@ The app will spit out the following error:\\
 
 since these will be the leftover arguments that were left in the argument list. Had all the flags been valid, the argument list would have been empty.
 
+Some flags rely on other flags such as '--delete' and '--convert'.  Delete specifies that the images should be deleted after all operations complete, and Convert specifies that the images should be converted to a movie after all operations complete. 
+If the user wishes to convert the images after completion, then they are free to choose to delete or not to delete. But if they wish to simply delete without first converting, then an error pops up highlighting how pointless the operation will be - since it will be taking photos and then deleting them after.
+
 \paragraph{Terminal Colours\\}{
 To make the commandline look as interesting as possible I also implemented colours into the shell. Fremantle uses the busybox shell by default, which is a lightweight shel that comes prepackaged with many standard utils such as 'ls' 'mv' 'cp' and so forth which are symlinked to /usr/bin/ so as to appear independent of busybox.
 Busybox also shares the same as terminal colour codes as Bash, which are called via non-printing escape sequences which are enclosed in \textbackslash[\textbackslash033[ and \textbackslash] pairs.
@@ -148,7 +156,7 @@ char stop[ ] &"\textbackslash033[0m"\\
 \label{tab:colorcodes}
 \end{table}
 
-With this framework I could then control what colours I wanted to use by simply calling:\\
+With these codes I could then control what colours I wanted to use by simply calling:\\
 cout  yellow \(\langle\langle\) "Warning:" \(\langle\langle\) green \(\langle\langle\) "This shell supports" \(\langle\langle\) cyan \(\langle\langle\) "multiple"\(\langle\langle\)  red \(\langle\langle\) "colors!" \(\langle\langle\) stop \(\langle\langle\) endl;
 
 The stop colour at the end is neccesary to reset the shell to its default color, otherwise the last color set will be maintained for the next message which may not be desirable.
@@ -167,7 +175,7 @@ The stop colour at the end is neccesary to reset the shell to its default color,
 One of the main benefits of having a commandline implementation is that enables remote usage. A user can simply ssh or telnet into the phone from another machine and start and control the application from the shell on their own computer. The colours will also print correctly too.
 
 }
-\subsubsection{Reusing exiting variables}
+\subsubsection{Reusing existing variables}
 
 For standard motiondetection commandline calls such as mask, whitepixel, size, etc as shown in help.sh on page~\pageref{frame:help}, individual variables were created to hold these values, which were mirror variables for the same ones in the CameraThread. When the Commandline finishes parsing arguments it switches flow control back to the motiondetector (main window UI) class which then reassigns these variables to those of the camerathread as shown below:
 \begin{frame}[fragile]
@@ -178,23 +186,93 @@ The main MotionDetector class does not have variables in the header file that ho
 When commandline arguments are not given, the 'commands' pointer is initialised to zero and is thus empty. In this case the UI is active and so Operations gets its values directly from the UI. When the pointer is not empty, the UI is ignored and Operations gets its values directly from CommandLine. An exit slot is also connected in this case, so that when the camera thread finishes, the entire application safely closes (which overrides the default finish behaviour, where the UI simply becomes active and listens for input again).
 
 The real trick is when we want to perform a timelapse operation. Timelapse operations need only five arguments:
-\\ Image size, frame rate, convert images to movie,  delete images after conversion, and end date.
-Image size, convert and delete are variables used in motiondetection operations, so these values can be assigned correctly. But what do we do with frame rate and end date? These variables do not exist for motion detection operations, and it would be wasteful to create new variables for them, because as discussed above; whatever variables we create in commandline we must also create in Operations (the camera thread). Creating a framerate and enddate variable will be making variables that will be unused most of the time.
+\\ Image width, frame rate, convert images to movie,  delete images after conversion, and end date.\\
+(height does not need to be specified since it can be inferred from width, reducing the number of neccesary arguments).\\
+Image width, convert and delete are variables used in motiondetection operations, so these values can be assigned correctly. But what do we do with frame rate and end date? These variables do not exist for motion detection operations, and it would be wasteful to create new variables for them, because as discussed above; whatever variables we create in commandline we must also create in Operations (the camera thread). Creating a framerate and enddate variable will be making variables that will be unused most of the time.
 
-Instead, we reuse the one's that exist already but are not being used. To pass framerate into operations, we simply pass it as a mask variable (they are both integers) and to pass the end date we pass it as a time variable that is normally used in the motiondetector as duration. This reduces the number of class variables and in turn reduces overhead. Should I wish to create further options for the timelapse part of the app I can just slot them into the currently inactive motiondetector variables.
+Instead, we reuse the one's that exist already but are not being used. To pass framerate into operations, we simply pass it as a mask variable (they are both integers) and to pass the end date we pass it as a time variable that is normally used in the motiondetector as duration. This reduces the number of class variables and in turn reduces overhead.
 
-The camera thread needs to know whether it will do
+This maybe frowned upon in certain circles due to the error prone nature of using a single variable for multiple different operations, but as long as it is done safely it is much more efficient. In this case, the camera thread needs to know whether the operation it is about to perform is a motion detection or a time lapsing one, and so a timelapse boolean had to be created. This may seem like a step backwards after what I just said about reusing variables, but it is neccesary because for a motion detection operation all the other variables will be used up, plus this ensures that should I wish to create further options for the timelapse part of the app I can just slot them into the currently inactive motiondetector variables.
 
-
-
-
-
-\paragraph{Why echoing the same command at differeint intervals?}
 \section{Scheduled Events}
+
+Scheduled events are events that have been schedules to run at specific times. They are often used to automate system daemons, but can also be acessed by the user to run scripts or programs at specific times.
+
 \subsection{Cron}
-\subsection{Cookies, Triggers, Flags}
-\subsection{Logic of repeated calls}
+In Linux 'cron' is the job scheduler, and it performs its operations by reading from a 'crontab' file which is a configuration file detailing the date and frequency, and job-specific detail of the job.
+
+Cron jobs are prepended by an intuitive 5 character sequence which is used to define the date and frequency via:\\
+%\begin{verbatim}
+%# Source: http://en.wikipedia.org/wiki/cron
+% *    *    *     *    *  command to be executed
+%│    │    │    │    │
+%│    │    │    │    │
+%│    │    │    │    │
+%│    │    │    │    └───── day of week (0 - 6) (0 is Sunday, or use names)
+%│    │    │    └────────── month (1 - 12)
+%│    │    └─────────────── day of month (1 - 31)
+%│    └──────────────────── hour (0 - 23)
+%└───────────────────────── min (0 - 59)
+%\end{verbatim}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{| l | l |}
+\hline
+\multicolumn{2}{|c|}{\bf Quick Crash Course in Crontabs} \\
+\hline
+Run every minute for eternity:  &  *\tab*\tab*\tab*\tab*\\
+Run at 11am and 2pm every day:& 0\tab 11,14\tab*\tab*\tab*\\
+Run every mon,tue, wed,fri at 12 pm every 10 mins:&   */10\tab 12\tab*\tab*\tab1-3,5\\
+Run at 8:14 and 8:15 every October 21st that is a Tuesday& 14,15\tab 8\tab21\tab*\tab2\\
+\hline
+\end{tabular}
+\caption{Cron tab examples}
+\label{tab:cron}
+\end{table}
+
+So to run out motiondetection application every alternate winter morning at 8am, I would set a cronjob as:\\
+' \tab*\tab8\tab*/2\tab12,1,2\tab*\tab  motiondetect --my-flag'
+
+\subsection{TimeLapse hidden command flag/switch}
+
+The importance of the commandline functionality mentioned in the previous section was to ensure that the app could be issued a command that would enable it to run and exit by itself. For scheduled events this would mean using a specific flag to issue time lapse operations.
+
+This flag is hidden from the user (i.e. it is not documented in the help text as shown on page~\pageref{frame:help}. This is because it is the app itself that sets the scheduled event, and not the user. The user should not be able to set a scheduled event accidentally/maliciously from the commandline.
+
+To ensure this I made the flag for running the timelapse operations an obscure mix of two words that are normally not likely to be next to each other in a given sentence:\\
+'motiondetect --teenage-diplomacy \(\langle\)DateTime\(\rangle\) \(\langle\)Convert\(\rangle\) \(\langle\)Delete\(\rangle\) \(\langle\)Width\(\rangle\) \(\langle\)fps\(\rangle\)'. This is a reference to 'Blinded By the Light' song by Bruce Springsteen later covered by ELO. I figured no one would actually use that as a command call.
+
+The code is as follows:
+\begin{frame}[fragile]
+\lstinputlisting[title=\textbf{Snippet from CommandLine.cpp}]{../Code/commandline/secrettime.cpp}
+\label{code:secret}
+\end{frame}
+
+As you can see  the error/exit messages of the function call arent very informative either with an unhelpful "Nice Try" error message whenever the arguments aren't of the right length or format. 
+
+\subsubsection{Logic of repeated calls}
+
+The snippet of code shown on page~\pageref{code:secret} shows how to call the timelapse operation. This function is called repeatedly for scheduled events, and it is called with the same arguments every time for each task set. This might seem somewhat counterintuitive to be using the same DateTime value for each job within a task but the logic is sound:
+
+\begin{enumerate}
+\item I set a DateTime value for 10th October 2012 3pm (the date I want the task to end.)  I set an image size of 320x240.\\
+\vspace{-20pt}
+\item I set that I want it to convert the images to a movie on completion, and that I want the the images deleted. I set a fps of 25.\\
+\vspace{-20pt}
+\item I set an interval of 30 minutes for how often I want to set a job until it terminates at the DateTime value I set in the previous step.\\
+\vspace{-20pt}
+\item The app sets jobs to the scheduler specifying that the system should run:\\
+ ' motiondetector --teenage-diplomacy 10:10:2012:15:00:00   1  1  320 25' \\
+every half hour until 10th October 2012 3pm.
+\vspace{-8pt}
+\item When the app executes using this flag, it compares the {\it current DateTime} with the end DateTime. If the current is less than the end, then it takes a photo using the size parameter and exits. Otherwise if the current date is {\it later} than the end date, it knows to convert (at 25 fps), delete, then exit.
+\end{enumerate}
+All this, purely by using the same argument values.
+
 \section{Software Battles}
+In order to get repeated application calls in the first place, we need to first schedule the jobs.
+
 \subsection{Cron Vs Alarmd}
 \subsection{qDebug vs std::cout}
 \subsubsection{Message Handlers}
