@@ -183,7 +183,7 @@ Image size, convert and delete are variables used in motiondetection operations,
 
 Instead, we reuse the one's that exist already but are not being used. To pass framerate into operations, we simply pass it as a mask variable (they are both integers) and to pass the end date we pass it as a time variable that is normally used in the motiondetector as duration. This reduces the number of class variables and in turn reduces overhead. Should I wish to create further options for the timelapse part of the app I can just slot them into the currently inactive motiondetector variables.
 
-The camera thread needs to know whether
+The camera thread needs to know whether it will do
 
 
 
