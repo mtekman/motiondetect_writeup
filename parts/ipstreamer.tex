@@ -23,6 +23,8 @@
 \usepackage{float}  %These two ensure that table position follows text by specifcing {table}[H]
 \restylefloat{table}
 
+\usepackage{qtree}
+
 %CODE LISTINGS
 \usepackage{color}
 \usepackage{listings}
@@ -122,27 +124,31 @@ The app worked well, but it was my first attempt at writing in C++ and I had com
 
 It was a useful app however and so I believed it would be useful to bring it up to my current standard after learning how to properly program 2 years later.
 
-\subsection{Rewriting}{
+\subsection{Rewriting}
 
 An application that can perform all the functions mentioned above should not have been written in a single class, and yet it was. Worst of all it performed all of it's operations by directly calling shell commands as described by the example gstreamer script on page~\pageref{gstreamer}. On top of that, all the UI elements appeared within one class, since I had not known then how to switch between UIs.
 
 A rewrite was neccesary and the first job was to seperate the application into seperate components. I split the UI into 8 different components:
 \begin{enumerate}
-\item [ChooseOp] A mainwindow class that would enable the user to choose which operation the user would like to do (i.e. Ip stream, watchdog, timelapse). The idea was to incorporate the motion detector and timelapse into Phonestreamer, but they became apps of their own and so the idea was dropped.
-\item [RemoteOps] A mainwindow class for quickly connecting to a presaved connection using presaved settings, or default ones.
-	\begin{enumerate}
-	\item [About] A popup window which explained the application and its usage, as well as for donating
-	\item [CameraView] A mainwindow class with would act as a viewfinder for the camera so that the user could see what they were streaming
-\item [ConnectionSettings] A mainwindow class for specifying streaming options such as what format to stream to (VLC, HTTP, Webcam, etc), which camera to use,  and what size.
-\item [ConnectionWind] A popup window which specifies the address and port to stream to.
+\item [\bf ChooseOp] - A mainwindow class that would enable the user to choose which operation the user would like to do (i.e. Ip stream, watchdog, timelapse). The idea was to incorporate the motion detector and timelapse into Phonestreamer, but they became apps of their own and so the idea was dropped.
+\item [\bf About] - A popup window which explained the application and its usage, as well as for donating
+\item [\bf CameraView] - A mainwindow class with would act as a viewfinder for the camera so that the user could see what they were streaming.
+\item [\bf RemoteOps] - A mainwindow class for quickly connecting to a presaved connection using presaved settings, or default ones.
+\item [\bf ConnectionWind] - A popup window which specifies the address and port to stream to.
+\item [\bf ScanWind] - A list popup window for listing active addresses on the network currently and updating ConnectionWind accordingly when an address is selected.
+\item [\bf ConnectionSettings] - A mainwindow class for specifying streaming options such as what format to stream to (VLC, HTTP, Webcam, etc), which camera to use,  and what size.
+\item [\bf WindowSCP] - A popup window for generating and sending configuration files to the remote system in order to recieve an incoming stream
+\end{enumerate}
 
-\item [ScanWind] A list popup window for scanning active address on the network and 
+\begin{figure}
+\bf
+\Tree [.ChooseOp [CameraView  [ [ ScanWind ].ConnectionWind [ WindowsSCP ].ConnectionSettings ].RemoteOps ] About ]
+\caption{Tree diagram showing transitions from one window to the next}
+\end{figure}
 
-created a class for 
+This design 
 
 
-
-Seperating classes, why a rewrite is neccesary}
 \subsubsection{arp-scan}
 \subsubsection{MySQL}
 \subsubsection{Webkit}
