@@ -150,11 +150,68 @@ This design  made the app all the more readable and much more maintainable for f
 
 \subsection{New features}
 
-\subsubsection{arp-scan}
-
-
-
 Other than splitting the app into seperate classes, I also made a number of upgrades:
+
+\subsubsection{Automatic Connection Finder}
+Whenever I wanted to initiate a connection between my phone and my computer, I would always have to open a shell type 'ifconfig wlan0' to find the PC's ip address. This was too much work for a relatively simple connection and so I wanted to find the ip address of a machine on the same network as the phone, without the user having to manually go check it themselves.\\
+
+{\bf Ping}\\
+Ping is a very simple and fundamental tool for checking the response times between two different machines. A typical ping syntax would be:\\
+`ping [address]` which would print lines detailing how long it took to send a packet for each packet that it sent.
+One way to find all active connections on a network would then be:
+\vspace{-15pt}
+\begin{lstlisting}[title=\bf Code for pinging all addresses on a network]
+#Grab all but end part of address
+address=$(ifconfig usb0 | grep "inet addr" | awk '{split($2,a,":");split(a[2],b,".");print b[1]"."b[2]"."b[3]}')
+echo $address  # (e.g. 192.168.254) //last part split off
+all=
+
+for ii in $(seq 0 100); do
+       add=$address.$ii                             # e.g 192.168.254.0
+       result=$(ping $add -i 0.2 -c 1)     #ping for 0.2 seconds, 1 package only
+       result=$($result | grep Unreachable)     #Look for errors
+       len=${#result}                                  #count length of result
+       if [[ "$len" -ne 0]]; then                   
+           all=$all\n$add                              #if no errors, append to list
+       fi
+done
+
+echo $all               #print list
+
+\end{lstlisting}
+The shell code I wrote above works, and will find all the active connections on a network -- eventually. It is very methodical, and will ping all connections from (for example) 192.168.254.1 to 192.168.254.100, assuming there are even 100 assigned addresses on the network. However the user will die of boredom before a list can be populated and so I had to search for another way.\\
+
+{\bf Arp-Scan}\\
+Arp-Scan is a tool that "sends ARP packets to hosts on the local network and displays any responses that are received" \footnote{Arp-Scan man page - http://linux.die.net/man/1/arp-scan}. It is scores faster than pinging methodically, and usually returns a list within 5 seconds of being called (depending on how large the network is. For WAN's this may take up to 10 minutes).
+A Maemo port of arp-scan exists \footnote{Arp-Scan for Maemo, Colin Stephane - http://talk.maemo.org/showthread.php?t=73467} and so I could simply add it to my project as a dependency and harness it from the shell.
+
+Due to reasonable delay between scanning the network and displaying the results, I created a small Thread class for it so that the UI would remain active while it scanned, and also so that a loading spinner would spin so as to ensure the user that something was happening in the background:
+\vspace{-15pt}
+\begin{lstlisting}[title=\bf Snippet from MyThread.cpp for Scanning network and Retrieving data]
+void MyThread::run() {     data = getNetworkInfo(); }
+QString MyThread::getNetworkInfo()
+{
+    QStringList args;
+    args << "-c" << QString("echo %2arp-scan --interface=wlan0 --localnet | egrep '[[:digit:]]{1,3}%1.[[:digit:]]{1,3}%1.[[:digit:]]{1,3}%1.'%2 | root").arg(QChar(0x5c),QChar(0x22));
+    QProcess *proc = new QProcess(this);
+    proc->start("/bin/sh", args);
+    proc->waitForFinished();
+    return proc->readAll();
+}
+\end{lstlisting}
+\vspace{-20pt}
+\begin{lstlisting}[title=\bf Snippet from ScanWind.cpp which calls MyThread]
+    //Spinning Loader Gif
+    QMovie *wer = new QMovie(":/myImage/images/loader.gif");
+    ui->label_scanwind_loader->setMovie(wer)->start();
+    //Thread performs search and populates list on completion
+    scanthread = new MyThread;  scanthread->start();
+    QObject::connect(scanthread, SIGNAL(finished()), this, SLOT(populateList()))
+\end{lstlisting}
+
+After the list is populated, the user then selects the address from a dropdown menu and then the window closes, updating the address textbox appropriately, ensuring that the user will never have to manually type in an address if they dont want to.
+
+
 \subsubsection{MySQL}
 Previously versions of PhoneStreamer would remember the last set settings and then simply reload them when the app started up upon next use (see page~\pageref{QSettings} for a detailed summary of how to persist data in Qt). This was useful when the user wanted to connect to the same machine twice, using the same settings without having to retype the address,port, video type and other parameters all over again. However it was limited to having a single-level history, so that if a user connected to machine A and then connected to machine B, only machine B would be remembered and machine A would be overwritten, meaning that the user would have to retype everything for machine A (which in turn would overwrite the details for machine B).
 
@@ -199,15 +256,65 @@ Javascript would then read the details of the marker and display it HTML title, 
 \tab WHERE `Names`.`nameID` = `Connections`.`nameID`\\
 \tab AND `Connections`.`details` = [Details selected from map]"\\
 
+This may seem a little farfetched, but towards the beginning I already had a working prototype, the PHP code of which is shown on page~\pageref{gmaps} of the appendix.
 
+The PHP code would retrieve from a database, and plot the stored coordinates onto the map, while displaying the details in a HTML table to the right of the map. At the time, I had not got the MySQL component part of the application working, and so I was grabbing IP addresses from an SMF messaging board, by embedding a small SWF flash object in the signature of posts:
 
+\begin{lstlisting}[title=\bf Snippet from counter.fla]
+var rex:RegExp = /[\s\r\n]*/gim; // Regex STRIP WHITESPACE
 
+function onDataLoad(evt:Event)\{
+	myLoader.removeEventListener(Event.COMPLETE, onDataLoad);
+	//Get IP Address of connecting browser
+	var ipAddress:String = evt.target.data.cant.split('\n')[0];
+	ipAddress = ipAddress.replace(rex,'');
+	//Create Url for PHP GET method
+	var urlSend:String = "http://tetricity.net78.net/stats/insert.php?topical="+ipAddress+"\&submit=Submit";
+	//Submit to DB
+	var textReq:URLRequest = new URLRequest(urlSend);
+	textLoader.load(textReq);
+	textLoader.addEventListener(Event.COMPLETE, textLoadComplete);
+\}
+\end{lstlisting}
+This object would grab the IP address of any user visiting any page that my signature appeared on and insert into a database along with the global coordinates of the IPaddress which was found by querying http://whatismyipaddress.com/ip/[insert\_ip\_address]:
 
+\begin{lstlisting}[title=\bf Snippet from insert.php]
+//////Part 2 - Insert new IPAddress and User
+\$ip = \$\_GET[topical];
+\$url = 'http://whatismyipaddress.com/ip/' . \$ip;
+\$content = file\_get\_contents(\$url);
 
-Unethical 
+//Regex: Country, State, City
+preg\_match('/\>Country.*img/', \$content, \$match); 
+\$country = split(':',\$match[0]);
+..
+..
+
+\$latlng = \$latlng[0];
+\$country = strip\_tags(trim(\$country[1]));
+\$state = strip\_tags(\$state[1]);
+\$city = strip\_tags(\$city[1]);
+
+///Insert values into DB:
+..
+..
+if(strlen(\$country)>2)\{
+     \$squire="REPLACE INTO  `flash_users` (`ID` ,`Address` ,`Country` ,`State` ,`City`, `LatLng`) VALUES (NULL ,  '\$ip' , '\$country' , '\$state' ,  '\$city', '\$latlng')";
+     //Inserts
+     if(!\$res=mysql\_query(\$squire,\$con)) die('<h1>Details not inserted.</h1>');
+\}
+\end{lstlisting}
+
+Resulting in a page that looked like this:
+%WEBPAGE IMAGE OF MAPS AND TABLE
+
+However, the accuracy of coordinates was not very good (often a 20 mile radius around an IP address was necessary) and people connecting from central London all seemed to connect from one central hub, which overlapped markers and made it hard to pick out different connections.
+
+With much reluctance, I had to drop this web-side component too.
 
 \subsection{Optimisations}
 deletion of objects
+\subsection{Thougts for the future}
 \end{document}
 
 QSettings in GUI section
