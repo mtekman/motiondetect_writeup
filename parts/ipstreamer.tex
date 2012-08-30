@@ -100,7 +100,7 @@ Smartphones are the ideal surveillance device, since they are portable, lightwei
 
 \section{PhoneStreamer}
 
-Phonestreamer was the name of an app I made for Maemo in 2010\footnote{http://talk.maemo.org/showthread.php?t=70877}. It was essentially a front-end for a few gstreamer-scripts, with a wide variety of features namely:
+Phonestreamer was the name of an app I made for Maemo in 2010\footnote{PhoneStreamer - http://talk.maemo.org/showthread.php?t=70877}. It was essentially a front-end for a few gstreamer-scripts, with a wide variety of features namely:
 \begin{enumerate}
 \item Streams
 	\begin{enumerate}
@@ -146,12 +146,68 @@ A rewrite was neccesary and the first job was to seperate the application into s
 \caption{Tree diagram showing transitions from one window to the next}
 \end{figure}
 
-This design 
+This design  made the app all the more readable and much more maintainable for future development, as well as making it much easier for the user to quickly connect.
 
+\subsection{New features}
 
 \subsubsection{arp-scan}
-\subsubsection{MySQL}
-\subsubsection{Webkit}
-\subsection{Optimisations}
 
+
+
+Other than splitting the app into seperate classes, I also made a number of upgrades:
+\subsubsection{MySQL}
+Previously versions of PhoneStreamer would remember the last set settings and then simply reload them when the app started up upon next use (see page~\pageref{QSettings} for a detailed summary of how to persist data in Qt). This was useful when the user wanted to connect to the same machine twice, using the same settings without having to retype the address,port, video type and other parameters all over again. However it was limited to having a single-level history, so that if a user connected to machine A and then connected to machine B, only machine B would be remembered and machine A would be overwritten, meaning that the user would have to retype everything for machine A (which in turn would overwrite the details for machine B).
+
+A user on the official announcement page of the application requested a feature where the application would store different profiles for work and home\footnote{Angry Yoda Master (AMY) - http://talk.maemo.org/showthread.php?p=1054381\&highlight=profiles\#post1054381}.
+To overcome this I decided to implement a MySQL database, so that the user could switch between different configurations easily. I have used MySQL before: once for Android application, and many times for web development so I was well familiar with the declarative syntax and porting over between projects was relatively simple.
+
+In order to enable SQL functionality, a 'QT +=sql' must be added to .pro file of the application in order for qmake to compile correctly.
+
+The database was relatively small and simple and didn't require much reduction (to third normal form) to optimize it. \Cref{tab:profiledb} depicts the structure of the table reduced to it's third normal form so as to avoid duplicates and functional dependencies, but mostly to minimise the size of the database.
+\begin{table}[H]
+\centering
+\begin{tabular}{| r | l | }
+\hline
+Table Name	&Fields\\\hline
+Names:		&nameID *, Name+\\
+Connections: 	&conID*, nameID~, details\\\hline
+\end{tabular}
+\caption{Database Structure for Profiles. * = key field, += unique field, and ~= foreign key. In Names, the Name field is unique purely to prevent the user from having two profiles called 'Work' and 'Work', because it would hard to know which 'Work' profile held the relevant settings. The 'nameID' field in Connections allows for duplicates, since different users can have multiple connection settings.}
+\label{tab:profiledb}
+\end{table}
+
+In the RemoteOps window, the user would click on the Profiles button which would launch a dropdown menu with two buttons at the bottom (similar to ScanWind popup). The menu would list all the current 'Names' (with a default name of "Home") by calling the MySQL command:\\
+\tab"SELECT `Name` FROM `Names`"\\
+and then splitting the results into an array of Names that will be placed as Items in the dropdown menu. Upon selecting a name the dropdown list would then update itself with all the connections for that particular name via the MySQL command:\\
+\tab"SELECT `details` FROM `Connections` , `Names` WHERE `nameID` = `Names`.`nameID` AND `Names`.`Name` =  [the name picked by the user]"
+
+The user would then select the relevant connection and these would update the ConnectionSettings UI and ConnectionWind UI, and then return the user back to the RemoteOps window where they could then quickly connect without having to manually enter in anything.
+
+The two buttons at the bottom right of the dropdown menu would float above the list, and would be called 'New...' and 'Delete...' respectively. When the user clicked 'New...', they would be met with a window that would take in the name of their profile, and the details of the connection ( a tickbox would exist that would ask the user whether to save the current settings. If ticked, the input textbox for details would become inactive).  For 'Delete...' a list of current connections would be displayed and the user would select the one they wated to delete.
+
+The Profiles.cpp code on page~\pageref{profiles} in the appendix shows the easy C++ semantics of inserting and deleting connections sand users alike.
+
+Unfortunately this was as far as I got with this MySQL implementation, since I didn't have time to build the controller that would feed data from the UI to the backend Profiles.cpp class. It is currently put on a TODO list until after this writeup finishes.
+
+\subsubsection{Webkit}
+Like the Android SDK, Qt also has it's own webkit for displaying a browser a within an application and enabling Javascript and displaying HTML  functionality. This may not seem very useful for an application that just needs to stream video, but early on in development I wanted the user to easily select connections through an intuitive graphical interface.
+The idea I had was to use Google Maps Javascript API to plot the coordinates of each IP address (not LAN) on a map with a marker. The user would then browse the map to their work or to their home through the webbrowser within the app, and then select a connection by clicking on the marker.
+
+Javascript would then read the details of the marker and display it HTML title, which in turn would have it's contents read by the QWebView object it is contained within by simply calling "QWebView::title()". MySQL would then perform a search of the database matching those details:\\
+
+ SELECT 'Name', 'details' FROM `Names`,`Connections`\\
+\tab WHERE `Names`.`nameID` = `Connections`.`nameID`\\
+\tab AND `Connections`.`details` = [Details selected from map]"\\
+
+
+
+
+
+
+Unethical 
+
+\subsection{Optimisations}
+deletion of objects
 \end{document}
+
+QSettings in GUI section
