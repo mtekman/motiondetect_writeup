@@ -1,0 +1,151 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+
+%%% PACKAGES
+\usepackage{graphicx} % support the \includegraphics command and options
+\usepackage{wrapfig} % Figure wrapping
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+\usepackage{url}
+\usepackage{enumerate}
+\usepackage{cleveref}  %cites figures intelligently
+\usepackage{import} % document structuring
+\usepackage{float}  %These two ensure that table position follows text by specifcing {table}[H]
+\restylefloat{table}
+
+%CODE LISTINGS
+\usepackage{color}
+\usepackage{listings}
+
+\lstset{
+	tabsize=4,
+%	language=matlab,
+        	basicstyle=\scriptsize,
+%     	upquote=true,
+       	aboveskip={\baselineskip},
+        	columns=fixed,
+        	showstringspaces=false,
+        	extendedchars=true,
+        	breaklines=true,
+	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+	frame=single,
+        	showtabs=false,
+        	showspaces=false,
+        	showstringspaces=false,
+        	identifierstyle=\ttfamily,
+        	keywordstyle=\color[rgb]{0,0,1},
+        	commentstyle=\color[rgb]{0.133,0.545,0.133},
+        	stringstyle=\color[rgb]{0.627,0.126,0.941},
+	language=C++
+}
+
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+\usepackage{titlesec}
+%\titleformat{\subsection}[runin]{\mdseries\bf}{\thesubsection}{1em}{}
+%\titleformat{\subsubsection}[runin]{\mdseries\bf\underline\large}{\thesubsection}{1 em}{\vspace{-5 pt}}
+
+\usepackage{footbib}
+
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+\newcommand{\tab}{\hspace*{2em}}
+
+
+%%% END Article customizations
+
+%%% The "real" document content comes below...
+
+\title{\Huge Motion Detection and\\Other Imaging Operations for\\Debian-Based Mobile Devices }
+\author{\small By Mehmet Tekman\\\small Department of Computer Science\\\small University College London}
+
+
+
+%Maybe a section for Camera terminology: Exposure, Aperture, FrameTime?
+
+\begin{document}
+
+\part{IP Camera}
+
+An IP Camera is a video device that can send or recieve data through LAN or the internet. The camera is usually positioned in some remote location, and accessed by the user from another location usually for surveillance applications.  Normally CCTV and other security monitoring software is employed for these types of tasks, but these technologies are restricted by the fact that they are merely hardware video devices performing the very specific task of streaming video from one place to another.
+
+On the otherhand, smartphones are far more flexible, mainly because they offer multiple functionalities that CCTV doesn't. They are wireless devices with camera's and microphone's embedded, as well as speakers for producing warning noises if the user should so wish.
+
+Smartphones are the ideal surveillance device, since they are portable, lightweight, and offer multiple uses not restricted to just video.
+
+\section{PhoneStreamer}
+
+Phonestreamer was the name of an app I made for Maemo in 2010\footnote{http://talk.maemo.org/showthread.php?t=70877}. It was essentially a front-end for a few gstreamer-scripts, with a wide variety of features namely:
+\begin{enumerate}
+\item Streams
+	\begin{enumerate}
+	\item Video and Audio
+	\item Front and Back camera, with supported image sizes of 320x240, and 640x480.
+	\item Uses protocols: HTTP, RTP, and UDP
+	\end{enumerate}
+\item Uses many diferent encoders and decoders (jpeg, smoke, h264, vp8)  and has quality control to restrict bandwidth
+\item Outputs to
+	\begin{enumerate}
+	\item Web browser,
+	\item VLC media player (creates a configuration file for recieving streams)
+	\item X Window (linux only)
+	\item Local file on the phone
+	\item File on a remote system (linux only)
+	\item Webcam (linux only). It mounts itself as the default video device on the remote system (/dev/video0) which can then be used as a portable webcam device in applications such as skype and google chat.
+	\end{enumerate}
+\end{enumerate}
+
+The app worked well, but it was my first attempt at writing in C++ and I had come from a scripting background of ActionScript 2, meaning a lot of cleaner object-oriented approaches were not known to me as well as not knowing when to delete an object. The entire app was written in one class, which though may be more efficient made it very hard to filter through 800 lines of code. It was unreadable.
+
+It was a useful app however and so I believed it would be useful to bring it up to my current standard after learning how to properly program 2 years later.
+
+\subsection{Rewriting}{
+
+An application that can perform all the functions mentioned above should not have been written in a single class, and yet it was. Worst of all it performed all of it's operations by directly calling shell commands as described by the example gstreamer script on page~\pageref{gstreamer}. On top of that, all the UI elements appeared within one class, since I had not known then how to switch between UIs.
+
+A rewrite was neccesary and the first job was to seperate the application into seperate components. I split the UI into 8 different components:
+\begin{enumerate}
+\item [ChooseOp] A mainwindow class that would enable the user to choose which operation the user would like to do (i.e. Ip stream, watchdog, timelapse). The idea was to incorporate the motion detector and timelapse into Phonestreamer, but they became apps of their own and so the idea was dropped.
+\item [RemoteOps] A mainwindow class for quickly connecting to a presaved connection using presaved settings, or default ones.
+	\begin{enumerate}
+	\item [About] A popup window which explained the application and its usage, as well as for donating
+	\item [CameraView] A mainwindow class with would act as a viewfinder for the camera so that the user could see what they were streaming
+\item [ConnectionSettings] A mainwindow class for specifying streaming options such as what format to stream to (VLC, HTTP, Webcam, etc), which camera to use,  and what size.
+\item [ConnectionWind] A popup window which specifies the address and port to stream to.
+
+\item [ScanWind] A list popup window for scanning active address on the network and 
+
+created a class for 
+
+
+
+Seperating classes, why a rewrite is neccesary}
+\subsubsection{arp-scan}
+\subsubsection{MySQL}
+\subsubsection{Webkit}
+\subsection{Optimisations}
+
+\end{document}

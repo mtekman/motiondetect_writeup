@@ -95,12 +95,14 @@ Modern smartphones of today do often come equipped with camera's whose images ca
 
 {\bf GStreamer} is an open source multimedia framework that is already native to Fremantle since it is the library that the default mediaplayer uses and so would reduce the dependencies of my application. GStreamer makes use of pipelining, byt connecting a number of elements in an ordered fashion so that the output (source) of one element is fed into the input(sink) of another element and so on until it reaches the final element which is usually a file or a network stream.
 \\\\A previous app of mine was Gstreamer based and a typical command from it would be:
+\label{gstreamer}
 \begin{verbatim}
 	      gst-launch v4l2src device=/dev/video0 ! \
 	      videoscale ! video/x-raw-yuv, width=320, height=240 ! \
 	      ffmpegcolorspace !  jpegenc 80 ! \
 	      tcpserversink host=192.168.1.101 port=9000
 \end{verbatim}
+
 This pipes the video-for-linux(version2) camera source into a video scaling element, into a raw video stream of defined height and width, into an element that convert the pixel color depths to type ffmpeg color sizes, into an element that encodes the raw stream into mjpeg format with a quality of 80\%, which then pipes it into a tcp server element which broadcasts to the specified host and port.
 \\On the recieving side, a gstreamer pipe would need to reverse the order of the elements (i.e. recieve from tcpserver, feed it into a jpeg decoder, and then specify an output window or file sink.
 \\Gstreamer is very well developed, and has a Good, Bad, and Ugly heirarchy of stable to unstable plugins that can be used to enable a wide array of different multimedia functionalities and formats.
