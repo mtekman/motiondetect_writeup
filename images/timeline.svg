@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="timeline.svg">
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;">
+      <path
+         id="path4262"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <inkscape:path-effect
+       effect="skeletal"
+       id="path-effect5293"
+       is_visible="true"
+       pattern="M 0,0 0,10 10,5 z"
+       copytype="single_stretched"
+       prop_scale="1"
+       scale_y_rel="false"
+       spacing="0"
+       normal_offset="0"
+       tang_offset="0"
+       prop_units="false"
+       vertical_pattern="false"
+       fuse_tolerance="0" />
+    <inkscape:path-effect
+       effect="skeletal"
+       id="path-effect5283"
+       is_visible="true"
+       pattern="m 0,-160 0,10 10,-5 z"
+       copytype="single_stretched"
+       prop_scale="1"
+       scale_y_rel="false"
+       spacing="0"
+       normal_offset="0"
+       tang_offset="0"
+       prop_units="false"
+       vertical_pattern="false"
+       fuse_tolerance="0" />
+    <inkscape:path-effect
+       effect="skeletal"
+       id="path-effect5277"
+       is_visible="true"
+       pattern="M 0,5 C 0,2.24 2.24,0 5,0 7.76,0 10,2.24 10,5 10,7.76 7.76,10 5,10 2.24,10 0,7.76 0,5 z"
+       copytype="single_stretched"
+       prop_scale="1"
+       scale_y_rel="false"
+       spacing="0"
+       normal_offset="0"
+       tang_offset="0"
+       prop_units="false"
+       vertical_pattern="false"
+       fuse_tolerance="0" />
+    <inkscape:path-effect
+       effect="skeletal"
+       id="path-effect5273"
+       is_visible="true"
+       pattern="M 0,5 C 0,2.24 2.24,0 5,0 7.76,0 10,2.24 10,5 10,7.76 7.76,10 5,10 2.24,10 0,7.76 0,5 z"
+       copytype="single_stretched"
+       prop_scale="1"
+       scale_y_rel="false"
+       spacing="0"
+       normal_offset="0"
+       tang_offset="0"
+       prop_units="false"
+       vertical_pattern="false"
+       fuse_tolerance="0" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect5271"
+       is_visible="true" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect5265"
+       is_visible="true" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect5261"
+       is_visible="true" />
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Mend"
+       style="overflow:visible;">
+      <path
+         id="path4268"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
+         transform="scale(0.4) rotate(180) translate(10,0)" />
+    </marker>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="87.142857 : 420.4668 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective3099" />
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-4"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4262-6"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.94331929"
+     inkscape:cx="303.32156"
+     inkscape:cy="575.0411"
+     inkscape:document-units="px"
+     inkscape:current-layer="g5695"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1571"
+     inkscape:window-height="816"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="0">
+    <sodipodi:guide
+       orientation="0,1"
+       position="810,802.85714"
+       id="guide3028" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="240,975.71429"
+       id="guide3032" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="480,915.71429"
+       id="guide3034" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="24.285714,832.85714"
+       id="guide3081" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#ff8080;fill-rule:evenodd;stroke:#000000;stroke-width:0.73633385px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985"
+       width="700"
+       height="24.785715"
+       x="24.285715"
+       y="256.64789"
+       inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:19.82550049px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="463.01477"
+       y="249.50504"
+       id="text2987"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         x="463.01477"
+         y="249.50504"
+         id="tspan2991">Aug</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text2995"
+       y="249.50504"
+       x="228.44334"
+       style="font-size:19.82550049px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         id="tspan2997"
+         y="249.50504"
+         x="228.44334"
+         sodipodi:role="line">Jul</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text2995-9"
+       y="247.50504"
+       x="702.30774"
+       style="font-size:19.82550049px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         y="247.50504"
+         x="702.30774"
+         sodipodi:role="line"
+         id="tspan3020">Sep</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:19.82550049px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="16.57143"
+       y="249.50504"
+       id="text3024"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         x="16.57143"
+         y="249.50504"
+         id="tspan3026">Jun</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:22.28863907px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-97.763992"
+       y="320.33429"
+       id="text3055"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         x="-97.763992"
+         y="320.33429"
+         id="tspan3063">IP Webcam</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:22.28863907px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-156.26172"
+       y="380.17667"
+       id="text3067"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3069"
+         x="-156.26172"
+         y="380.17667">Motion Detector</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:22.28863907px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-96.171951"
+       y="439.20166"
+       id="text3071"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3073"
+         x="-96.171951"
+         y="439.20166">TimeLapse</tspan><tspan
+         sodipodi:role="line"
+         x="-96.171951"
+         y="467.06247"
+         id="tspan3075" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:22.28863907px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-71.087303"
+       y="499.00284"
+       id="text3077"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3079"
+         x="-71.087303"
+         y="499.00284">Write Up</tspan></text>
+    <rect
+       style="fill:#afe9dd;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect5693"
+       width="699.93597"
+       height="40.459312"
+       x="24.285713"
+       y="291.77307"
+       ry="20.229656"
+       inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       ry="20.229656"
+       y="351.77307"
+       x="24.285713"
+       height="40.459312"
+       width="699.93597"
+       id="rect5721"
+       style="fill:#afe9dd;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0"
+       inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#afe9dd;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect5723"
+       width="699.93597"
+       height="40.459312"
+       x="24.285713"
+       y="411.77307"
+       ry="20.229656"
+       inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       ry="20.229656"
+       y="471.77307"
+       x="24.285713"
+       height="40.459312"
+       width="699.93597"
+       id="rect5725"
+       style="fill:#afe9dd;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0"
+       inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer">
+    <g
+       id="g5695">
+      <rect
+         ry="17.142857"
+         y="293.65085"
+         x="102.85714"
+         height="37.142857"
+         width="245.23473"
+         id="rect3115"
+         style="fill:#2ad4ff"
+         inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
+      <rect
+         style="fill:#2ad4ff"
+         id="rect3117"
+         width="185.87415"
+         height="37.142857"
+         x="345.40469"
+         y="353.65085"
+         ry="17.142857"
+         inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
+      <rect
+         ry="17.142857"
+         y="413.65085"
+         x="528.28571"
+         height="37.142857"
+         width="86.023865"
+         id="rect3119"
+         style="fill:#2ad4ff"
+         inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
+      <rect
+         style="fill:#2ad4ff"
+         id="rect3121"
+         width="115.6546"
+         height="37.142857"
+         x="607.62421"
+         y="473.65085"
+         ry="17.142857"
+         inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path3125"
+         d="m 24.95882,312.50504 319.68498,0"
+         style="fill:none;stroke:#000000;stroke-width:1.94672024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.94672037, 3.89344073;stroke-dashoffset:19.46720369;marker-start:none;marker-mid:none;marker-end:url(#Arrow1Mend)"
+         inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:2.45094919;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.45094941, 4.9018988;stroke-dashoffset:24.50949407;marker-start:none;marker-mid:none;marker-end:url(#Arrow1Mend)"
+         d="M 24.285714,372.50504 526.7579,372.72758"
+         id="path4699"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90"
+         sodipodi:nodetypes="cc" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path4701"
+         d="M 24.154141,431.79075 610.50498,431.34568"
+         style="fill:none;stroke:#000000;stroke-width:2.31104136;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.31104146, 4.6220829;stroke-dashoffset:23.11041453;marker-start:none;marker-mid:none;marker-end:url(#Arrow1Mend)"
+         inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:2.33438516;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.33438527, 4.66877053;stroke-dashoffset:23.34385271;marker-start:none;marker-mid:none;marker-end:url(#Arrow1Mend)"
+         d="m 23.992534,490.36218 694.504466,0"
+         id="path4703"
+         inkscape:connector-curvature="0"
+         inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
+      <path
+         sodipodi:nodetypes="cccc"
+         inkscape:connector-curvature="0"
+         id="path5297"
+         d="m 347.49026,312.62686 43.05325,-0.3338 -103.51311,60.55863 56.98556,-0.26697"
+         style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0;marker-start:none;marker-end:url(#Arrow1Lend)"
+         inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
+      <path
+         sodipodi:nodetypes="cccc"
+         inkscape:connector-curvature="0"
+         id="path5297-3"
+         d="m 531.09187,372.70713 46.65359,-0.0914 -111.27013,59.46967 60.29186,0.0152"
+         style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0;marker-start:none;marker-end:url(#Arrow1Lend)"
+         inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0;marker-start:none;marker-end:url(#Arrow1Lend)"
+         d="m 614.24971,431.33114 38.1456,-0.0914 -107.18389,59.14772 60.80493,0.42854"
+         id="path5691"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccc"
+         inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
+      <text
+         xml:space="preserve"
+         style="font-size:36.13132477px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         x="101.004"
+         y="259.24905"
+         id="text3035"
+         sodipodi:linespacing="125%"
+         transform="scale(1.1880718,0.84169997)"
+         inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90"><tspan
+           sodipodi:role="line"
+           id="tspan3037"
+           x="101.004"
+           y="259.24905"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">Development Timeline</tspan></text>
+    </g>
+  </g>
+</svg>

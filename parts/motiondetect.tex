@@ -85,7 +85,7 @@ Modern smartphones of today do often come equipped with camera's whose images ca
 \section{Competition}
 \paragraph{Due to the small community of Maemo users, there are not many apps of this nature on the platform and thus not much competition at all.}
 
-\section{Software Battles}
+\section{Available Software Evaluation}
 \paragraph{To start a basic motion detector, the very least that I would need to do is take one frame and subtract it from another to see the difference. To do this I would need to store every pixel value in an array for each image and then perform a sweep over both arrays to compare their pixel values. There must be imaging libraries that I could use that would greatly facilitate such imaging techniques. But first I would need to be able to take a single photo.....}
 
 \subsection{QtMobility vs Gstreamer vs FCam}
@@ -243,7 +243,7 @@ so I was not able to use imagemagick on the device. This is perhaps a good thing
 \paragraph{ {\bf FFmpeg} was my next and most immediate option - I have used it countless times before to convert movie files and I have found it's libavcodec library a powerful and useful tool in the past. FFMpeg is one of the most popular free multimedia frameworks around, supporting every single codec and format under the sun. It has a fast release time too and when a new format is released it is not usually a long wait before ffmpeg has a supporting library for it. FFmpeg is primarily used to stream, convert, decode, mux, demux and transcode video files into different formats, but is not used for computer vision.\\
 For converting a series of images to a movie file the documentation states that one has to call:\\
 'ffmpeg -i name\_of\_files\_\%05d.jpg -y movie.mpg -r fps'\\
-It is key to note here that the y flag overwrites any output file that already exists, and that the frames-per-second flag '-r' must be placed at the end. The \%05d just notifies FFmpeg that the format for the image files are padded by zeros by up to 5 digits.\\
+It is key to note here that the y flag overwrites any output file that already exists, and that the frames-per-second flag '-r' must be placed at the end. FFMpeg requires that the filename for the images are named incrementally, and so the \%05d just notifies FFmpeg that the format for the image files are padded by zeros by up to 5 digits.\\
 Despite using different arrangements and different flags, this only partially worked, as the images would be compiled into a movie, but the framerate flag was temperamental and sometimes ignored.\\
 Additionally ffmpeg does not come installed as default by the device, since gstreamer is main multimedia framework used by the mediaplayer and this would also be a needlessly large dependency to have for my project
 }
@@ -253,8 +253,9 @@ VLC has only been very recenly ported to Maemo and is accessed by adding user Qo
 To convert a series of images to a movie file one simply has to call:\\
 'mencoder "mf://path/to/images*.jpg" -mf fps=\(\langle\)fps\(\rangle\) -o movie.mpg -ovc lavc -lavcopts vcodec=mjpeg'\\
 which specifies the that libavcodec is to be used, the framerate and also that the output videocodex should be mpeg format.
-\\Mencoder is also not pre-installed with the device, but many Maemo users do tend to install it first chance they get due to the default Media Player's poor support for certain MPG formats, this is by far the most convenient of the four video processing libraries to use and best of all it actaully works.
-}
+\\Mencoder is also not pre-installed with the device, but many Maemo users do tend to install it first chance they get due to the default Media Player's poor support for certain MPG formats. Mencoder is by far the most convenient of the four video processing libraries to use, not only because it doesnt require filenames for the images to be named incrementally, but also because the framerate is applied correctly and produces the correctly comiled movie. The freedom in the naming of the image filenames also has an additional benefit such that ifthe motiondetector does not record an image to file correctly and the filenames get mixed up, mencoder will still compile the images into a movie without throwing an error, whereas FFMpeg would perform a segmentaion fault. Mencoder was the clear winner, and was adopted into the application and added to the dependencies.}
+
+
 \section{Image Processing Techniques}
 \paragraph{A motion detector works on the basic priniciple that there there exists some drastic difference between two images where motion has occred and motion has not occured. One way to see this represenation is to subtract one frame from another and look for the leftover pixels. Pixels where the image hasn't changed will have the same pixel value and will thus cancel each other out, whereas images where there is a difference between pixels at the same location will have values greater than zero. In the case of unsigned chars, any negative pixels will naturally wrap around and becomes high pixel values (white).}
 \subsection{Subtraction}
