@@ -141,15 +141,16 @@ Supported UYVY image sizes are: (2592x1968, 1280x960, 800x600, 640x480, 320x240,
 \subsection{OpenCV vs CImg}
 \paragraph{Now that I had my camera driver configured, I needed to choose an appropriate image library to perform the processing. Technically I could have written my own library class to perform the simple image subtraction and addition functions that I wanted, but there may have been more features that I might want to use later in development and so it was useful to see what was available. OpenCV and CImg are both common imaging libraries for C, C++, and Python, for use with real-time image proccessing.  Both are used widely in computer vision applications, and both contain approximately the same core capabilities, though OpenCV has more extraneous features.}
 \subsubsection{OpenCV}
-\paragraph{The Open Source Computer Vision Library (or OpenCV) was developed by Intel for use with computer vision applications, but since was dropped and is now maintained by Willow Garage and Itseez.
-\\OpenCV comes with many useful functions for motion detection: image subtraction, averaging, normalising, and even its own method for tracking movement. The older C-based version of OpenCV uses an image format called IPLImage which needs to contain all the image data in order to perform any processing on it, but since version 2.1 the IPLImage format was replaced by cv::Mat which was more C++ orientated and bears many of the extended structural similarities of a matrix struct. This enables it to hold as many different colour channels as it needs where previously the IPLImage format had only permitted four.
+The Open Source Computer Vision Library (or OpenCV) was developed by Intel for use with computer vision applications, but since was dropped and is now maintained by Willow Garage and Itseez.
+
+OpenCV comes with many useful functions for motion detection: image subtraction, averaging, normalising, and even its own method for tracking movement. The older C-based version of OpenCV uses an image format called IPLImage which needs to contain all the image data in order to perform any processing on it, but since version 2.1 the IPLImage format was replaced by cv::Mat which was more C++ orientated and bears many of the extended structural similarities of a matrix struct. This enables it to hold as many different colour channels as it needs where previously the IPLImage format had only permitted four.
 
 Motion can be detected through changes in colour and/or changes in intensity. A motion detector that harnesses changes in both colour and intensity will be more informative than one that measures changes in just intensity. But speed must be taken into account too, and an image with color has pixel values at least four times the size (32-bit) of that which measures just greyscale intensity (8-bit), meaning it will either require more reources or more time to determine whether motion has occured or not . I also reasoned that changes in an image which occur due to changes in colour is not significant enough to warrant motion, since brightness should decrease drastically too.
 
 For these reasons, I surmised that the IPLImage format with the limited number of color channels was enough to perform image processing on, and so cv::Mat was ignored.
 
-In order to perform imaging operations on the frames captured by FCam, I would need to find a way to convert from the FCam::Image to IPLImage. This proved diffucult.
-}
+In order to perform imaging operations on the frames captured by FCam, I would need to find a way to convert from the FCam::Image to IPLImage. This proved difficult.
+
 \paragraph{The FCam Image format is made up of:\\
 \tab FCam::Image::Image(\\
 \tab\tab int width,  int height,\\
@@ -173,13 +174,13 @@ For this reason OpenCV had to be abandoned and a new image processing library ha
 \paragraph{CImg was suggested by my project supervisor after we discussed the bugs I had been experiencing. CImg is relateivly bug free since it does not exit in any packaged form. In fact all the functions and image processing capabilities are contained within a single header file containing 45,000 lines of code and coming up to 2.54MB in size. \\Despite the substantial overhead of including this file in development process, Qt only had to parse the functions within it once and it was set to go.
 \\Another bonus is that it removes a dependency from the project, and makes it all that much more portable. One thing I had to do first was to convert from FCam to CImg.
 \\The CImg constructor is formed of:\\
-CImg(const unsigned int width,\\
-\tab const unsigned int height,\\
-\tab const unsigned int size\_z=1, //depth\\
-\tab const unsigned int size\_c=1 //spectrum\\
+\tab CImg(\\
+\tab\tab const unsigned int width, const unsigned int height,\\
+\tab\tab const unsigned int size\_z=1, //depth\\
+\tab\tab const unsigned int size\_c=1 //spectrum\\
 )\\
 To construct a CImg, all one has to do is call ‘CImg\(\langle\)T\(\rangle\) Name’; where T is the type or size of each pixel value, and name is the name of the image. So for an image that that has 256 colorspace, T = unsigned char = 8bit.
-In CIMG, the color channels are in RGB format. OpenCV's IPLImage only supports up to 4 color channels but CImg supports up to any number and this provided a source of initial confusion for me.
+\\In CIMG, the color channels are in RGB format. OpenCV's IPLImage only supports up to 4 color channels but CImg supports up to any number and this provided a source of initial confusion for me.
 http://sph2grid.googlecode.com/svn-history/r14/trunk/CImg/plugins/cimg\_ipl.h:\\
 Using the same format as the cornell code I attempted to make:}
 \begin{frame}[fragile]
@@ -228,7 +229,7 @@ That is, for a greyscale image from 0-255 at pixel i,j - I was sticking it into 
 \subsection{ImageMagick vs FFMpeg vs VLC vs Mencoder}
 \paragraph{Now that the image processing side of this was underway, I needed a program that could convert a series of images into a movie format so that when the user returns to their motion detector, they can watch all the highlights in the movie file over the course of a few seconds rather than having to flit through each individual image.
 }
-\paragraph{Imagemagick is an open-source image software library for processing images. It can perform much of the same functions and CImg and OpenCV, but it was not considered as a suitabe image processing library because the development package had not been released for Maemo and compatibility was a concern. There is, however, a imagemagick package for Maemo that performs the functions from commandline and so accessing its functions would not be a problem if I was resigned to the fact that I would be calling a system process from Qt. CImg has good compatibility with Imagemagick since it's convertToJPEG command actually calls the 'convert' module of Imagemagick.}
+\paragraph{{\bf Imagemagick} is an open-source image software library for processing images. It can perform much of the same functions and CImg and OpenCV, but it was not considered as a suitabe image processing library because the development package had not been released for Maemo and compatibility was a concern. There is, however, a imagemagick package for Maemo that performs the functions from commandline and so accessing its functions would not be a problem if I was resigned to the fact that I would be calling a system process from Qt. CImg has good compatibility with Imagemagick since it's convertToJPEG command actually calls the 'convert' module of Imagemagick.}
 \paragraph{
 According to the documentation, to convert a series of jpegs to a movie format, all one has to do is call:
 'convert -delay \(\langle\)frametime\(\rangle\) input\_jpegs\_*.jpg output\_movie.mpg'\\
@@ -239,16 +240,16 @@ But this failed with Maemo specific errors:\\}
 \end{frame}
 so I was not able to use imagemagick on the device. This is perhaps a good thing since the imagemagick suite is very large and would be a hefty dependency to add to my project
 
-\paragraph{FFmpeg was my next and most immediate option - I have used it countless times before to convert movie files and I have found it's libavcodec library a powerful and useful tool in the past. FFMpeg is one of the most popular free multimedia frameworks around, supporting every single codec and format under the sun. It has a fast release time too and when a new format is released it is not usually a long wait before ffmpeg has a supporting library for it. FFmpeg is primarily used to stream, convert, decode, mux, demux and transcode video files into different formats, but is not used for computer vision.\\
+\paragraph{ {\bf FFmpeg} was my next and most immediate option - I have used it countless times before to convert movie files and I have found it's libavcodec library a powerful and useful tool in the past. FFMpeg is one of the most popular free multimedia frameworks around, supporting every single codec and format under the sun. It has a fast release time too and when a new format is released it is not usually a long wait before ffmpeg has a supporting library for it. FFmpeg is primarily used to stream, convert, decode, mux, demux and transcode video files into different formats, but is not used for computer vision.\\
 For converting a series of images to a movie file the documentation states that one has to call:\\
 'ffmpeg -i name\_of\_files\_\%05d.jpg -y movie.mpg -r fps'\\
 It is key to note here that the y flag overwrites any output file that already exists, and that the frames-per-second flag '-r' must be placed at the end. The \%05d just notifies FFmpeg that the format for the image files are padded by zeros by up to 5 digits.\\
 Despite using different arrangements and different flags, this only partially worked, as the images would be compiled into a movie, but the framerate flag was temperamental and sometimes ignored.\\
 Additionally ffmpeg does not come installed as default by the device, since gstreamer is main multimedia framework used by the mediaplayer and this would also be a needlessly large dependency to have for my project
 }
-\paragraph{VLC is a comparitavely new open-source mediaplayer which can also perform transcoding, streaming, muxing and the same functions as FFMpeg. In fact alot of its codecs are actually taken from the ffmpeg project (e.g. libavcodec), but it also contains a lot of its own.\\
+\paragraph{ {\bf VLC} is a comparitavely new open-source mediaplayer which can also perform transcoding, streaming, muxing and the same functions as FFMpeg. In fact alot of its codecs are actually taken from the ffmpeg project (e.g. libavcodec), but it also contains a lot of its own.\\
 VLC has only been very recenly ported to Maemo and is accessed by adding user Qole's repository to the /etc/apt/sources.list. It is very incomplete, lacking a decent GUI, but it has a working backend. Unfortunately nowhere in the documentation does it mention being able to convert a series of jpegs to a movie file and I soon had to abondon VLC too.\\ This is probably for the best since VLC is not available in the main repositories and users would find it hard to access. This leaves...}
-\paragraph{Mencoder is yet another multimedia framework released under GPL, and comes as a module with mplayer, a very stable open-source media player that comes with all the codecs and formats that mencoder can use.\\
+\paragraph{ {\bf Mencoder} is yet another multimedia framework released under GPL, and comes as a module with mplayer, a very stable open-source media player that comes with all the codecs and formats that mencoder can use.\\
 To convert a series of images to a movie file one simply has to call:\\
 'mencoder "mf://path/to/images*.jpg" -mf fps=\(\langle\)fps\(\rangle\) -o movie.mpg -ovc lavc -lavcopts vcodec=mjpeg'\\
 which specifies the that libavcodec is to be used, the framerate and also that the output videocodex should be mpeg format.
