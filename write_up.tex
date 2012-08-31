@@ -81,35 +81,31 @@
 %%% The "real" document content comes below...
 
 \title{\Huge Motion Detection and\\Other Imaging Operations for\\Debian-Based Mobile Devices }
-\author{\small By Mehmet Tekman\\\small Supervisors: Robin Hirsch and Fabrizio Pece\\\small Department of Computer Science\\\small University College London}
+\date{30 August 2012}
+\author{{\bf By Mehmet Tekman}\\\small MSc Computer Science\\\small University College London\\\\
+\large Supervisors: Robin Hirsch and Fabrizio Pece}
+
 
 \begin{document}
 \maketitle 
 
-\part*{}{\tiny .\\\\\\\\\\\\\\\\\\\\\\\\}
-
+\part*{}{\tiny.\\\\\\\\\\\\\\\\}
 \begin{abstract}
- Morphological image processing techniques were adopted upon frames captured by the camera on the Nokia N900 smartphone to correctly detect motion for a wide range image sizes using the Qt Framework. A commandline interface was then developed to help facilitate time lapse operations in order to efficiently watch a target for a certain amount of time at specified intervals. The motion detection and time lapse components were merged into a single application dubbed ‘WatchDog’ and released successfully on public repositories. IP webcam operations were also developed but they will be implemented into WatchDog at a further date.
+Morphological image processing techniques were adopted upon frames captured by the camera on the Nokia N900 smartphone to correctly detect motion for a wide range image sizes using the FCam API and CImg processing library in C++ within the Qt Framework.\\\tab A commandline interface was then developed to help facilitate time lapse operations in order to efficiently watch a target within a set period of time at specified intervals. The motion detection and time lapse components were merged into a single application dubbed ‘WatchDog’ and released successfully on public repositories.\\\tab IP webcam operations were also developed but they will be implemented into WatchDog at a further date.
+\\\\\let\thefootnote\relax\footnote{This report is submitted as part requirement for the MSc Computer Science degree at UCL. It is substantially the result of my own work except where explicitly indicated in the text. The report may be freely copied and distributed provided the source is explicitly acknowledged.}
 \end{abstract}
-
 \pagebreak
+
 \tableofcontents
 %This is awesome! It automaticaly generates a TOC depending on the part,section,subsection structure declared below!
 \pagebreak
 
-\import{parts/}{background.tex}
-\import{parts/}{motiondetect.tex}
-\import{parts/}{timelapse.tex}
-\import{parts/}{ipstreamer.tex}
+%\import{parts/}{background.tex}
+%\import{parts/}{motiondetect.tex}
+%\import{parts/}{timelapse.tex}
+%\import{parts/}{ipstreamer.tex}
 
-\part{IP Streamer}
-\section{PhoneStreamer}{existing app}
-\subsection{Porting}{Seperating classes, why a rewrite is neccesary}
-\subsubsection{MySQL}
-\subsubsection{Webkit}
-\subsection{Optimisations}
-
-\part{User Interfaces}{dsfasdfasdfasdfasdfasdfasdfasdf}
+\part{User Interfaces}
 \section{Widgets}
 \subsection{CSS Stylesheets}
 \subsection{Labels and PixMaps}
@@ -121,7 +117,7 @@
 \subsection{Maemo5 Stacked Windows}
 
 \section{Event Handling}
-\subsubsection{Overriding events}
+\subsection{Overriding events}
 \section{Interface Diagrams}
 \subsection{Motion Detector}
 \subsection{TimeLapse}
@@ -137,9 +133,14 @@
 \subsection{Rebases, Merges}
 \subsection{Release schedule}{Changelog and aims}
 
+
 \part{Bibliography}
 
 \part{Appendix}
+\section{Manual}
+\subsection{System Manual}{How to compile}
+\subsection{User Manual}
+
 \section{API example usage}
 \subsection{GStreamer Pipelining in C++}
 \paragraph{ The following is just a small snippet from an example Camera class from the Maemo Documentation Wiki:\\http://wiki.maemo.org/Documentation/Maemo\_5\_Developer\_Guide/Using\_Multimedia\_Components/Camera\_API\_Usage
