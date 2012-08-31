@@ -815,26 +815,26 @@ Once I realised my mistake I simply made the motion detector call the autoExpose
 
 \subsubsection{Lens Check}
 One of the easiest errors to make when using the app is to forget to open the lens cap before starting it. By looking through the FCamera source code mentioned previously I found a reference to file in /sys/devices/ that echoed the current state of the lens position:
-\begin{lstlisting}[fragile]
-bool lensClosed() {
+\begin{lstlisting}
+bool lensClosed() \{
     FILE * ff = fopen("/sys/devices/platform/gpio-switch/cam_shutter/state", "r");
     char state = fgetc(ff);
     fclose(ff);
     return state == 'c'; //o = open, c = close
-}
+\}
 \end{lslsting}
 
 \subsubsection{Kernel Compatibility}
 Early on in the development of the app, I came across problems where the FCam driver would not initialize properly, and no warning messages were given. Upon reboot it sometimes worked, but it would tend to work the most when I used the default phone kernel PR-1.3.
 
-For this reason I enabled a kernel check at the start of the Camera thread which would issue out a warning whenever a kernel different from the PR-1.3 kernel was being used. This was a simple shell call to ‘uname -r’:
-\begin{lstlisting}[fragile]
+For this reason I enabled a kernel check at the start of the Camera thread which would issue out a warning whenever a kernel different from the PR-1.3 kernel was being used. This was a simple shell call to ‘uname’
+\begin{lstlisting}
 //kernel-powerv51 doesnt work. v50 is supposed to compatible.
-bool validKernel(){
-    QString command = "uname -r";
+bool validKernel()\{
+    QString command = “uname -r”;
     command = terminalAction(command, true);
     return command.contains("omap1") || !command.contains("51");
-}
+\}
 \end{lstlisting}
  However the root of the problem turned out to be that I was not initializing the camera properly when I started the thread, and so when I fixed this problem, the validKernel() function became redundant and I deleted it from the source.
 
