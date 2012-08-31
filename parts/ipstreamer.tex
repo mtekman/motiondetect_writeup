@@ -1,94 +1,85 @@
-% !TEX TS-program = pdflatex
-% !TEX encoding = UTF-8 Unicode
-\documentclass[11pt]{article} % use larger type; default would be 10pt
-\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
-
-%%% PAGE DIMENSIONS
-\usepackage{geometry} % to change the page dimensions
-\geometry{a4paper} % or letterpaper (US) or a5paper or....
-
-%%% PACKAGES
-\usepackage{graphicx} % support the \includegraphics command and options
-\usepackage{wrapfig} % Figure wrapping
-% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
-\usepackage{booktabs} % for much better looking tables
-\usepackage{array} % for better arrays (eg matrices) in maths
-\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
-\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
-\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
-\usepackage{url}
-\usepackage{enumerate}
-\usepackage{cleveref}  %cites figures intelligently
-\usepackage{import} % document structuring
-\usepackage{float}  %These two ensure that table position follows text by specifcing {table}[H]
-\restylefloat{table}
-
-\usepackage{qtree}
-
-%CODE LISTINGS
-\usepackage{color}
-\usepackage{listings}
-
-\lstset{
-	tabsize=4,
-%	language=matlab,
-        	basicstyle=\scriptsize,
-%     	upquote=true,
-       	aboveskip={\baselineskip},
-        	columns=fixed,
-        	showstringspaces=false,
-        	extendedchars=true,
-        	breaklines=true,
-	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
-	frame=single,
-        	showtabs=false,
-        	showspaces=false,
-        	showstringspaces=false,
-        	identifierstyle=\ttfamily,
-        	keywordstyle=\color[rgb]{0,0,1},
-        	commentstyle=\color[rgb]{0.133,0.545,0.133},
-        	stringstyle=\color[rgb]{0.627,0.126,0.941},
-	language=C++
-}
-
-%%% HEADERS & FOOTERS
-\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
-\pagestyle{fancy} % options: empty , plain , fancy
-\renewcommand{\headrulewidth}{0pt} % customise the layout...
-\lhead{}\chead{}\rhead{}
-\lfoot{}\cfoot{\thepage}\rfoot{}
-
-%%% SECTION TITLE APPEARANCE
-\usepackage{sectsty}
-\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
-\usepackage{titlesec}
-%\titleformat{\subsection}[runin]{\mdseries\bf}{\thesubsection}{1em}{}
-%\titleformat{\subsubsection}[runin]{\mdseries\bf\underline\large}{\thesubsection}{1 em}{\vspace{-5 pt}}
-
-\usepackage{footbib}
-
-% (This matches ConTeXt defaults)
-
-%%% ToC (table of contents) APPEARANCE
-\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
-\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
-\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
-\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
-\newcommand{\tab}{\hspace*{2em}}
-
-
-%%% END Article customizations
-
-%%% The "real" document content comes below...
-
-\title{\Huge Motion Detection and\\Other Imaging Operations for\\Debian-Based Mobile Devices }
-\author{\small By Mehmet Tekman\\\small Department of Computer Science\\\small University College London}
-
-
-
-%Maybe a section for Camera terminology: Exposure, Aperture, FrameTime?
-
-\begin{document}
+%% !TEX TS-program = pdflatex
+%% !TEX encoding = UTF-8 Unicode
+%\documentclass[11pt]{article} % use larger type; default would be 10pt
+%\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+%
+%%%% PAGE DIMENSIONS
+%\usepackage{geometry} % to change the page dimensions
+%\geometry{a4paper} % or letterpaper (US) or a5paper or....
+%
+%%%% PACKAGES
+%\usepackage{graphicx} % support the \includegraphics command and options
+%\usepackage{wrapfig} % Figure wrapping
+%% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{booktabs} % for much better looking tables
+%\usepackage{array} % for better arrays (eg matrices) in maths
+%\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+%\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+%\usepackage{url}
+%\usepackage{enumerate}
+%\usepackage{cleveref}  %cites figures intelligently
+%\usepackage{import} % document structuring
+%\usepackage{float}  %These two ensure that table position follows text by specifcing {table}[H]
+%\restylefloat{table}
+%
+%\usepackage{qtree}
+%
+%%CODE LISTINGS
+%\usepackage{color}
+%\usepackage{listings}
+%
+%\lstset{
+%	tabsize=4,
+%%	language=matlab,
+%        	basicstyle=\scriptsize,
+%%     	upquote=true,
+%       	aboveskip={\baselineskip},
+%        	columns=fixed,
+%        	showstringspaces=false,
+%        	extendedchars=true,
+%        	breaklines=true,
+%	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+%	frame=single,
+%        	showtabs=false,
+%        	showspaces=false,
+%        	showstringspaces=false,
+%        	identifierstyle=\ttfamily,
+%        	keywordstyle=\color[rgb]{0,0,1},
+%        	commentstyle=\color[rgb]{0.133,0.545,0.133},
+%        	stringstyle=\color[rgb]{0.627,0.126,0.941},
+%	language=C++
+%}
+%
+%%%% HEADERS & FOOTERS
+%\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+%\pagestyle{fancy} % options: empty , plain , fancy
+%\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{}
+%\lfoot{}\cfoot{\thepage}\rfoot{}
+%
+%%%% SECTION TITLE APPEARANCE
+%\usepackage{sectsty}
+%\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+%\usepackage{titlesec}
+%%\titleformat{\subsection}[runin]{\mdseries\bf}{\thesubsection}{1em}{}
+%%\titleformat{\subsubsection}[runin]{\mdseries\bf\underline\large}{\thesubsection}{1 em}{\vspace{-5 pt}}
+%
+%\usepackage{footbib}
+%
+%% (This matches ConTeXt defaults)
+%
+%%%% ToC (table of contents) APPEARANCE
+%\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+%\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+%\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+%\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+%\newcommand{\tab}{\hspace*{2em}}
+%
+%
+%%%% END Article customizations
+%
+%\begin{document}
 
 \part{IP Camera}
 
@@ -312,9 +303,10 @@ However, the accuracy of coordinates was not very good (often a 20 mile radius a
 
 With much reluctance, I had to drop this web-side component too.
 
-\subsection{Optimisations}
-deletion of objects
-\subsection{Thougts for the future}
-\end{document}
+\subsection{Afterthoughts}
+When I first began
 
-QSettings in GUI section
+In the very near future I hope to merge Phonestreamer with the rest of the watchdog application to make a fully-fledged image-processing application
+%\end{document}
+%
+%QSettings in GUI section

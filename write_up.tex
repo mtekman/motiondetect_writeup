@@ -8,6 +8,7 @@
 \geometry{a4paper} % or letterpaper (US) or a5paper or....
 
 %%% PACKAGES
+\usepackage{qtree} % Tree support
 \usepackage{graphicx} % support the \includegraphics command and options
 \usepackage{wrapfig} % Figure wrapping
 % \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
@@ -80,11 +81,7 @@
 %%% The "real" document content comes below...
 
 \title{\Huge Motion Detection and\\Other Imaging Operations for\\Debian-Based Mobile Devices }
-\author{\small By Mehmet Tekman\\\small Department of Computer Science\\\small University College London}
-
-
-
-%Maybe a section for Camera terminology: Exposure, Aperture, FrameTime?
+\author{\small By Mehmet Tekman\\\small Supervisors: Robin Hirsch and Fabrizio Pece\\\small Department of Computer Science\\\small University College London}
 
 \begin{document}
 \maketitle 
@@ -92,7 +89,7 @@
 \part*{}{\tiny .\\\\\\\\\\\\\\\\\\\\\\\\}
 
 \begin{abstract}
- Morphological image processing techniques were adopted upon frames captured by the camera on a mobile phone to correctly detect motion for a wide range image sizes.
+ Morphological image processing techniques were adopted upon frames captured by the camera on the Nokia N900 smartphone to correctly detect motion for a wide range image sizes using the Qt Framework. A commandline interface was then developed to help facilitate time lapse operations in order to efficiently watch a target for a certain amount of time at specified intervals. The motion detection and time lapse components were merged into a single application dubbed ‘WatchDog’ and released successfully on public repositories. IP webcam operations were also developed but they will be implemented into WatchDog at a further date.
 \end{abstract}
 
 \pagebreak
@@ -112,20 +109,22 @@
 \subsubsection{Webkit}
 \subsection{Optimisations}
 
-
 \part{User Interfaces}{dsfasdfasdfasdfasdfasdfasdfasdf}
 \section{Widgets}
 \subsection{CSS Stylesheets}
 \subsection{Labels and PixMaps}
 \subsection{Animated Gifs and QMovie}
-\section{Event Handling}
+\section{Persisting data}
+
 \subsection{Slots/Signals}
-\subsubsection{Overriding events}
+\subsection{IP Streamer}
 \subsection{Maemo5 Stacked Windows}
+
+\section{Event Handling}
+\subsubsection{Overriding events}
 \section{Interface Diagrams}
 \subsection{Motion Detector}
 \subsection{TimeLapse}
-\subsection{IP Streamer}
 
 \part{Release}
 \section{Publishing}
@@ -137,10 +136,6 @@
 \subsection{Branch model of Git}{Dropbox overall backup}
 \subsection{Rebases, Merges}
 \subsection{Release schedule}{Changelog and aims}
-
-\section{Additional Work}
-\subsection{Python Easter Egg}
-\subsection{Google Maps API}{Talk about how you were gonna include it as part of IP Stream by embedding a flash object on a page, but deemed it too unethical}
 
 \part{Bibliography}
 
