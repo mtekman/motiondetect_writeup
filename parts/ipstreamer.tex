@@ -140,7 +140,6 @@ A rewrite was neccesary and the first job was to seperate the application into s
 This design  made the app all the more readable and much more maintainable for future development, as well as making it much easier for the user to quickly connect.
 
 \subsection{New features}
-
 Other than splitting the app into seperate classes, I also made a number of upgrades:
 
 \subsubsection{Automatic Connection Finder}
@@ -168,7 +167,6 @@ for ii in $(seq 0 100); do
 done
 
 echo $all               #print list
-
 \end{lstlisting}
 The shell code I wrote above works, and will find all the active connections on a network -- eventually. It is very methodical, and will ping all connections from (for example) 192.168.254.1 to 192.168.254.100, assuming there are even 100 assigned addresses on the network. However the user will die of boredom before a list can be populated and so I had to search for another way.\\
 
@@ -304,9 +302,7 @@ However, the accuracy of coordinates was not very good (often a 20 mile radius a
 With much reluctance, I had to drop this web-side component too.
 
 \subsection{Afterthoughts}
-When I first began
-
-In the very near future I hope to merge Phonestreamer with the rest of the watchdog application to make a fully-fledged image-processing application
+In the very near future I hope to merge Phonestreamer with the rest of the watchdog application to make a fully-fledged image-processing application. With this in mind, my new version of Phonestreamer was called MediaStream and had buttons included in the main UI as empty slots for calling the two components of watchdog (the motion detector, and the time lapser).
 %\end{document}
 %
 %QSettings in GUI section

@@ -82,7 +82,7 @@
 Mobile phone's however do not come equipped with microwave lasers nor ultrasonic emitters, and though a significant amount of mobile phones have infra-red sensors and bluetooth radio sensors, the poor resolution of these sensors makes using them as reliable motion detectors somewhat tricky.\\
 Modern smartphones of today do often come equipped with camera's whose images can be used to detect motion, but all the processing is done in the software which can be slow. Fortunately smartphones of today are fast enough to handle such image processing, and using lower-level languages such as C and C++ the strain on the phone can be greatly reduced.}
 
-\section{Competition}
+\subsection{Competition}
 \paragraph{Due to the small community of Maemo users, there are not many apps of this nature on the platform and thus not much competition at all.}
 
 \section{Available Software Evaluation}
@@ -638,8 +638,6 @@ To  detect tiny movement I placed a single blinking cursor on the screen. The ex
 
 As shown in \cref{img:curse1} and \cref{fig:curse2}, something appears to be picked up for a 2x2 mask, but both are ignored for a 3x3 mask. This means that tiny movement is of the same order as noise, and so a 3\% difference between images cannot be accurately flagged as movement.
 
-
-
 \section{Threads}
 Threads are processes that appear to run at the same time to other processes. On multi-core devices, the illusion is true: two processes genuinely can run in different cores at the same time. On a single-core device such as this, the illusion is false: the OS scheduler switches between different processes to allocate time-slices to each process at regular intervals.\\
 \\In mobile applications, threading is necessary as often a background task needs to be run which will halt the user interface until the task is complete. In the first draft of my application, this was the case - the buttons and widgets that controlled the camera execution would become unresponsive until the camera had finished its process, where control would then flow back to the user-interface.
@@ -751,12 +749,86 @@ This added the ‘mailcmd’ dependency to my project, but it is a small package
 
 This means that any time during the application, there will be at maximum three threads running: UI, Camera, and Email. Email needed to be run on it’s own thread, otherwise the camera thread would hang between frames as it waits for confirmation of the email to be sent. I wanted the application to be as responsive as possible and so I created a seperate thread for Email to avoid this problem.
 
-\subsection{Optimisations/Error Proofing}
-Autoexpose on updateReference (drastic changes in brightness levels), interval scaling, lens open check.
+\subsection{Logic and Optimisations/Error Proofing}
+The underlying logic of the application lies in the Operations.cpp camera thread. The thread is based on the relatively simple FCam API examples\footnote{FCam API Examples - http://fcam.garage.maemo.org/examples.html}, where the Camera is first initialised by:
+\begin{lstlisting}[title=\bf Snippet initialise() function in Operations.cpp]
+     errorCheck();  //Call error check function
+
+    // Set shot parameters of Camera to 0.08 seconds and keep the brightness at an even gain of 1
+    stream1.exposure = 80000;
+    stream1.gain = 1.0f;
+
+    /* Enable the histogram unit -- NECESSARY to autoexpose image!
+         Histogram monitors the entire image for changes to intensity */
+    stream1.histogram.enabled = true;
+    stream1.histogram.region = FCam::Rect(0, 0, width, height); 
+
+    //  Request an image of specified size. UYVY Format is used for streaming/Video
+    stream1.image = FCam::Image(width, height, FCam::UYVY);
+\end{lstlisting}
+The small error checking method referenced above is replicated from the FCam API online examples, and it simply performs a check that the FCam driver is running, and that other applications are not using it concurently (please see page~\pageref{operations} in the Appendix.
+
+The rest of the code and logic is entirely mine and is derived from the following pseudocode:
+\begin{frame}[fragile]
+	\lstinputlisting[title=\textbf{Source Code: MovementLogic1.pseudo}]{../Code/pseudo/logic1.pseudo}
+\end{frame}
+The camera is initialised, and an initial reference is taken using the accumulator method defined earlier. Then we check for movement by getting a fresh image from FCam, and converting it to a CImg (passing a reference to the image and not the entire image to save memory). The result is then ‘normalised’ by dividing the pixel values by 100 (norm = 100) which limits it to a colorspace of 25 (256/100). This is because I found that normalising it to binary colorspace (\{0,1\}) resulted in erratic behaviour when I subtracted the current frame to the reference frame because the extremely discriminatory nature of binary colorspace grouped small changes in an image the same as  large changes in the image. Normalising to larger colorspace first and then subtracting fixed this problem, and then normalising was permitted in order for opening and closing of the image to occur.
+
+Once the white pixels were counted in the image it was compared to the threshold amount set initially. If it was above the threshold then movement was flagged and the camera then begins recording 10 frames in succession as fast as possible (which is the time it takes to perform the exposure). Once recording is finished, the reference frame is updated and an email is sent (if specified) with the latest attached movement image. 
+
+The thread then forces the camera to sleep for the interval amount. Initially the interval was set by calling ‘FCam::Shot::framTime(interval)’, but this was temperamental and the camera did not always respond to changes in the interval, and so the thread was used instead to set the interval.
+
+This loops until the current time is greater than the previously set time for the application to run (default 1 minute). Once finished, the recorded images and compiled into a movie using mencoder (if specified).
+
+\subsubsection{Interval Scaling}
+On the train one morning it occured to me that if the app were to run for days on end (which it most certainly can) then there may be long periods of time where no movement occurs at all. During this time, the application would have dutifully taken frame after frame after frame at constant intervals, whilst wasting system resources and learning nothing about its environment
+To rectify this I immediately wrote a python script (see page~\pageref{interval} in the Appendix) as an outline of how I wanted the interval to react to its current situation - it should alter the interval to reflect the past level of movement.
+To give an idea:
+\begin{enumerate}
+\item A maximum interval is set. A minimum interval is set. A counter is set to zero.
+\item The camera starts with an interval halfway between the maximum and minimum interval.
+\item For every frame without movement, the counter is incremented.
+\item If movement {\it has not} occured for 10 frames, then the interval is {\it doubled} and the counter reset. The camera has learned that nothing is likely to happen in the near future and so there is no need to check for movement so often.
+\item If movement {\it has not} occured for 10 frames with the new interval, then it is {\it doubled} again the counter reset. This continues every 10 frames of no movement (each time the framerate decreasing with every counter reset) until it reaches the maximum interval and cannot be doubled anymore.
+\item If movement {\it does} occur within a single frame, then the interval is immediately {\it halved} and the counter reset.  The camera has learned that the scene has become more active, and now checks more frequently. It does not wait for a counter to reach 10 to react, but reacts immediately. 
+\item If movement {\it does} occur yet again, then the interval is immediately {\it halved} again and the counter reset. This conintiues until the interval reaches the minimum interval and cannot be halved anymore.
+\end{enumerate}
+The code below gives a representation of this logic in a newer version of the checkMovement function:
+\begin{frame}[fragile]
+	\lstinputlisting[title=\textbf{Source Code: MovementLogic2.pseudo}]{../Code/pseudo/consecmovement1.pseudo}
+\end{frame}
+It should be noted that the halving and the doubling have been replaced by an interval {\it modifier} which is a number between 0.01 and 1. The modifier was determined by trial and error to have a default value of 0.16.  As the modifier tends towards 1, the camera reacts unenthusiastically to changes in the scene (e.g. for mod=0.9, it will jump from an interval of 10 seconds to 9 seconds). When the modifier equals 1 the minimum interval is ignored and interval scaling is disabled, taking frames at a constant interval equal to the maximum interval. When the modifier is low, it reacts very eagerly to changes in the scene and for a mod=0.16 it will jump from a 10 seconds interval to 1.6 second interval and then back to 10 seconds (should no more movement occur). A modifier value of 0 is completely prohibited and I made sure the GUI would not allow it.
+
+\subsubsection{AutoExpose}
+I noticed sometimes that when I left the motion detector to face the garden at night the application would crash before the next morning with the last saved images being extremely white. This was because when I initially started the app, the target scene was dark, and so the histogram initially increased the exposure and gain to accomodate for this. But the following morning, when the target scene was now brighter, the exposure and gain weren’t adjusted accordingly and so when it updated the reference image, the reference image was a completely white image and so when it performed subtraction, the white pixel count was always above the threshold making the app think that movement was continuously occuring!
+Once I realised my mistake I simply made the motion detector call the autoExpose algorithm whenever it updated the reference image and the problem was solved.
+
+\subsubsection{Lens Check}
+One of the easiest errors to make when using the app is to forget to open the lens cap before starting it. By looking through the FCamera source code mentioned previously I found a reference to file in /sys/devices/ that echoed the current state of the lens position:
+\begin{lstlisting}[fragile]
+bool lensClosed() {
+    FILE * ff = fopen("/sys/devices/platform/gpio-switch/cam_shutter/state", "r");
+    char state = fgetc(ff);
+    fclose(ff);
+    return state == 'c'; //o = open, c = close
+}
+\end{lslsting}
+
 \subsubsection{Kernel Compatibility}
 Early on in the development of the app, I came across problems where the FCam driver would not initialize properly, and no warning messages were given. Upon reboot it sometimes worked, but it would tend to work the most when I used the default phone kernel PR-1.3.
 
-For this reason I enabled a kernel check at the start of the Camera thread which would issue out a warning whenever a kernel different from the PR-1.3 kernel was being used. This was a simple shell call to ‘uname -r’. However the root of the problem turned out to be that I was not initializing the camera properly when I started the thread, and so when I fixed this problem, the kernelCheck function became redundant and I deleted it from the source.
+For this reason I enabled a kernel check at the start of the Camera thread which would issue out a warning whenever a kernel different from the PR-1.3 kernel was being used. This was a simple shell call to ‘uname -r’:
+\begin{lstlisting}[fragile]
+//kernel-powerv51 doesnt work. v50 is supposed to compatible.
+bool validKernel(){
+    QString command = "uname -r";
+    command = terminalAction(command, true);
+    return command.contains("omap1") || !command.contains("51");
+}
+\end{lstlisting}
+ However the root of the problem turned out to be that I was not initializing the camera properly when I started the thread, and so when I fixed this problem, the validKernel() function became redundant and I deleted it from the source.
+
+
 %
 %\footbibliographystyle{plain}
 %\footbibliography{citers}

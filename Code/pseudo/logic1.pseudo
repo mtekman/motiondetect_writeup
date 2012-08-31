@@ -1,0 +1,35 @@
+reference_image :=0
+norm = 100;
+
+initialise()
+updateReferenceImage()
+checkForMovement(interval, threshold, timeLimit)
+if(convertToMovie) convertToMovie()
+
+function updateReferenceImage(){
+	#See accumulator.pseudo
+}
+
+function checkMovement(interval, threshold, timeLimit){
+	current_image :=0
+	do{
+		image = getImage()
+		current_image = convertToCImg(&image)/norm  #{0,25}
+		
+		sub = (current_image - reference_image).normalise() #{0,1}
+		sub = sub.erode(mask).dilate(mask)
+
+		total = countWhitePixels(sub)
+		if(total > threshold){
+			print "Movement!"
+		
+			recordToFile(10 frames, fast_as_possible)
+			updateReferenceImage()
+
+			if(email_user)  emailUser()
+		}
+		thread::sleep(interval)
+	} while( currentTime() < timeLimit)
+}
+
+

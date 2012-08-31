@@ -123,15 +123,24 @@ Morphological image processing techniques were adopted upon frames captured by t
 \subsection{TimeLapse}
 
 \part{Release}
+
+\section{Versioning}
+The project initially started with Mediastream taking over from Phonestreamer after a  2 year hiatus. Phonestreamer did not have version control and so I started a new repository for it on bitbucket. At that stage I was not familiar with branching since I was relateively new to the versioning process, and so I was making all my commits (stable/unstable) to the master branch.
+
+Once development for the motion detector began I experimented more with Git, and created three new repositories called ‘fcam\_gstreamer’, ‘fcam\_opencv’ , and ‘fcam\_cimg’  when I was first trying out the different API’s. They were contained within different folders and I treated them as seperate projects. In hindsight it would have made more sense to create an ‘fcam’ repository, and then simply create three {\it branches} from the master and call them ‘developer/fcam\_gstreamer’, ‘developer/fcam\_opencv’, and ‘developer\_cimg’. The master would contain an initial setup of methods and which I would then work on independently and push any respective changes to. Once I had exhausted Gstreamer and OpenCV, I would then merge the ‘developer_
+
+
+\subsection{Branch model of Git}{Dropbox overall backup}
+\subsection{Rebases, Merges}
+\subsection{Release schedule}{Changelog and aims}
+
+
+
 \section{Publishing}
 \subsection{Maemo Garage}
 \subsection{Extras}{Devel, Testing, Extras -- promotion period and rating system}
 \subsection{Announce Page}{Reception}
 
-\section{Versioning}
-\subsection{Branch model of Git}{Dropbox overall backup}
-\subsection{Rebases, Merges}
-\subsection{Release schedule}{Changelog and aims}
 
 
 \part{Bibliography}

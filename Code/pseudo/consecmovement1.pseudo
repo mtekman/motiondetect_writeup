@@ -1,0 +1,36 @@
+function checkMovement(int_min, int_max, int_modifier, threshold, timeLimit){
+	current_image :=0
+	consecutive_no_movement :=0
+	current_interval = int_max/2   //interval can rise and fall
+
+	do{
+		image = getImage()
+		current_image = convertToCImg(&img)/norm  #{0,25}
+		
+		sub = (current_image - reference_image).normalise() #{0,1}
+		sub = sub.erode(mask).dilate(mask)
+
+		total = countWhitePixels(sub)
+		if(total > threshold){
+			print "Movement!"
+			consecutive_no_movement = 0;  //reset
+		
+			recordToFile(10 frames, recordLogic())
+			updateReferenceImage()
+
+			if(email_user)  emailUser()
+		}
+		else{
+			consecutive_no_movement ++
+			if(consecutive_no_movement > 10){
+				// Increase interval due to inactivity
+				modified_int = current_interval/int_modifier
+				current_interval = modified_int //If greater than int_min
+				consecutive_no_movement = 0;
+			}
+		}
+
+		thread::sleep(interval)
+	} while( currentTime() < timeLimit)
+}
+	
