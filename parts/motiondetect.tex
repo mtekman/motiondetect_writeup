@@ -799,6 +799,16 @@ The code below gives a representation of this logic in a newer version of the ch
 \end{frame}
 It should be noted that the halving and the doubling have been replaced by an interval {\it modifier} which is a number between 0.01 and 1. The modifier was determined by trial and error to have a default value of 0.16.  As the modifier tends towards 1, the camera reacts unenthusiastically to changes in the scene (e.g. for mod=0.9, it will jump from an interval of 10 seconds to 9 seconds). When the modifier equals 1 the minimum interval is ignored and interval scaling is disabled, taking frames at a constant interval equal to the maximum interval. When the modifier is low, it reacts very eagerly to changes in the scene and for a mod=0.16 it will jump from a 10 seconds interval to 1.6 second interval and then back to 10 seconds (should no more movement occur). A modifier value of 0 is completely prohibited and I made sure the GUI would not allow it.
 
+Another thing to note is the recordLogic() function.  I noticed at one point that for short intervals (~1 second) the application would hang on the record function as it tried to record 10 frames as fast as possible. To prevent this from occuring I scaled the record function so that depending on the current interval value, the number of frames it would record and the interval at which it would record them would be adjusted accordingly to this following method:
+\begin{lstlisting}[title=Snippet from checkMovement function in Operations.cpp]
+//7. Record logic:
+            float scale = ((float)(current\_interval)/(float)(max\_interval));
+
+            int record\_interval = (int)(scale*400)+100;  //max=500, min = 100
+            int record\_frames = (int)(10- (scale*8));       //longest stint=10, shortest = 2;
+\end{lstlisting}
+So now the interval would be fast for large number of frames (500 milliseconds for 10 frames), or slow for short number of frames (100 milliseconds for 2 frames) with scaling in between,
+
 \subsubsection{AutoExpose}
 I noticed sometimes that when I left the motion detector to face the garden at night the application would crash before the next morning with the last saved images being extremely white. This was because when I initially started the app, the target scene was dark, and so the histogram initially increased the exposure and gain to accomodate for this. But the following morning, when the target scene was now brighter, the exposure and gain weren’t adjusted accordingly and so when it updated the reference image, the reference image was a completely white image and so when it performed subtraction, the white pixel count was always above the threshold making the app think that movement was continuously occuring!
 Once I realised my mistake I simply made the motion detector call the autoExpose algorithm whenever it updated the reference image and the problem was solved.
