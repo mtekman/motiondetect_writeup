@@ -1,0 +1,113 @@
+\part{Appendix}
+\section{Further Background}
+
+\subsubsection{Community}\label{maemocomm}
+\paragraph{Maemo initially started off as being maintained by Nokia, with users recieving flashable firmware updates every 6 months or so, and over-the-air package updates bimonthly until it was stopped being maintained in 2011. At that point the community was responsible for updates and now the latest edition of Fremantle is known as Maemo CSSU (Community Supported Service Updates) which have transformed the device into a very fast and almost completely open-source device.}
+\paragraph{Further developements to the Kernel were made, and soon Kernel-Power (now version 51)  is most widely used kernel on the device replacing Nokia's PR 1.3 due to it's overclocking support, USB hostmode capabilites, wifi packet-injection, and even support for 720p video (not a feature of the device, nor any device, at the time of its release in 2009)}
+\paragraph{Applications follow the same open-source framework as Debian applications, where any packages in the main repositories must be open source, and any third party closed-source applications must be installed through Nokia's Ovi store which has slow access through the phone's browser}
+
+\subsubsection{Future of Nokia}
+\paragraph{Nokia's previous OS was Symbian, which at the time was one of the most popular mobile operating system. Every one in two mobile phones sold in 2009 carried the Symbian OS\cite{symb1} a stark contrast to the current leading smartphone OS's of today. Maemo was Nokia's next brain child, the open-source succesor to Symbian which it replaced in the release of  it's then next-gen internet tablet phones, a bold and somewhat puzzling move by Nokia after the success of their initial Symbian OS. Maemo's open framework attracted many hardcore linux developers hungry to port linux applications onto the device, but sadly that was mostly all the phone was good for. The initial Diablo release for the Nokia N810 was superseded by  the Fremantle release for the N900, which has now been surpassed by the Harmattan release for the N9 and N950.}
+\paragraph{Harmattan was supposed to be the stepping stone between Maemo and Meego, Nokia's next inventure, which was a merge between Moblin OS and Maemo. However though initial development images worked well with Nokia devices the Meego project was dropped by Nokia and the community had to once again pick up the slack, and are currently maintining Meego under the codename 'Mer' which is now being used as the template for the next completely open-source mobile OS 'Tizen' which will be launched on Samsung phones in the near future}
+\paragraph{One cannot blame Nokia for trying something new, but it is often said that the reason that sales for Nokia internet tablets did not do so well was because the CEO's were not comfortable fully backing the mostly unknown Maemo and Meego OSes. Had there been more advertizing and promotional support from Nokia's PR department, the mobile phone market may have been very different from the current state that is in now.}
+\paragraph{At the moment Nokia have backed behind the Windows Mobile 8 OS in a last bid attempt to re-establish themselves in the market to new customers with the Nokia Lumia smartphone series. This is essentially a complete reversal of the open-source ideals it had been pursuing not so many months before, leaving a lot of the original Nokia developers feeling somewhat betrayed.}
+
+\section{Other Implementations}
+
+\subsection{qDebug vs std::cout}\label{qdebug}
+qDebug is the default output stream in Qt. It has very basic usage almost similar to cout, but it automatically flushes and appends a linebreak to any output that is echoed to it.
+
+Initially I was using qDebug to handle all my output messages, and every unlinked class would have the \(\langle\) QDebug\(\rangle\) module imported in order to use it. It was a slight overhead in terms of the extra module that had to be built with the app, but it was very easy to use and automatically converted all QObjects into their QString counterparts.
+
+However when I developed the commandline functionality of the application, I realised that the messages were not being printed to the console which was a problem if a remote user who had ssh/telnetted into the device wanted to know what was happening.
+
+In order to fix this I then switched from qDebug() to std::cout, which is the default output stream for C and C++ and prints directly to standard out. Using this option, the messages were printed correctly to the terminal, and terminal colours could also be used with them too.
+
+Switching from qDebug() to std::cout was not much of a problem, since it mostly involved just replacing the former with the latter and removing \(\langle\) QDebug\(\rangle\) includes. FCam used methods that relied on std::strings and so to use std::cout I didn't need to import any extra modules since the standard \(\langle\)stdlib.h\(\rangle\) \(\langle\)stdio.h\(\rangle\) libraries were already being used. In most cases I dropped the std:: prefix by simply adopting the std namespace.
+
+std::cout is slightly more harder to use than qDebug(), mostly because it couldn't handle QObjects very well and so I was constantly manually converting QObjects to their char * counterparts (e.g. QString::toUTF8().data()) which was a minor inconvenience at most.
+std::cout has the benefit that the developer can choose when to flush output to the console or when to end a line, which saved a lot of wasted lines.
+
+Another useful feature of printing directly to the console is that I can use the \textbackslash r operator to clear any current output on a given line and overwrite it. For place where I was outputting the current filename of the recorded file, this saved a lot of wasted lines from being printed as the filenames simply overwrote each other in the same line until the recording process finished, and I then moved to a new line.
+
+\subsubsection{Message Handlers}
+Before I used cout, I attempted to use a qMessageHandler() that would automatically pipe qDebug() streams directly to std::cout. On the QtGlobal API\footnote{qInstallMessageHandler - http://doc.qt.nokia.com/4.7-snapshot/qtglobal.html\#qInstallMsgHandler}, I found the following snippet of code:
+\begin{lstlisting}
+ #include <qapplication.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+
+ void myMessageOutput(QtMsgType type, const char *msg)
+ {
+     switch (type) {
+     case QtDebugMsg:
+         fprintf(stderr, "Debug: %s\n", msg);
+         break;
+     case QtWarningMsg:
+         fprintf(stderr, "Warning: %s\n", msg);
+         break;
+     case QtCriticalMsg:
+         fprintf(stderr, "Critical: %s\n", msg);
+         break;
+     case QtFatalMsg:
+         fprintf(stderr, "Fatal: %s\n", msg);
+         abort();
+     }
+ }
+
+ int main(int argc, char **argv)
+ {
+     qInstallMsgHandler(myMessageOutput);
+     QApplication app(argc, argv);
+     ...
+     return app.exec();
+ }
+\end{lstlisting}
+The code identified the type of output message (Debug, Warning, Critical, Fatal) and piped it into the cout stream. Unforunately this was too much overhead, since there was a significant delay, and adding to the current overhead of using qDebug() in the first place was  too much. I simply abondoned the approach and replaced qDebug() with std::cout.
+
+\section{Manual}
+\subsection{System Manual}
+\subsubsection{Getting the source}
+The source code can be from the CD provided or can also be accesseed on the maemo packages database\footnote{Package Search - http://maemo.org/packages/} and search for WatchDog. Then select any Extras-Devel repository for the latest code, and click on source. Untar the file with ‘tar -zxvf  watchdog\_*.tar.gz’.
+\subsubsection{Building with Qt}
+First download the QtSDK for either Windows or Linux from the official Qt site\footnote{Qt Downloads - http://qt.nokia.com/downloads}. Windows is recommended for stability reasons. A normal installation will take up 2.66GB of data, but a lot of this not needed so I recommend doing a custom installation. To install the neccesary components needed to run the app are:
+\begin{enumerate}
+\item Tick the core QtSDK (greater or equal to v1.2.1-1)
+\item Untick experimental
+\item Untick Documentation
+\item Untick APIs (Qt Mobility, Qt Quick (QML), and Notifications are not needed)
+\item In Development Tools tick:
+	\begin{enumerate}
+	\item Qt Designer
+	\item Qt Creator (untickable)
+	\item Qt Simulator (if you do not own Nokia N900)
+	\item Desktop Qt (if you do not own Nokia N900)
+	\item Maemo Toolchain
+	\item Device Files
+	\end{enumerate}
+\item Untick Miscellaneous (Qt Examples and Sources not needed)
+\end{enumerate}
+This should limit the install to 925 MB and be much easier to install. Once complete, launch Qt and click ‘Open Project...’ and select the source directory either from the CD or the directory you had just previously untarred. Qt will then launch a prompt asking you for which target to build the app for: Tick Maemo5 if you have a Nokia N900 and wish to run the application on there, or else tick Qt Simulator for an emulator. Qt will then update the .pro file with the relevant target(s).
+
+To build and run, simply press Build... then Run on the status bar, or Ctrl+B and Qt will run qmake to create the relevant moc files and then compile the app, finally packaging the application and sending it to the device (or emulator) to be launched.
+
+If no target has been set up, then go to Tools... Options... select the Linux Devices tab and create a new target configuration. Click Add... and follow the wizard to set up a hardware device or an emulator. A development account will be set up on the device (with default username ‘developer’ which has root priveleges for installing/uninstalling) and SSH keys will need to be generated in order to let the device automatically send data between machines without prompting for a password every time.
+
+\section{API example usage}
+\subsection{GStreamer Pipelining in C++}
+\paragraph{ The following is just a small snippet from an example Camera class from the Maemo Documentation Wiki:\\http://wiki.maemo.org/Documentation/Maemo\_5\_Developer\_Guide/Using\_Multimedia\_Components/Camera\_API\_Usage
+\\ test\\\\}
+\lstinputlisting[title=\textbf{Source Code: gst\_class.cpp}]{Code/API_Examples/gst_class.cpp}
+
+\section{Tables}
+\import{tables/}{normalised_subtracted_image_size.tex}
+
+
+\section{Application Code}
+\subsection{Motion Detector}
+\subsection{TimeLapse}
+\subsection{IP Streamer}
+\subsection{Commit Log}
+\subsection{Other}{Python code, Interval, GMaps}
+
+\section{Glossary and Index}

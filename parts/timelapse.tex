@@ -181,6 +181,8 @@ The stop colour at the end is neccesary to reset the shell to its default color,
 
 One of the main benefits of having a commandline implementation is that enables remote usage. A user can simply ssh or telnet into the phone from another machine and start and control the application from the shell on their own computer. The colours will also print correctly too.
 
+{\small\bf It should be noted that at this stage std::cout replaced qDebug, the default Qt output stream, and message handlers are also attempted in order to enable verbose output for commandline. The implementation attempt for this is detailed on page~\pageref{qdebug} in the Other Implementations section of the Appendix.}
+
 }
 \subsubsection{Reusing existing variables}
 
@@ -308,13 +310,6 @@ which performs bitwise OR upon these two triggers and sets the flag to "'true'" 
 
 To use Alarmd, one needs to use libalarmd, which is native to the phone and so the rootstrap device already had it installed. The class I created borrowed the template for a few of it's functions from the examples at http://wiki.maemo.org/Documentation/Maemo\_5\_Developer\_Guide/Using\_Generic\_Platform\_Components/Alarm\_Framework. 
 Alarmd jobs have APPID's, which uniquely match a job to an application making it far easier to retrieve and edit jobs without affecting other jobs or having to filter through them.
-
-\subsection{qDebug vs std::cout}
-QDebug is a 
-
-
-\subsubsection{Message Handlers}
-Faffed around with message handlers for a log window, but then just used cout...
 
 \section{Optimisations/Error Proofing}
 Commandline not called until arguments!=0, then it is destroyed intelligently.

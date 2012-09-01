@@ -822,18 +822,17 @@ bool lensClosed() \{
     fclose(ff);
     return state == 'c'; //o = open, c = close
 \}
-\end{lslsting}
+\end{lstlisting}
 
 \subsubsection{Kernel Compatibility}
 Early on in the development of the app, I came across problems where the FCam driver would not initialize properly, and no warning messages were given. Upon reboot it sometimes worked, but it would tend to work the most when I used the default phone kernel PR-1.3.
-
-For this reason I enabled a kernel check at the start of the Camera thread which would issue out a warning whenever a kernel different from the PR-1.3 kernel was being used. This was a simple shell call to ‘uname’
+For this reason I enabled a kernel check at the start of the Camera thread which would issue out a warning whenever a kernel different from the PR-1.3 kernel was being used. This was a simple shell call to ‘uname -r’
 \begin{lstlisting}
-//kernel-powerv51 doesnt work. v50 is supposed to compatible.
-bool validKernel()\{
-    QString command = “uname -r”;
+%//kernel-powerv51 doesnt work. v50 is supposed to compatible.
+bool validKernel() \{
+    QString command = "uname -r";
     command = terminalAction(command, true);
-    return command.contains("omap1") || !command.contains("51");
+    return command.contains("omap1") \textpipe\textpipe !command.contains("51");
 \}
 \end{lstlisting}
  However the root of the problem turned out to be that I was not initializing the camera properly when I started the thread, and so when I fixed this problem, the validKernel() function became redundant and I deleted it from the source.

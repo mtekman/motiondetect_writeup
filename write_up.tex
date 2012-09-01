@@ -60,6 +60,9 @@
 %%% SECTION TITLE APPEARANCE
 \usepackage{sectsty}
 \allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+%\ttfamily
+%\sffamily\mdseries\upshape
+\rmfamily
 \usepackage{titlesec}
 %\titleformat{\subsection}[runin]{\mdseries\bf}{\thesubsection}{1em}{}
 %\titleformat{\subsubsection}[runin]{\mdseries\bf\underline\large}{\thesubsection}{1 em}{\vspace{-5 pt}}
@@ -102,122 +105,16 @@ Morphological image processing techniques were adopted upon frames captured by t
 %This is awesome! It automaticaly generates a TOC depending on the part,section,subsection structure declared below!
 \pagebreak
 
-\import{parts/}{background.tex}
-\import{parts/}{motiondetect.tex}
-\import{parts/}{timelapse.tex}
-\import{parts/}{ipstreamer.tex}
+%\import{parts/}{background.tex}
+%\import{parts/}{motiondetect.tex}
+%\import{parts/}{timelapse.tex}
+%\import{parts/}{ipstreamer.tex}
+%\import{parts/}{userinterfaces.tex}
+%\import{parts/}{release.tex}
 
-\part{User Interfaces}
-\section{Widgets}
-\subsection{CSS Stylesheets}
-\subsection{Labels and PixMaps}
-\subsection{Animated Gifs and QMovie}
-\section{Persisting data}
+%\part{Bibliography}
 
-\subsection{Slots/Signals}
-\subsection{IP Streamer}
-\subsection{Maemo5 Stacked Windows}
-
-\section{Event Handling}
-\subsection{Overriding events}
-\section{Interface Diagrams}
-\subsection{Motion Detector}
-\subsection{TimeLapse}
-
-\part{Release}
-
-\section{Versioning}
-The project initially started with Mediastream taking over from Phonestreamer after a  2 year hiatus. Phonestreamer did not have version control and so I started a new repository for it on bitbucket. At that stage I was not familiar with branching since I was relateively new to the versioning process, and so I was making all my commits (stable/unstable) to the master branch.
-
-Once development for the motion detector began I experimented more with Git, and created three new repositories called ‘fcam\_gstreamer’, ‘fcam\_opencv’ , and ‘fcam\_cimg’  when I was first trying out the different API’s. They were contained within different folders and I treated them as seperate projects. In hindsight it would have made more sense to create an ‘fcam’ repository, and then simply create three {\it branches} from the master and call them ‘develop/fcam\_gstreamer’, ‘develop/fcam\_opencv’, and ‘develop\_cimg’. The master would contain an initial setup of methods and which I would then work on independently and push any respective changes to. Once I had exhausted Gstreamer and OpenCV, I would then merge the ‘develop\_cimg’ to the master and resume work from there.
-
-As mentioned in the Background section, Qt is very temperamental depending on which OS is used to develop on. For the longest time I found that I was unable to actually {\it build a deb package} for the application due to some meaningless error that refused to cite any useful information or even an exit code. I got around this by manually copying the build files to the device into the right locations.
-
-One day I decided to create a new project called ‘WatchDog’ (the current name of the application) and imported my code from fcam\_cimg to it. To my surprise (and relief) Qt built a deb package for it, and so I began developing in this new watchdog project, effectively resuming from fcam\_cimg. Being relatively new to Git I did not know how to rename the fcam repository, keep all the previous changes, and then append the new changes I was making to watchdog ontop - so instead I created a new repository for watchdog and resumed development from there.
-
-With watchdog I got braver with Git and began to try branching using the recommended master,develop,feature, hotfix standard model. I would push all my new changes to the develop branch, and when I wanted to try something completely new (i.e a new feature) I would create a new feature branch (e.g. feature/averaging, feature/subtraction) and then commit to that branch until I was reasonably sure that the method was stable, where I would then merge my changes with the develop branch. The hotfix branch was never used as I didn’t release my application to the public Maemo repositories until much later so I had nothing to fix.
-
-The diagram below shows the branch structure of my Git repository and the various merges I performed. For a transcript of commits please see page~\pageref{commits} in the Appendix.
-[[[INSERT DIAGRAM HERE]]]
-
-
-
-\section{Publishing}
-To publish an app for the N900 there are two mediums: The Nokia Ovi store, and Maemo Extras.
-
-\subsection{Ovi}
-The Ovi store is similar to Android’s Marketplace, where users can download apps,music, and movies from their browser. Apps that are published for Ovi do not require the source for publishing, and can be either free or paid. However in order to publish for Ovi, the deveoper must play a minimum fee of 1 euro, and Nokia gets to retain from 30\% of the developers profits. This was something I wasn’t too happy about, ethically nor financially. Besides, should someone want to use my code in the future to build something better then I would be more than proud to give them my source. As of recently the Ovi brand is to be discontinued and replaced with the Nokia brand.
-
-\subsection{Extras}
-The more common option amongst Maemo developers is to use the Extras repositories on the Maemo site. The extras repository is preconfigured on the N900 and the user simply has to enable it using the default package manager HAM (Hildon Application Manager) or other.
-
-Like most repositories, it is split into two sections: free and non-free, with free applications being open-source and non-free being closed-source. However the user doesn’t pay to use either.
-
-To upload a project to Extras, one can either upload directly using a Maemo Garage account, or by using the Extras Assistant Wizard. The wizard is more commonly used, and it requires a .changes file and the compressed .tar.gz archive of the source.
-
-An autobuilder then automatically builds the package (or fails with errors which the developer must address before trying to reupload), and then an autotester tests the app to see if it installs cleanly and without conflicts, and finally an autostager rates the app and stages it on the repositories to be downloaded by the end-user\footnote{Repository process - http://wiki.maemo.org/Extras\_repository\_process\_definition}. This process can take from 3 minutes to 3 days depending on how many new applications are being uploaded and how large/complex the application is.
-
-Completley new applications are staged to the Extras-Devel repository, which is where all the new (and largely unstable) apps are first placed. Applications that are deemed stable by their developers can be pushed to Extras-testing repository by clicking a ‘Promote Package’ button on the information page for the application. Assuming all dependencies are met and a valid category for the app (multimedia/games/etc) is specified, then it should be promoted within the day\footnote{Promoting to Testing  - http://wiki.maemo.org/Extras-devel\#Promoting\_packages\_to\_extras-testing}. 
-
-Once in testing, it then undergoes a human rating system who thumb the application up or down depending on stable (or usually how good) it is. After a package recieves 10 positive votes and has had a minimum of 10 days within extras-testing, it is then promotes to the main Extras repository\footnote{Promoting to Extras - http://wiki.maemo.org/Extras-devel\#Promoting\_packages\_to\_extras-testing}
-
-\subsection{Announce Page}
-To promote the application, developers usually create an Announce thread on the Maemo Talk forums with a subject heading of ‘[Announce] Appname - Description’. Developers who are too meek to upload to Extras-Devel and don’t quite want to reveal their source can attach their .deb packages to the first post where users can then download it and try it out without having to go through the repositories. All issues concerning the application and future versions and releases are updated/posted on this thread.
-
-In the case of my old Phonestreamer app (now MediaStream) I got 10,000 downloads within a week, and 40,000 within a month\footnote{Phonestreamer Announce page - http://talk.maemo.org/showthread.php?t=70877}, but that was two years ago when the N900 was still relatively new and cutting edge.
-
-In the case of my current WatchDog app, the response has been less eager simply due to the lack N900 users still lingering around. The responses that I have recieved however have been overwhelmingly supportive and impressed and I have even dedicated this project write up to the first user who responded to my announce page (see dedication above the contents)\footnote{‘deed’ appraisal http://talk.maemo.org/showpost.php?p=1255370\&postcount=2}. The lack of users is not surprising, but I am not worried since the watchdog application is extremely portable (the underlying logic does not solely rely on FCam or CImg) and due to the cross-platform nature of the Qt framework, means that I can port this application to another phone in the very near future (though to my dismay it is most likely to be a Windows phone because of the Qt requirement). Watchdog is also a good ‘end app’ for the phone since many users simply discard or swap in their old phones when upgrading, but now watchdog gives it a use as security device.
-
-\part{Bibliography}
-
-\part{Appendix}
-\section{Manual}
-\subsection{System Manual}
-\subsubsection{Getting the source}
-The source code can be from the CD provided or can also be accesseed on the maemo packages database\footnote{Package Search - http://maemo.org/packages/} and search for WatchDog. Then select any Extras-Devel repository for the latest code, and click on source. Untar the file with ‘tar -zxvf  watchdog_*.tar.gz’.
-\subsubsection{Building with Qt}
-First download the QtSDK for either Windows or Linux from the official Qt site\footnote{Qt Downloads - http://qt.nokia.com/downloads}. Windows is recommended for stability reasons. A normal installation will take up 2.66GB of data, but a lot of this not needed so I recommend doing a custom installation. To install the neccesary components needed to run the app are:
-\begin{enumerate}
-\item Tick the core QtSDK (greater or equal to v1.2.1-1)
-\item Untick experimental
-\item Untick Documentation
-\item Untick APIs (Qt Mobility, Qt Quick (QML), and Notifications are not needed)
-\item In Development Tools tick:
-	\begin{enumerate}
-	\item Qt Designer
-	\item Qt Creator (untickable)
-	\item Qt Simulator (if you do not own Nokia N900)
-	\item Desktop Qt (if you do not own Nokia N900)
-	\item Maemo Toolchain
-	\item Device Files
-	\end{enumerate}
-\item Untick Miscellaneous (Qt Examples and Sources not needed)
-\end{enumerate}
-This should limit the install to 925 MB and be much easier to install. Once complete, launch Qt and click ‘Open Project...’ and select the source directory either from the CD or the directory you had just previously untarred. Qt will then launch a prompt asking you for which target to build the app for: Tick Maemo5 if you have a Nokia N900 and wish to run the application on there, or else tick Qt Simulator for an emulator. Qt will then update the .pro file with the relevant target(s).
-
-To build and run, simply press Build... then Run on the status bar, or Ctrl+B and Qt will run qmake to create the relevant moc files and then compile the app, finally packaging the application and sending it to the device (or emulator) to be launched.
-
-If no target has been set up, then go to Tools... Options... select the Linux Devices tab and create a new target configuration. Click Add... and follow the wizard to set up a hardware device or an emulator. A development account will be set up on the device (with default username ‘developer’ which has root priveleges for installing/uninstalling) and SSH keys will need to be generated in order to let the device automatically send data between machines without prompting for a password every time.
-
-\section{API example usage}
-\subsection{GStreamer Pipelining in C++}
-\paragraph{ The following is just a small snippet from an example Camera class from the Maemo Documentation Wiki:\\http://wiki.maemo.org/Documentation/Maemo\_5\_Developer\_Guide/Using\_Multimedia\_Components/Camera\_API\_Usage
-\\ test\\\\}
-\lstinputlisting[title=\textbf{Source Code: gst\_class.cpp}]{Code/API_Examples/gst_class.cpp}
-
-\section{Tables}
-\import{tables/}{normalised_subtracted_image_size.tex}
-
-
-\section{Application Code}
-\subsection{Motion Detector}
-\subsection{TimeLapse}
-\subsection{IP Streamer}
-\subsection{Commit Log}
-\subsection{Other}{Python code, Interval, GMaps}
-
-\section{Glossary and Index}
-
+\import{parts/}{appendix.tex}
 
 \end{document}
 
