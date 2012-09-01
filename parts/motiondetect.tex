@@ -88,7 +88,7 @@ Modern smartphones of today do often come equipped with camera's whose images ca
 \section{Available Software Evaluation}
 \paragraph{To start a basic motion detector, the very least that I would need to do is take one frame and subtract it from another to see the difference. To do this I would need to store every pixel value in an array for each image and then perform a sweep over both arrays to compare their pixel values. There must be imaging libraries that I could use that would greatly facilitate such imaging techniques. But first I would need to be able to take a single photo.....}
 
-\subsection{QtMobility vs Gstreamer vs FCam}
+\subsection{QtMobility vs Gstreamer vs FCam}\label{gstreamertalk}
 
 {\bf QtMobility} is a Qt library that enabed developers to have access to standard mobile functionality such as messaging, contacts, multimedia, and camera.  The camera is contained within a QCamera widget and simple calls can be made to the imaging device.
 \\Unfortunately the official stable version v1.1 had camera support for Symbian and Meego(Harmattan), but not Fremantle. There was an unstable version 1.2 which included Fremantle support, but once I had installed libqtm-dev\_1.2 on the rootstrap device, and tried to use the QCamera element from within a C++ class it did not work. This is because the QCamera element has to be accessed through QML, which would be doable but would not be optimized for speed. For this reason I dropped QtMobility.
@@ -256,7 +256,7 @@ which specifies the that libavcodec is to be used, the framerate and also that t
 \\Mencoder is also not pre-installed with the device, but many Maemo users do tend to install it first chance they get due to the default Media Player's poor support for certain MPG formats. Mencoder is by far the most convenient of the four video processing libraries to use, not only because it doesnt require filenames for the images to be named incrementally, but also because the framerate is applied correctly and produces the correctly comiled movie. The freedom in the naming of the image filenames also has an additional benefit such that ifthe motiondetector does not record an image to file correctly and the filenames get mixed up, mencoder will still compile the images into a movie without throwing an error, whereas FFMpeg would perform a segmentaion fault. Mencoder was the clear winner, and was adopted into the application and added to the dependencies.}
 
 
-\section{Image Processing Techniques}
+\section{Image Processing Techniques}\label{proctechniques}
 \paragraph{A motion detector works on the basic priniciple that there there exists some drastic difference between two images where motion has occred and motion has not occured. One way to see this represenation is to subtract one frame from another and look for the leftover pixels. Pixels where the image hasn't changed will have the same pixel value and will thus cancel each other out, whereas images where there is a difference between pixels at the same location will have values greater than zero. In the case of unsigned chars, any negative pixels will naturally wrap around and becomes high pixel values (white).}
 \subsection{Subtraction}
 \begin{wrapfigure}{R}{0.3\textwidth}
@@ -451,7 +451,7 @@ The images above show how the running average method reduces the localised noise
 
 Clearly another technique is needed to smooth the images so that sparse pixels surrounded by emptiness can be ignored and not contribute to the threshold count. Such techniques are called {\bf morphological operations}
 
-\subsubsection{Image Morphology}
+\subsubsection{Image Morphology}\label{kernelmorph}
 Another way to reduce noise in an image is to 'smooth out' random white pixels, so that an image dotted sparsely with noise is converted into an image that contains only the most concentrated of clusters.  To do this one needs to smooth the pixels.
 In binary colorspace, smoothing a pixel requires considering the values of the neighbouring pixels. If pixel A has 8 neighbours (adjacent/diagonal), then the 0 or 1 value of pixel A is determined by the value of its neighbours.\\
 To {\bf Dilate} a pixel is to set its value to 1 if all (or most) of it's neighbouts are also 1.\\
@@ -809,7 +809,7 @@ Another thing to note is the recordLogic() function.  I noticed at one point tha
 \end{lstlisting}
 So now the interval would be fast for large number of frames (500 milliseconds for 10 frames), or slow for short number of frames (100 milliseconds for 2 frames) with scaling in between,
 
-\subsubsection{AutoExpose}
+\subsubsection{AutoExpose}\label{autoexpose}
 I noticed sometimes that when I left the motion detector to face the garden at night the application would crash before the next morning with the last saved images being extremely white. This was because when I initially started the app, the target scene was dark, and so the histogram initially increased the exposure and gain to accomodate for this. But the following morning, when the target scene was now brighter, the exposure and gain weren’t adjusted accordingly and so when it updated the reference image, the reference image was a completely white image and so when it performed subtraction, the white pixel count was always above the threshold making the app think that movement was continuously occuring!
 Once I realised my mistake I simply made the motion detector call the autoExpose algorithm whenever it updated the reference image and the problem was solved.
 

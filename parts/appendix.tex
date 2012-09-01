@@ -65,6 +65,105 @@ Before I used cout, I attempted to use a qMessageHandler() that would automatica
 \end{lstlisting}
 The code identified the type of output message (Debug, Warning, Critical, Fatal) and piped it into the cout stream. Unforunately this was too much overhead, since there was a significant delay, and adding to the current overhead of using qDebug() in the first place was  too much. I simply abondoned the approach and replaced qDebug() with std::cout.
 
+\section{UI related implementations}\label{widgetstuff}
+
+\section{Window management and Maemo5 Stacked Windows}
+Unlike iPhone and Android user interfaces, Maemo does not automatically slide between different windows when initiated, but instead creates a new window and shifts view to it, whilst the previous window still exists. 
+
+This isn't much of a problem if the user is solely using the one app because the user will not notice it. However Maemo was one the first platforms to support multitasking windows for mobiles, and so if the user has multiple windows open at any one time, then switching between windows suddenly becomes tediousy difficult as there now many windows open at any one time.
+
+One solution is to simply call QMainindow::hide() or QMainWindow::show() between different windows so that only one window is shown at any one time, but this is inelegant, and ultimately leads to confusion of how many windows are being hidden which can waste memory if those windows are not being used.
+
+To overcome this I trawled through the forums and came across Maemo5StackedWindow. This is a window property that enables sliding transitions and works only on the Maemo5 device. To enable it one must place the following in the constructor of {\it every} window of the project:
+\begin{lstlisting}
+#ifdef Q_WS_MAEMO_5
+    this->setAttribute(Qt::WA_Maemo5StackedWindow);
+    this->setWindowFlags(Qt::Window);
+#endif
+\end{lstlisting}
+
+This solves the 
+
+\section{Persisting data}
+\subsection{QSettings}
+
+
+\subsection{Labels and PixMaps}
+A QPixmap is essentially a container for a bitmap, optimized for displaying image. It is different from a QImage in that QImage can store and manipulate image data, but not display it.
+
+To display a QPixmap one must assign it to a QLabel. In my MediaStream application I played around with QPixmaps alot creating my own custom QPushButton, so that when the user clicked on the button, the image icon rotated clockwise, and then rotated back when the user released the button.
+
+To do this I needed to override the default event handlers for click, push, release actions. C++ is different from Java in overriding events in the way that in Java, and '@override' tag must be placed above the overriding function. In C++ one does not need to do such a thing.
+\subsubsection{Overriding events}
+There are two events I needed to override: push and release. I needed to intercept these events and grab the x,y coordinates of the 'mouse' pointer and check whether the  coordinates match within the region of the button that the user is pressing:
+\begin{lstlisting}
+//Overrides default mousePressEvent behaviour
+void MainWindow::mousePressEvent(QMouseEvent * event)
+\{
+    if(ui->widget\_main\_Connection->geometry().contains(  event->x(),event->y()))
+    \{
+        //shake img forward
+        QPixmap qpm = spinPixMap(*ui->label\_main\_connection\_img->pixmap(), 20);
+        ui->label\_main\_connection\_img->setPixmap(qpm);
+    \}
+
+    if(ui->widget\_main\_Profile->geometry().contains(  event->x(),event->y()))
+    \{
+        //shake img forward
+        QPixmap qpm = spinPixMap(*ui->label\_main\_profile\_img->pixmap(), 20);
+        ui->label\_main\_profile\_img->setPixmap(qpm);
+    \}
+\}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent * event)
+\{
+    if(ui->widget\_main\_Connection->geometry().contains(  event->x(),event->y()))
+    \{
+        //shake img back
+        QPixmap qpm = spinPixMap(*ui->label\_main\_connection\_img->pixmap(), -20);
+        ui->label\_main\_connection\_img->setPixmap(qpm);
+        (new ConnectionWind)->exec();  //Launch Window
+    \}
+
+    if(ui->widget\_main\_Profile->geometry().contains(  event->x(),event->y()))
+    \{
+        //shake img back
+        QPixmap qpm = spinPixMap(*ui->label\_main\_profile\_img->pixmap(), -20);
+        ui->label\_main\_profile\_img->setPixmap(qpm);
+    \}
+\}
+\end{lstlisting}
+This performed two different operations when the user pressed and released a button (i.e. titled forward, then tilted back the QPixmap)
+
+The actual tilting came by modifying and replacing the existing pixmap. This was done using QPainter which can draw graphics to a QPixmap object as well as perform operations upon it such as rotating and translating the object. The spinPixMap() function below displays this:
+\begin{lstlisting}
+QPixmap MainWindow::spinPixMap(QPixmap original, int angle)
+\{
+    QPixmap rotatedpix(original.size());
+    rotatedpix.fill(QColor::fromRgb(0,0,0,0));
+    QPainter *ppp = new QPainter(\&rotatedpix);
+    QSize size = original.size();
+    ppp->translate(size.height()/2,size.height()/2);
+    ppp->rotate(angle);
+    ppp->translate(-size.height()/2,-size.height()/2);
+    ppp->drawPixmap(0, 0, original);
+    ppp->end();
+    delete ppp;
+    return rotatedpix;
+\}
+\end{lstlisting}
+
+\subsubsection{CSS stylesheets}
+Not only can the QPixmap change upon events, but different stylesheets can be set as well. Stylesheets are exactly the same in Qt as they are HTML, and it was through those that I created the red oval borders around the the Profile and Connection buttons (see page~\pageref{guimap} bottom left for the Profile Database window to see both the rotating pixmap and the stylesheet in action.
+
+\subsection{Animated Gifs and QMovie}
+QPixmap by default can display a whole range of static images (jpg, png, bmp, gif, etc), but it cannot display animated gifs or other media that has more than one frame. To overcome this one must declare a QMovie object, initialise it with the animated gif (or wmv) file and then assign it to a QLabel. It can then be controlled via start() and stop() methods:
+\begin{lstlisting}
+QMovie *movieLogo = new QMovie(":/myImage/images/logo.gif");
+movieLogo->setScaledSize(QSize(250,250));
+ui->myLabel->setMovie(movieLogo);
+\end{lstlisting}
+
 \section{Manual}
 \subsection{System Manual}
 \subsubsection{Getting the source}

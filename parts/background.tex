@@ -173,4 +173,17 @@ From the QtSDK, branches can be chosen through context menus and changes can be 
 Previous reports of mine have often been written in OpenOffice or Abiword, but this time I decided to try LaTex.\\LaTex is an intuitive document creating language widely used in academia to produce proffesional papers and reports using the type-setting program Tex. It has native support for writing equations, producing tables, generating a table of contents, and simplifies bibliography management.\\Every part of the document is declared in a single marking tag which can declare a section, or subsection, or subsubsection, or paragraph, or subparagraph.
 \\For trees I used the QTree package, and for bibliographies I didn't want the reader to have to constantly flip back and forth to a bibliography at the back, so I used the {\it footbib}\footnote{footbib - mirror.hmc.edu/ctan/macros/latex/contrib/footbib/footbib.pdf} package that placed references at the foot of the page whilst still maintaining the bibliography database. Footnotes were also frequently used whenever a citation was not likely to be quoted again.
 
+\section{Literature Review}
+Prior to development I was reading through a detailed review by Massimo Piccardi from the Computer Vision Research Group (CVRG) at the University of Technology, Sydney (UTS)\footnote{Background Sutraction Techniques - http://www-staff.it.uts.edu.au/~massimo/BackgroundSubtractionReview-Piccardi.pdf} on background subtractions. The review highlighted many common problems and pitfalls that would occur in trying to detect motion and how to overcome them.
+Indeed on page~\pageref{autoexpose} I describe how I fell into the trap of not updating the exposure of the camera and thus not detecting changes in illumination.
+Piccardi talks about how simple subtraction between one frame and the next is very sensitive to a threshold, since the background is simply the previous image. He goes on to mention a method of accumulating frames as a running averages to overcome this problem and you can see the implementation of both efforts on page~\pageref{proctechniques}.
+
+Once I got to the stage where I needed to perform morphological operations I began to read about erosion and dilation techniques from H.E. Burdick's textbook Digital Imaging: Theory and Applications\footnote{Digital Imaging: Theory and Applications, H. E. Burdick, McGraw-Hill, 1997}. On chapter 5: Morphological Operations he discusses the uses of the different kernel masks neccesary for erosion, dilation, and what he deems "hit-and-miss operators". I expand more on the topic on page~\pageref{kernelmorph}.
+
+For timelapse operations there was not many prior works that I could read from, mostly because the topic is quite self-explanatory. I did read a great deal about cron and the alarmd framework as mentioned in detail on page~\pageref{cronalarm}.
+
+IP streaming was based on the gstreamer framework and I discuss that at length (with examples) on page~\pageref{gstreamertalk}.
+
+
+
 %\end{document}
