@@ -166,15 +166,38 @@ To promote the application, developers usually create an Announce thread on the 
 
 In the case of my old Phonestreamer app (now MediaStream) I got 10,000 downloads within a week, and 40,000 within a month\footnote{Phonestreamer Announce page - http://talk.maemo.org/showthread.php?t=70877}, but that was two years ago when the N900 was still relatively new and cutting edge.
 
-In the case of my current WatchDog app, the response has been less eager simply due to the lack N900 users still lingering around. The responses that I have recieved however have been overwhelmingly supportive and impressed and I have even dedicated this project write up to the first user who responded to my announce page (see dedication above the contents)\footnote{‘deed’ appraisal http://talk.maemo.org/showpost.php?p=1255370\&postcount=2}. The lack of users is not surprising, but I am not worried since the watchdog application is extremely portable and due to the current portability of the Qt framework, means that I can port this application to another phone in the very near future (though to my dismay it is most likely to be a Windows phone because of the Qt requirement).
-
+In the case of my current WatchDog app, the response has been less eager simply due to the lack N900 users still lingering around. The responses that I have recieved however have been overwhelmingly supportive and impressed and I have even dedicated this project write up to the first user who responded to my announce page (see dedication above the contents)\footnote{‘deed’ appraisal http://talk.maemo.org/showpost.php?p=1255370\&postcount=2}. The lack of users is not surprising, but I am not worried since the watchdog application is extremely portable (the underlying logic does not solely rely on FCam or CImg) and due to the cross-platform nature of the Qt framework, means that I can port this application to another phone in the very near future (though to my dismay it is most likely to be a Windows phone because of the Qt requirement). Watchdog is also a good ‘end app’ for the phone since many users simply discard or swap in their old phones when upgrading, but now watchdog gives it a use as security device.
 
 \part{Bibliography}
 
 \part{Appendix}
 \section{Manual}
-\subsection{System Manual}{How to compile}
-\subsection{User Manual}
+\subsection{System Manual}
+\subsubsection{Getting the source}
+The source code can be from the CD provided or can also be accesseed on the maemo packages database\footnote{Package Search - http://maemo.org/packages/} and search for WatchDog. Then select any Extras-Devel repository for the latest code, and click on source. Untar the file with ‘tar -zxvf  watchdog_*.tar.gz’.
+\subsubsection{Building with Qt}
+First download the QtSDK for either Windows or Linux from the official Qt site\footnote{Qt Downloads - http://qt.nokia.com/downloads}. Windows is recommended for stability reasons. A normal installation will take up 2.66GB of data, but a lot of this not needed so I recommend doing a custom installation. To install the neccesary components needed to run the app are:
+\begin{enumerate}
+\item Tick the core QtSDK (greater or equal to v1.2.1-1)
+\item Untick experimental
+\item Untick Documentation
+\item Untick APIs (Qt Mobility, Qt Quick (QML), and Notifications are not needed)
+\item In Development Tools tick:
+	\begin{enumerate}
+	\item Qt Designer
+	\item Qt Creator (untickable)
+	\item Qt Simulator (if you do not own Nokia N900)
+	\item Desktop Qt (if you do not own Nokia N900)
+	\item Maemo Toolchain
+	\item Device Files
+	\end{enumerate}
+\item Untick Miscellaneous (Qt Examples and Sources not needed)
+\end{enumerate}
+This should limit the install to 925 MB and be much easier to install. Once complete, launch Qt and click ‘Open Project...’ and select the source directory either from the CD or the directory you had just previously untarred. Qt will then launch a prompt asking you for which target to build the app for: Tick Maemo5 if you have a Nokia N900 and wish to run the application on there, or else tick Qt Simulator for an emulator. Qt will then update the .pro file with the relevant target(s).
+
+To build and run, simply press Build... then Run on the status bar, or Ctrl+B and Qt will run qmake to create the relevant moc files and then compile the app, finally packaging the application and sending it to the device (or emulator) to be launched.
+
+If no target has been set up, then go to Tools... Options... select the Linux Devices tab and create a new target configuration. Click Add... and follow the wizard to set up a hardware device or an emulator. A development account will be set up on the device (with default username ‘developer’ which has root priveleges for installing/uninstalling) and SSH keys will need to be generated in order to let the device automatically send data between machines without prompting for a password every time.
 
 \section{API example usage}
 \subsection{GStreamer Pipelining in C++}
