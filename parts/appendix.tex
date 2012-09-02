@@ -33,60 +33,39 @@ Another useful feature of printing directly to the console is that I can use the
 \subsubsection{Message Handlers}
 Before I used cout, I attempted to use a qMessageHandler() that would automatically pipe qDebug() streams directly to std::cout. On the QtGlobal API\footnote{qInstallMessageHandler - http://doc.qt.nokia.com/4.7-snapshot/qtglobal.html\#qInstallMsgHandler}, I found the following snippet of code:
 \begin{lstlisting}
- #include <qapplication.h>
- #include <stdio.h>
- #include <stdlib.h>
+ \#include <qapplication.h>
+ \#include <stdio.h>
+ \#include <stdlib.h>
 
  void myMessageOutput(QtMsgType type, const char *msg)
- {
-     switch (type) {
+ \{
+     switch (type) \{
      case QtDebugMsg:
-         fprintf(stderr, "Debug: %s\n", msg);
+         fprintf(stderr, "Debug: \%s\n", msg);
          break;
      case QtWarningMsg:
-         fprintf(stderr, "Warning: %s\n", msg);
+         fprintf(stderr, "Warning: \%s\n", msg);
          break;
      case QtCriticalMsg:
-         fprintf(stderr, "Critical: %s\n", msg);
+         fprintf(stderr, "Critical: \%s\n", msg);
          break;
      case QtFatalMsg:
-         fprintf(stderr, "Fatal: %s\n", msg);
+         fprintf(stderr, "Fatal: \%s\n", msg);
          abort();
-     }
- }
+     \}
+\ }
 
  int main(int argc, char **argv)
- {
+ \{
      qInstallMsgHandler(myMessageOutput);
      QApplication app(argc, argv);
      ...
      return app.exec();
- }
+ \}
 \end{lstlisting}
 The code identified the type of output message (Debug, Warning, Critical, Fatal) and piped it into the cout stream. Unforunately this was too much overhead, since there was a significant delay, and adding to the current overhead of using qDebug() in the first place was  too much. I simply abondoned the approach and replaced qDebug() with std::cout.
 
 \section{UI related implementations}\label{widgetstuff}
-
-\section{Window management and Maemo5 Stacked Windows}
-Unlike iPhone and Android user interfaces, Maemo does not automatically slide between different windows when initiated, but instead creates a new window and shifts view to it, whilst the previous window still exists. 
-
-This isn't much of a problem if the user is solely using the one app because the user will not notice it. However Maemo was one the first platforms to support multitasking windows for mobiles, and so if the user has multiple windows open at any one time, then switching between windows suddenly becomes tediousy difficult as there now many windows open at any one time.
-
-One solution is to simply call QMainindow::hide() or QMainWindow::show() between different windows so that only one window is shown at any one time, but this is inelegant, and ultimately leads to confusion of how many windows are being hidden which can waste memory if those windows are not being used.
-
-To overcome this I trawled through the forums and came across Maemo5StackedWindow. This is a window property that enables sliding transitions and works only on the Maemo5 device. To enable it one must place the following in the constructor of {\it every} window of the project:
-\begin{lstlisting}
-#ifdef Q_WS_MAEMO_5
-    this->setAttribute(Qt::WA_Maemo5StackedWindow);
-    this->setWindowFlags(Qt::Window);
-#endif
-\end{lstlisting}
-
-This solves the 
-
-\section{Persisting data}
-\subsection{QSettings}
-
 
 \subsection{Labels and PixMaps}
 A QPixmap is essentially a container for a bitmap, optimized for displaying image. It is different from a QImage in that QImage can store and manipulate image data, but not display it.
