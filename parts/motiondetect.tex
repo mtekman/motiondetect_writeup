@@ -109,7 +109,7 @@ This pipes the video-for-linux(version2) camera source into a video scaling elem
 
 Despite the speed and efficient usage of system resources, GStreamer has an extremely involved API but is difficult to work with since it is prone to cascading errors due to the every element being dependant on the previous element to function. An example of the C++ implementation of the same code as above is shown in the appendix.\\
 
-FrankenCamera (or {\bf FCam}) is a very easy to use open-source C++ API for controlling digital cameras.  The FCam architecture was developed as a joint reasearch project between Stanford Computer Graphics and Nokia's Research Center for controlling the N900's camera, but has since been used to run their own F2 camera built in their labs\footnote{fcamdoc}. Normally camera architectures are not so easily accessible and it is very fortunate that FCam chose the N900 to develop on.
+FrankenCamera (or {\bf FCam}) is a very easy to use open-source C++ API for controlling digital cameras.  The FCam architecture was developed as a joint reasearch project between Stanford Computer Graphics and Nokia's Research Center for controlling the N900's camera, but has since been used to run their own F2 camera built in their labs\footnote{Frankencamera: Experimental platform - http://doi.acm.org/10.1145/1833349.1778766}\label{ref:fcamdoc}. Normally camera architectures are not so easily accessible and it is very fortunate that FCam chose the N900 to develop on.
 \pagebreak
 \\The FCam API is split into 4 components:
 \begin{enumerate}
@@ -162,12 +162,12 @@ The IPLImage has BGR channel order (i.e the first channel is blue, second is gre
 \begin{frame}{}
 \lstinputlisting[title=\textbf{Source Code: IPLconvert.cpp}]{../Code/API_Examples/IPLconvert.cpp}
 \end{frame}
-as taken from some skeleton code for an FCam project at Cornel university\footnote{Noah Snavely - Introduction to Computer Vision - http://www.cs.cornell.edu/courses/cs4670/2010fa/projects/p1/codes/project1.tar.gz}\\
+as taken from some skeleton code for an FCam project at Cornel university\footnote{Computer Vision course code- http://www.cs.cornell.edu/courses/cs4670/2010fa/projects/p1/codes/project1.tar.gz}\label{ref:snavelly}\\
 This took a reference to the FCam's Frame, extracted the image from it, and attempted to convert it into an unsigned 8-bit gresycale IPL image with 1 color channel. The unsigned 8-bit image would be limited to 0-255 range.\\
 Unfortunately several problems were encountered and almost three days were lost trying to get to the bottom of it:
 
-A Maemo port of openCV does exist for Fremantle \footcite{libcv} but despite installing libcv, libcv-dev, and many of it's dependencies (libcvcore, libhighgui) the SDK would complain about many missing dependencies when building the application. The culprit turned out to be missing dependencies for libhighgui-dev, but this was false since running a quit dpkg -L \(\langle\)dependency\_name\(\rangle\) confirmed that the dependency was indeed installed. At one stage I copied my entire /usr/lib directory from the phone to the rootstrap but it would still fail when trying to build.\\
-A few hours of trawling through the Maemo reading lists came up with a bug report \footcite{highgui-dev} from the original maintainer claiming a bug within the build system.\\
+A Maemo port of openCV does exist for Fremantle \footnote{Maemo Packages LibCV - http://maemo.org/packages/view/libcv-dev/}\label{ref:libcv} but despite installing libcv, libcv-dev, and many of it's dependencies (libcvcore, libhighgui) the SDK would complain about many missing dependencies when building the application. The culprit turned out to be missing dependencies for libhighgui-dev, but this was false since running a quit dpkg -L \(\langle\)dependency\_name\(\rangle\) confirmed that the dependency was indeed installed. At one stage I copied my entire /usr/lib directory from the phone to the rootstrap but it would still fail when trying to build.\\
+A few hours of trawling through the Maemo reading lists came up with a bug report \footnote{Missing dependencies bug - http://lists.maemo.org/pipermail/maemo-developers/2011-August/028583.html}\label{ref:depbug} from the original maintainer claiming a bug within the build system.\\
 For this reason OpenCV had to be abandoned and a new image processing library had to be used.
 
 \subsubsection{CImg}
@@ -180,7 +180,7 @@ CImg was suggested by my project supervisor after we discussed the bugs I had be
 \tab\tab const unsigned int size\_c=1 //spectrum\\
 )\\
 To construct a CImg, all one has to do is call ‘CImg\(\langle\)T\(\rangle\) Name’; where T is the type or size of each pixel value, and name is the name of the image. So for an image that that has 256 colorspace, T = unsigned char = 8bit.
-\\In CIMG, the color channels are in RGB format. OpenCV's IPLImage only supports up to 4 color channels but CImg supports up to any number and this provided a source of initial confusion for me.\footnote{CIMG IPL conversion class header text - http://sph2grid.googlecode.com/svn-history/r14/trunk/CImg/plugins/cimg\_ipl.h:}\\
+\\In CIMG, the color channels are in RGB format. OpenCV's IPLImage only supports up to 4 color channels but CImg supports up to any number and this provided a source of initial confusion for me.\footnote{CIMG IPL conversion class header text - http://sph2grid.googlecode.com/svn-history/r14/trunk/CImg/plugins/cimg\_ipl.h:}\label{ref:cimgipl}\\
 Using the same format as the Cornell code I attempted to make:
 \begin{frame}{}
 \lstinputlisting[title=\textbf{Source Code: IPLconvert.cpp}]{../Code/API_Examples/CImgConvertBad.cpp}
@@ -689,7 +689,7 @@ QThread has a protected method called start() which is the same as Java Thread's
 \subsubsection{Signal/Slots}
 Signals and slots are a core mechanism in Qt that sets itself apart from all the others. It is essentially a notification framework, so that when Object A performs something then Object B can know about it.  Traditionally, these are enabled through the use of callbacks, where a global pointer to a function is passed between objects to enable communication. However callback's are not very type-safe since the pointer can reference anything and there is no gauruntee that the callback will be called with the correct parameters.
 
-Signal and slots\footnote{Image Slots/Signals - http://doc.qt.nokia.com/4.7-snapshot/signalsandslots.html} provide an alternative to this. When a particular event occurs in Object A, then A emits a signal for that event. A slot  is then called to handle the signal, where a slot is simply a function which has the extended ability to listen for signals. If Object B has a slot that is paired with a signal from Object A, then  B will run it's slot when A emits its signal.
+Signal and slots\footnote{Image (Slots/Signals) - http://doc.qt.nokia.com/4.7-snapshot/signalsandslots.html} provide an alternative to this. When a particular event occurs in Object A, then A emits a signal for that event. A slot  is then called to handle the signal, where a slot is simply a function which has the extended ability to listen for signals. If Object B has a slot that is paired with a signal from Object A, then  B will run it's slot when A emits its signal.
 
 \begin{wrapfigure}{R}{0.5\textwidth}
 	\vspace{-10pt}
@@ -707,7 +707,7 @@ connect is a function of QObject, and so to enable signals/slots, one must inher
 
 Pairing usually occurs automatically: When a button is clicked, Qt creates a slot for it in the source file and the user can then edit the slot to perform some task. The connect:: script is never seen in the source file, but is included in the autogenerated MOC files and so the implementation is seamless.
 
-Custom slots are another story. Though this mechanism is completely native to Qt, it can very temperamental trying to create custom slots. Often you will need to clean, rebuild, make, clean, rebuild, make, and so forth until the custom signal or slot is accepted. This is undoubdetly a bug of Qt and has been reported by previous users.\footnote{Bug report -  https://bugreports.qt-project.org/browse/QTBUG-17072}
+Custom slots are another story. Though this mechanism is completely native to Qt, it can very temperamental trying to create custom slots. Often you will need to clean, rebuild, make, clean, rebuild, make, and so forth until the custom signal or slot is accepted. This is undoubdetly a bug of Qt and has been reported by previous users.\footnote{Bug report -  https://bugreports.qt-project.org/browse/QTBUG-17072}\label{ref:slotbug}
 
 For the Camera thread, I paired a stop button signal from the UI thread with a stop() slot in the camera thread. The stop() slot in the camera thread simply changed a class boolean variable called 'stopNow' to True.  In every function within the camera thread, whenever a loop occurred  stopNow!=True would be a condition that would terminate the loop. This would exit the function early and cause the Camera Thread to perform its Deletion function and stop the camera thread safely without crashing the application.
 
@@ -793,18 +793,18 @@ A major selling point of the application is the feature to email the user in rea
 Before starting the camera the user can choose to set an email address, message, subject, and can also choose to attach an image to the email, so that they can catch the latest image with the movement occuring within it. As a burglar alarm, this would be the method of catching the culprit red-handed so to speak.
 
 In order to do this a framework needed to be used to send the email.
-Qt provided an example in version 3.x of a class that could send emails to a specified SMTP server using QTCPSocket objects\footnote{QTCPSocket example - http://lists.trolltech.com/qt-interest/2006-10/thread01158-0.html}, but this was dropped in recent versions of Qt and despite trawlng the forums very few users had managed to use this class file effectively in Qt4.7. So I was unable to use this framework to send an email. This was not neccesarily a bad thing, since the SMTP server would have to be defined by me and I would have had to have some kind of address book of every SMTP address in order to send an email to gmail or hotmail or whatnot.
+Qt provided an example in version 3.x of a class that could send emails to a specified SMTP server using QTCPSocket objects\footnote{QTCPSocket example - http://lists.trolltech.com/qt-interest/2006-10/thread01158-0.html}\label{ref:qtcp}, but this was dropped in recent versions of Qt and despite trawlng the forums very few users had managed to use this class file effectively in Qt4.7. So I was unable to use this framework to send an email. This was not neccesarily a bad thing, since the SMTP server would have to be defined by me and I would have had to have some kind of address book of every SMTP address in order to send an email to gmail or hotmail or whatnot.
 
-Instead I looked at the phone itself for a framework.  QtMobility looked promising, but several problems were reported for Maemo\footnote{QtMobility bugs - http://www.developer.nokia.com/Community/Discussion/showthread.php?201846-Sending-Email-Using-Qt-Mobility} which was confirmed by several users, and so I had to look at another alternative.
+Instead I looked at the phone itself for a framework.  QtMobility looked promising, but several problems were reported for Maemo\footnote{QtMobility bugs - http://www.developer.nokia.com/Community/Discussion/showthread.php?201846-Sending-Email-Using-Qt-Mobility}\label{ref:qtmobbug} which was confirmed by several users, and so I had to look at another alternative.
 
-A veteran user on the Maemo community site had written an app called ‘mailcmd ’\footnote{nicolai’s mailcmd announce page - http://talk.maemo.org/showthread.php?t=82918} that was a simple commandline utility that sent emails using the default email account setup on the phone. It even allowed for attaching images and the sheer simplicity of its usage was exactly what I needed.
+A veteran user on the Maemo community site had written an app called ‘mailcmd ’\footnote{Nicolai’s Mailcmd Announce page - http://talk.maemo.org/showthread.php?t=82918}\label{ref:mailcmd} that was a simple commandline utility that sent emails using the default email account setup on the phone. It even allowed for attaching images and the sheer simplicity of its usage was exactly what I needed.
 
 This added the ‘mailcmd’ dependency to my project, but it is a small package and I don’t think users would mind too much. I created a class file that inherited a QThread which ran a QProcess to execute the mailcmd command in a new thread.
 
 This means that any time during the application, there will be at maximum three threads running: UI, Camera, and Email. Email needed to be run on it’s own thread, otherwise the camera thread would hang between frames as it waits for confirmation of the email to be sent. I wanted the application to be as responsive as possible and so I created a seperate thread for Email to avoid this problem.
 
 \subsection{Logic and Optimisations/Error Proofing}
-The underlying logic of the application lies in the Operations.cpp camera thread. The thread is based on the relatively simple FCam API examples\footnote{FCam API Examples - http://fcam.garage.maemo.org/examples.html}, where the Camera is first initialised by:
+The underlying logic of the application lies in the Operations.cpp camera thread. The thread is based on the relatively simple FCam API examples\footnote{FCam API Examples - http://fcam.garage.maemo.org/examples.html}\label{ref:fcamapi}, where the Camera is first initialised by:
 \begin{lstlisting}[title=\bf Snippet initialise() function in Operations.cpp]
      errorCheck();  //Call error check function
 
@@ -890,12 +890,6 @@ bool validKernel() \{
 \}
 \end{lstlisting}
  However the root of the problem turned out to be that I was not initializing the camera properly when I started the thread, and so when I fixed this problem, the validKernel() function became redundant and I deleted it from the source.
-
-
-
-\footbibliographystyle{plain}
-\footbibliography{citers}
-
 
 
 \end{document}
