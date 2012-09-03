@@ -64,8 +64,6 @@
 %%\titleformat{\subsection}[runin]{\mdseries\bf}{\thesubsection}{1em}{}
 %%\titleformat{\subsubsection}[runin]{\mdseries\bf\underline\large}{\thesubsection}{1 em}{\vspace{-5 pt}}
 %
-%\usepackage{footbib}
-%
 %% (This matches ConTeXt defaults)
 %
 %%%% ToC (table of contents) APPEARANCE
@@ -73,7 +71,7 @@
 %\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
 %\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
 %\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
-
+%
 %\begin{document}
 
 \part{TimeLapse}
@@ -106,7 +104,7 @@ Commandline switches enable the user to issue commands to a program through a li
 Qt (like most SDk's) places all the arguments to a program in a list of some kind. In Qt, the arguments are accessed via QApplication::arguments() which returns the arguments in a QStringList (very similar to an ArrayList in Java).
 
 My first step was to create a CommandLine class. This class would take a reference to the QStringList and check the tokens within that for certain key flag values. The key flag values needed would have to be same options that can be specified by the user, and so I settled with the standard convention of providing longhand and shorthand names for flags with '- -name' and '-n' respectively:
-\begin{frame}[fragile]
+\begin{frame}{}
 \lstinputlisting[title=\textbf{Source Code: help.sh}]{../Code/commandline/help.sh}
 \label{frame:help}
 \end{frame}
@@ -115,7 +113,7 @@ To search for flags, I used QStringLists' ".contains(key)" method which performs
 For this reason, flags such as '--help' or '--version' were the first two flags to be searched, since these will print a quick message and then terminate without having to check for further flags.
 
 The other flags followed a different logic:
-\begin{frame}[fragile]
+\begin{frame}{}
 \vspace{-10pt}
 \lstinputlisting[title=\textbf{Source Code: checkflag.cpp }]{../Code/commandline/checkflag.cpp}
 \end{frame}
@@ -127,14 +125,14 @@ The flag\_value is then assigned the integer (or other type) version of index af
 Once the flag has had all the useful arguments taken from it, it is then {\it removed} from the argument array in order of highest index for flag, to lowest index for flag (the flag name). This order is necesary because when you remove from an Array at a certain index, all the indexes above it are shifted down meaning you now have to subtract by 1 to access a certain item from the higher indexes which can lead to errors. It is therefore far easier to remove from high index to low index to ensure that the lower indexes are unaffected by changes in the higher indexes.
 
 Why is removal even important here? It's an optimization. By removing the arguments from the array after using them, future searches to that same array for different flag values will be {\it faster} because there are less items to check. This also gives another benefit in that if the user misspells or enters an unknown flag, it will be left over in the argument array , and so the program can notify the user precisely of which flags were not recognised and which one's were:
-\begin{frame}[fragile]
+\begin{frame}{}
 \lstinputlisting[title=\textbf{Source Code: unknowns.cpp }]{../Code/commandline/unknowns.cpp}
 \end{frame}
 
 So if the user types into a shell:\\
-' motiondetect -m 7 --size 320 240 --roger the dodger -w 100'\\
+\tab' motiondetect -m 7 --size 320 240 --roger the dodger -w 100'\\
 The app will spit out the following error:\\
-'Could not parse: --roger the dodger\\Please try --help for more info '
+\tab'Could not parse: --roger the dodger\\Please try --help for more info '
 
 since these will be the leftover arguments that were left in the argument list. Had all the flags been valid, the argument list would have been empty.
 
@@ -187,7 +185,7 @@ One of the main benefits of having a commandline implementation is that enables 
 \subsubsection{Reusing existing variables}
 
 For standard motiondetection commandline calls such as mask, whitepixel, size, etc as shown in help.sh on page~\pageref{frame:help}, individual variables were created to hold these values, which were mirror variables for the same ones in the CameraThread. When the Commandline finishes parsing arguments it switches flow control back to the motiondetector (main window UI) class which then reassigns these variables to those of the camerathread as shown below:
-\begin{frame}[fragile]
+\begin{frame}{}
 \lstinputlisting[title=\textbf{Snippet from MotionDetector (mainwindow UI) }]{../Code/commandline/commandtoops.cpp}
 \end{frame}
 The main MotionDetector class does not have variables in the header file that hold all the variables, like CommandLine and Operations (the camera thread) do. MotionDetector is simply a UI class, it acts as a waypoint or a go-between for connecting commandline arguments to the camerathread.
@@ -211,18 +209,16 @@ Scheduled events are events that have been schedules to run at specific times. T
 In Linux 'cron' is the job scheduler, and it performs its operations by reading from a 'crontab' file which is a configuration file detailing the date and frequency, and job-specific detail of the job.
 
 Cron jobs are prepended by an intuitive 5 character sequence which is used to define the date and frequency via:\\
-%\begin{verbatim}
-%# Source: http://en.wikipedia.org/wiki/cron
-% *    *    *     *    *  command to be executed
-%│    │    │    │    │
-%│    │    │    │    │
-%│    │    │    │    │
-%│    │    │    │    └───── day of week (0 - 6) (0 is Sunday, or use names)
-%│    │    │    └────────── month (1 - 12)
-%│    │    └─────────────── day of month (1 - 31)
-%│    └──────────────────── hour (0 - 23)
-%└───────────────────────── min (0 - 59)
-%\end{verbatim}
+\begin{figure}[H]
+\vspace{-20pt}
+	\begin{center}
+		\includegraphics[width=0.7\textwidth]{../images/cron}
+	\end{center}
+	\vspace{-20pt}
+	\caption{Cron example from Wikipedia}
+	\vspace{-10pt}
+\end{figure}
+
 
 \begin{table}[H]
 \centering
@@ -253,7 +249,7 @@ To ensure this I made the flag for running the timelapse operations an obscure m
 'motiondetect --teenage-diplomacy \(\langle\)DateTime\(\rangle\) \(\langle\)Convert\(\rangle\) \(\langle\)Delete\(\rangle\) \(\langle\)Width\(\rangle\) \(\langle\)fps\(\rangle\)'. This is a reference to 'Blinded By the Light' song by Bruce Springsteen later covered by ELO. I figured no one would actually use that as a command call.
 
 The code is as follows:
-\begin{frame}[fragile]
+\begin{frame}{}
 \lstinputlisting[title=\textbf{Snippet from CommandLine.cpp}]{../Code/commandline/secrettime.cpp}
 \label{code:secret}
 \end{frame}
@@ -290,7 +286,7 @@ Cron is native to all Linux-based OS's and to set a job, one has to edit /etc/cr
 Unfortunately this is seen as somewhat risky, and can lead to unpredictable behaviour, mostly because cron is only used on the device for system specific actions (such as /etc/cron.daily/locate which periodically updates the phone's tracker for media files), so any custom user-specific actions are somewhat temperamental.  I therefore had to abandon cron and look for something else.
 
 \subsubsection{Alarmd}
-Alarmd is a Maemo-native system daemon that {\it manages} queued alarm events which "executes actions defined in events either automatically or after user input via system ui dialog service"\footnote{http://maemo.org/packages/view/alarmd/}. At first glance it may seem like a front-end for cron, but by checking the dependencies it is seen that it talks directly to dbus. DBus is a low-level inter-system messaging/communication system for making system calls between applications, that it has been so well-engrained in Linux operating systems that it has only a single dependency.
+Alarmd is a Maemo-native system daemon that {\it manages} queued alarm events which "executes actions defined in events either automatically or after user input via system ui dialog service"\footnote{Alarmd Maemo Package - http://maemo.org/packages/view/alarmd/}\label{ref:alarmdpack}. At first glance it may seem like a front-end for cron, but by checking the dependencies it is seen that it talks directly to dbus. DBus is a low-level inter-system messaging/communication system for making system calls between applications, that it has been so well-engrained in Linux operating systems that it has only a single dependency.
 
 Alarmd is commonly used by the system to manage making multiple wake up alarms, but it is not restricted to that function and technically can be used to execute any alarm at any given time. It has a much easier API then cron, and does a lot of useful scheduling background tasks by itself such as removing a job from the list once complete. 
 
@@ -308,7 +304,8 @@ which performs bitwise OR upon these two triggers and sets the flag to "'true'" 
  \item[Events] These are containers for Actions, and are what Alarmd holds. To add an alarm to Alarmd, you add an 'Event'. Events also hold the time\_t for the alarm, and has support for  seconds, something that cron does not have.
 \end{description}
 
-To use Alarmd, one needs to use libalarmd, which is native to the phone and so the rootstrap device already had it installed. The class I created borrowed the template for a few of it's functions from the examples at http://wiki.maemo.org/Documentation/Maemo\_5\_Developer\_Guide/Using\_Generic\_Platform\_Components/Alarm\_Framework. 
+To use Alarmd, one needs to use libalarmd, which is native to the phone and so the rootstrap device already had it installed. The class I created borrowed the template for a few of it's functions from the examples at the Maemo Wiki\footnote{Alarmd Framework -- http://wiki.maemo.org/Documentation/Maemo\_5\_Developer\_Guide/Using\_Generic\_Platform\_Components/Alarm\_Framework}
+\label{ref:alarmdframe}. 
 Alarmd jobs have APPID's, which uniquely match a job to an application making it far easier to retrieve and edit jobs without affecting other jobs or having to filter through them.
 
 \section{Optimisations/Error Proofing}
@@ -316,7 +313,7 @@ Commandline not called until arguments!=0, then it is destroyed intelligently.
 
 Even with the decent examples at the Maemo wiki, the application was error prone: sometimes jobs would be added correctly and sometimes not, sometimes the jobs would execute correctly and sometimes not. 
 
-This was actually one of the most longest bugs to fix due to the temperamental nature of the errors. I eventually did find a fix by searching through the source code {\it Alarmed\footnote{http://maemo.org/packages/view/alarmed/}}, a python GUI for adding alarmed events to the scheduler using python bindings for libalarmd. The syntax was much the same and very soon I realised that the error turned out to be a problem with alarmd running commands from busybox, but should instead be running them from the Ash shell by prepending '/usr/bin/ash' to the executed strings. The app added and executed events flawlessly after that stage.
+This was actually one of the most longest bugs to fix due to the temperamental nature of the errors. I eventually did find a fix by searching through the source code {\it Alarmed\footnote{Alarmed python package and source - http://maemo.org/packages/view/alarmed/}\label{ref:alarmedpyth}}, a python GUI for adding alarmed events to the scheduler using python bindings for libalarmd. The syntax was much the same and very soon I realised that the error turned out to be a problem with alarmd running commands from busybox, but should instead be running them from the Ash shell by prepending '/usr/bin/ash' to the executed strings. The app added and executed events flawlessly after that stage.
 
 \subsection{Kill Switch}
 
@@ -342,12 +339,28 @@ The function prints a list of all active processes and greps the lines where 'te
 
 The kill switch is a hidden function; it is not to be used lightly and so there is not one button that calls it. Instead it is activated by a sequence of button pressed in succession each other. This is to enable that it is not accidentally pressed by the user, but is only used in emergencies.
 
-Setting the interval to less than 30 is not permitted either, but this is discussed later in GUI section on page~\pageref{gui}
+Setting the interval to less than 30 is not permitted either, but this is discussed later in the User Interfaces Section on page~\pageref{userinterfaces}.
 
 \subsection{Easter Egg}
 Also included in the commandline is a small easter egg that launches a Asteroids/Snake game I wrote using the curses library in python. It was written in between journeys to UCL and home during the development and writeup, and it felt like a shame to leave it out out of the app.
 It was written on the phone itself, using the nano text editor.
 
 To access it, the user must type 'motiondetect --easter'. The code can be found on page~\pageref{easter} in the Appendix.
+
+\begin{thebibliography}{9}
+\bibitem{alarmdpack}
+Simo Piiroinen, Alarm Daemon,  Source: \url{http://maemo.org/packages/view/alarmd/}
+Page~\pageref{ref:alarmdpack}
+
+\bibitem{alarmedpyth}
+Carol Alexandru, Alarmed Scheduling Application Package and Source - \url{http://maemo.org/packages/view/alarmed/}
+Page~\pageref{ref:alarmedpyth}
+
+\bibitem{alarmdframe}
+Maemo Documentation Wiki, Alarmd Framework - \url{http://wiki.maemo.org/Documentation/Maemo_5_Developer_Guide/Using_Generic_Platform_Components/Alarm_Framework}
+Page~\pageref{ref:alarmdframe}
+
+\end{thebibliography}
+
 
 %\end{document}
