@@ -10,9 +10,7 @@ One day I decided to create a new project called ‘WatchDog’ (the current nam
 
 With watchdog I got braver with Git and began to try branching using the recommended master,develop,feature, hotfix standard model. I would push all my new changes to the develop branch, and when I wanted to try something completely new (i.e a new feature) I would create a new feature branch (e.g. feature/averaging, feature/subtraction) and then commit to that branch until I was reasonably sure that the method was stable, where I would then merge my changes with the develop branch. The hotfix branch was never used as I didn’t release my application to the public Maemo repositories until much later so I had nothing to fix.
 
-The diagram below shows the branch structure of my Git repository and the various merges I performed. For a transcript of commits please see page~\pageref{commits} in the Appendix.
-[[[INSERT DIAGRAM HERE]]]
-
+For a transcript of commits please see page~\pageref{commits} in the Appendix.
 
 
 \section{Publishing}
@@ -28,15 +26,43 @@ Like most repositories, it is split into two sections: free and non-free, with f
 
 To upload a project to Extras, one can either upload directly using a Maemo Garage account, or by using the Extras Assistant Wizard. The wizard is more commonly used, and it requires a .changes file and the compressed .tar.gz archive of the source.
 
-An autobuilder then automatically builds the package (or fails with errors which the developer must address before trying to reupload), and then an autotester tests the app to see if it installs cleanly and without conflicts, and finally an autostager rates the app and stages it on the repositories to be downloaded by the end-user\footnote{Repository process - http://wiki.maemo.org/Extras\_repository\_process\_definition}. This process can take from 3 minutes to 3 days depending on how many new applications are being uploaded and how large/complex the application is.
+An autobuilder then automatically builds the package (or fails with errors which the developer must address before trying to reupload), and then an autotester tests the app to see if it installs cleanly and without conflicts, and finally an autostager rates the app and stages it on the repositories to be downloaded by the end-user\footnote{Repository process - http://wiki.maemo.org/Extras\_repository\_process\_definition}\label{ref:repproc}. This process can take from 3 minutes to 3 days depending on how many new applications are being uploaded and how large/complex the application is.
 
-Completley new applications are staged to the Extras-Devel repository, which is where all the new (and largely unstable) apps are first placed. Applications that are deemed stable by their developers can be pushed to Extras-testing repository by clicking a ‘Promote Package’ button on the information page for the application. Assuming all dependencies are met and a valid category for the app (multimedia/games/etc) is specified, then it should be promoted within the day\footnote{Promoting to Testing  - http://wiki.maemo.org/Extras-devel\#Promoting\_packages\_to\_extras-testing}. 
+Completley new applications are staged to the Extras-Devel repository, which is where all the new (and largely unstable) apps are first placed. Applications that are deemed stable by their developers can be pushed to Extras-testing repository by clicking a ‘Promote Package’ button on the information page for the application. Assuming all dependencies are met and a valid category for the app (multimedia/games/etc) is specified, then it should be promoted within the day\footnote{Promoting to Testing  - http://wiki.maemo.org/Extras-devel\#Promoting\_packages\_to\_extras-testing}\label{ref:promtest}. 
 
-Once in testing, it then undergoes a human rating system who thumb the application up or down depending on stable (or usually how good) it is. After a package recieves 10 positive votes and has had a minimum of 10 days within extras-testing, it is then promotes to the main Extras repository\footnote{Promoting to Extras - http://wiki.maemo.org/Extras-devel\#Promoting\_packages\_to\_extras-testing}
+Once in testing, it then undergoes a human rating system who thumb the application up or down depending on stable (or usually how good) it is. After a package recieves 10 positive votes and has had a minimum of 10 days within extras-testing, it is then promotes to the main Extras repository\footnote{Promoting to Extras - http://wiki.maemo.org/Extras-devel\#Promoting\_packages\_to\_extras-testing}\label{ref:promext}.
 
 \subsection{Announce Page}
 To promote the application, developers usually create an Announce thread on the Maemo Talk forums with a subject heading of ‘[Announce] Appname - Description’. Developers who are too meek to upload to Extras-Devel and don’t quite want to reveal their source can attach their .deb packages to the first post where users can then download it and try it out without having to go through the repositories. All issues concerning the application and future versions and releases are updated/posted on this thread.
 
-In the case of my old Phonestreamer app (now MediaStream) I got 10,000 downloads within a week, and 40,000 within a month\footnote{Phonestreamer Announce page - http://talk.maemo.org/showthread.php?t=70877}, but that was two years ago when the N900 was still relatively new and cutting edge.
+In the case of my old Phonestreamer app (now MediaStream) I got 10,000 downloads within a week, and 40,000 within a month\footnote{Phonestreamer Announce page - http://talk.maemo.org/showthread.php?t=70877}\label{ref:phonser}, but that was two years ago when the N900 was still relatively new and cutting edge.
 
-In the case of my current WatchDog app, the response has been less eager simply due to the lack N900 users still lingering around. The responses that I have recieved however have been overwhelmingly supportive and impressed and I have even dedicated this project write up to the first user who responded to my announce page (see dedication above the contents)\footnote{‘deed’ appraisal http://talk.maemo.org/showpost.php?p=1255370\&postcount=2}. The lack of users is not surprising, but I am not worried since the watchdog application is extremely portable (the underlying logic does not solely rely on FCam or CImg) and due to the cross-platform nature of the Qt framework, means that I can port this application to another phone in the very near future (though to my dismay it is most likely to be a Windows phone because of the Qt requirement). Watchdog is also a good ‘end app’ for the phone since many users simply discard or swap in their old phones when upgrading, but now watchdog gives it a use as security device.
+In the case of my current WatchDog app, the response has been less eager simply due to the lack N900 users still lingering around. The responses that I have recieved however have been overwhelmingly supportive and impressed and I have even dedicated this project write up to the first user who responded to my announce page (see dedication above the contents)\footnote{‘deed’ appraisal http://talk.maemo.org/showpost.php?p=1255370\&postcount=2}\label{ref:appraisal}. The lack of users is not surprising, but I am not worried since the watchdog application is extremely portable (the underlying logic does not solely rely on FCam or CImg) and due to the cross-platform nature of the Qt framework, means that I can port this application to another phone in the very near future (though to my dismay it is most likely to be a Windows phone because of the Qt requirement). Watchdog is also a good ‘end app’ for the phone since many users simply discard or swap in their old phones when upgrading, but now watchdog gives it a use as security device.
+
+\begin{thebibliography}{9}
+\bibitem{repproc}
+Exras Repository Process Definition, Maemo Wiki,
+\url{http://wiki.maemo.org/Extras_repository_process_definition}
+Page~\pageref{ref:repproc}
+
+\bibitem{promtest}
+Extras-Devel and Promoting to Extras-Testing, Maemo Wiki,
+\url{http://wiki.maemo.org/Extras-devel#Promoting_packages_to_extras-testing}
+Page~\pageref{ref:promtest}
+
+\bibitem{promext}
+Extras-Testing and Promiting to Extras, Maemo Wiki,
+\url{http://wiki.maemo.org/Extras-devel#Promoting_packages_to_extras-testing}
+Page~\pageref{ref:promext}
+
+\bibitem{phonser}
+Mehmet Tekman (tetris11\_), Phonestreamer Annouce Page, Maemo Forums,
+\url{http://talk.maemo.org/showthread.php?t=70877}
+Page~\pageref{ref:phonser}
+
+\bibitem{appraisal}
+User 'deed', Forum Post, PhoneStremer Announce Page, Maemo Forums,
+\url{http://talk.maemo.org/showpost.php?p=1255370&postcount=2}
+Page~\pageref{ref:appraisal}
+
+\end{thebibliography}

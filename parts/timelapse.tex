@@ -91,7 +91,7 @@ There were three approaches I could take to make a TimeLapse application:\\
 
 The first approach would have meant that the application would have been in the main foreground while all the frames were being taken. If I wanted to capture a frame every hour for two days, then the app would have to be open and active for that entire time. This would be a waste of RAM, since the application will occupy a chunk of memory for two days without actually doing any work for most of that time. This will also occupy window space since the application UI will be active in this time, which is a major problem because the user may unwittingly close the application preventing it from completing it's job.
 
-The second approach is the same as the first; waste of RAM over an extended period of time, but this time the window of the application is hidden and so the user will not be able to accidentally cancel the task once it is set. Doing this is very easy, since in Qt all one has to do is get rid of the myClass->show() function to run the app in the background. But as before, this is not optimal and wastes RAM.
+The second approach is the same as the first; waste of RAM over an extended period of time, but this time the window of the application is hidden and so the user will not be able to accidentally cancel the task once it is set. Doing this is very easy, since in Qt all one has to do is get rid of the myClass.show() function to run the app in the background. But as before, this is not optimal and wastes RAM.
 
 This leaves the third option, which is to set scheduled events for the app so that it starts and stops at specific times with minimal usage of system resources. The question now is how to enable the MotionDetector to do this.
 
@@ -275,6 +275,8 @@ every half hour until 10th October 2012 3pm.
 \end{enumerate}
 All this, purely by using the same argument values.
 
+To see the TimeLapse in operation, please visit the Youtube channel in the footer for a list of public videos demonstrating it in action\footnote{Timelapse videos - http://www.youtube.com/channel/UCbs6SUFR4UW6oREchDsRSpQ?feature=mhee}\label{ref:mickey}
+
 \section{Available Software Evaluation}
 In order to get repeated application calls in the first place, we need to first schedule the jobs. Fremantle uses cron (as do most systems), but it also has it's own native scheduler daemon 'Alarmd'.
 
@@ -359,6 +361,10 @@ Page~\pageref{ref:alarmedpyth}
 \bibitem{alarmdframe}
 Maemo Documentation Wiki, Alarmd Framework - \url{http://wiki.maemo.org/Documentation/Maemo_5_Developer_Guide/Using_Generic_Platform_Components/Alarm_Framework}
 Page~\pageref{ref:alarmdframe}
+
+\bibitem{mickey}
+Mickey.Mouse.Theme.Song - Youtube Account created to demonstrate TimeLapse videos, (more suitable unique names were hard to create), \url{http://www.youtube.com/channel/UCbs6SUFR4UW6oREchDsRSpQ?feature=mhee}
+Page~\pageref{ref:mickey}
 
 \end{thebibliography}
 
