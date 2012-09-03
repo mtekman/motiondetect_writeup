@@ -1,85 +1,85 @@
-% !TEX TS-program = pdflatex
-% !TEX encoding = UTF-8 Unicode
-\documentclass[11pt]{article} % use larger type; default would be 10pt
-\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
-
-%%% PAGE DIMENSIONS
-\usepackage{geometry} % to change the page dimensions
-\geometry{a4paper} % or letterpaper (US) or a5paper or....
-
-%%% PACKAGES
-\usepackage{qtree} % Tree support
-\usepackage{graphicx} % support the \includegraphics command and options
-\usepackage{wrapfig} % Figure wrapping
-% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
-\usepackage{booktabs} % for much better looking tables
-\usepackage{array} % for better arrays (eg matrices) in maths
-\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
-\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
-\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
-\usepackage{url}
-\usepackage{enumerate}
-\usepackage{cleveref}  %cites figures intelligently
-\usepackage{import} % document structuring
-\usepackage{float}  %These two ensure that table position follows text by specifcing {table}[H]
-\restylefloat{table}
-
-%CODE LISTINGS
-\usepackage{color}
-\usepackage{listings}
-
-\lstset{
-	tabsize=4,
-%	language=matlab,
-        	basicstyle=\scriptsize,
-%     	upquote=true,
-       	aboveskip={\baselineskip},
-        	columns=fixed,
-        	showstringspaces=false,
-        	extendedchars=true,
-        	breaklines=true,
-	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
-	frame=single,
-        	showtabs=false,
-        	showspaces=false,
-        	showstringspaces=false,
-        	identifierstyle=\ttfamily,
-        	keywordstyle=\color[rgb]{0,0,1},
-        	commentstyle=\color[rgb]{0.133,0.545,0.133},
-        	stringstyle=\color[rgb]{0.627,0.126,0.941},
-	language=C++
-}
-
-%%% HEADERS & FOOTERS
-\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
-\pagestyle{fancy} % options: empty , plain , fancy
-\renewcommand{\headrulewidth}{0pt} % customise the layout...
-\lhead{}\chead{}\rhead{}
-\lfoot{}\cfoot{\thepage}\rfoot{}
-
-%%% SECTION TITLE APPEARANCE
-\usepackage{sectsty}
-\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
-%\ttfamily
-%\sffamily\mdseries\upshape
-\rmfamily
-\usepackage{titlesec}
-%\titleformat{\subsection}[runin]{\mdseries\bf}{\thesubsection}{1em}{}
-%\titleformat{\subsubsection}[runin]{\mdseries\bf\underline\large}{\thesubsection}{1 em}{\vspace{-5 pt}}
-
-\usepackage{footbib}
-
-% (This matches ConTeXt defaults)
-
-%%% ToC (table of contents) APPEARANCE
-\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
-\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
-\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
-\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
-\newcommand{\tab}{\hspace*{2em}}
-
-\begin{document}
-%%% END Article customizations
+%% !TEX TS-program = pdflatex
+%% !TEX encoding = UTF-8 Unicode
+%\documentclass[11pt]{article} % use larger type; default would be 10pt
+%\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+%
+%%%% PAGE DIMENSIONS
+%\usepackage{geometry} % to change the page dimensions
+%\geometry{a4paper} % or letterpaper (US) or a5paper or....
+%
+%%%% PACKAGES
+%\usepackage{qtree} % Tree support
+%\usepackage{graphicx} % support the \includegraphics command and options
+%\usepackage{wrapfig} % Figure wrapping
+%% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{booktabs} % for much better looking tables
+%\usepackage{array} % for better arrays (eg matrices) in maths
+%\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+%\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+%\usepackage{url}
+%\usepackage{enumerate}
+%\usepackage{cleveref}  %cites figures intelligently
+%\usepackage{import} % document structuring
+%\usepackage{float}  %These two ensure that table position follows text by specifcing {table}[H]
+%\restylefloat{table}
+%
+%%CODE LISTINGS
+%\usepackage{color}
+%\usepackage{listings}
+%
+%\lstset{
+%	tabsize=4,
+%%	language=matlab,
+%        	basicstyle=\scriptsize,
+%%     	upquote=true,
+%       	aboveskip={\baselineskip},
+%        	columns=fixed,
+%        	showstringspaces=false,
+%        	extendedchars=true,
+%        	breaklines=true,
+%	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+%	frame=single,
+%        	showtabs=false,
+%        	showspaces=false,
+%        	showstringspaces=false,
+%        	identifierstyle=\ttfamily,
+%        	keywordstyle=\color[rgb]{0,0,1},
+%        	commentstyle=\color[rgb]{0.133,0.545,0.133},
+%        	stringstyle=\color[rgb]{0.627,0.126,0.941},
+%	language=C++
+%}
+%
+%%%% HEADERS & FOOTERS
+%\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+%\pagestyle{fancy} % options: empty , plain , fancy
+%\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{}
+%\lfoot{}\cfoot{\thepage}\rfoot{}
+%
+%%%% SECTION TITLE APPEARANCE
+%\usepackage{sectsty}
+%\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+%%\ttfamily
+%%\sffamily\mdseries\upshape
+%\rmfamily
+%\usepackage{titlesec}
+%%\titleformat{\subsection}[runin]{\mdseries\bf}{\thesubsection}{1em}{}
+%%\titleformat{\subsubsection}[runin]{\mdseries\bf\underline\large}{\thesubsection}{1 em}{\vspace{-5 pt}}
+%
+%\usepackage{footbib}
+%
+%% (This matches ConTeXt defaults)
+%
+%%%% ToC (table of contents) APPEARANCE
+%\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+%\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+%\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+%\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+%\newcommand{\tab}{\hspace*{2em}}
+%
+%\begin{document}
+%%%% END Article customizations
 
 \vspace{-20pt}
 \part{User Interfaces}
@@ -145,7 +145,7 @@ The implementation is shown below:\\
 chooseop::chooseop(QWidget *parent=0){
     ...
     ui->setupUi();
-    //Null pointers
+    //Set pointers to both classes as 0 initially.
     mw = 0; tlw = 0;
 }
 //destructor removes dangling pointers
@@ -188,7 +188,7 @@ To get around this, we use QSettings.
 QSettings is Qt's implementation of providing persistent platform settings. QSettings writes a configuration file to ~/.config/appname/settingsname.ini which can preserve settings between application usage, but also has the hidden benefit that it enables different classes sharing no parent-child relationship to share data between them.
 
 This may seem a small overhead of continuously reading and writing from disk, but it is far easier implementation that the alternative, which is to create duplicate  class variables so that for example; Class A with public variables vara,varb,varc, and Class B with public variables vara,varb,varc, and Class C with public variables vara,varb,varc. Say that ClassB has varb changed by the user, and Class C wants to access that setting. Now imagine the following implementation:\\
-\Tree [ [ ClassB ClassC ].ClassA ]
+\Tree [ [ ClassB ClassC ].ClassA ]\\
 So that in order to get from Class B to Class C, one must go through Class A first. Then the only way to persist that setting so that ClassA has varb changed too is to assign: 
 \begin{lstlisting}
 ClassA *apoint = new ClassA; 
@@ -212,12 +212,12 @@ ClassC *cpoint = new ClassC(apoint);
 cpoint->varb = bpoint->varb;
 delete bpoint;
 \end{lstlisting}
-But this is only a solution for classes that are connected via the tree diagram defined previously.
-For Classes that have more than one relationship between them such as:
-\Tree [ [ [ [ ClassE ].ClassD ].ClassB [ ClassF ].ClassC ].ClassA ]
-Then to persist data from ClassE to ClassF, one would have to go via E-D-B-C-F, meaning that the user either duplicates class variables for all classes and then assigns ClassD.varb = ClassE.varb, ClassB.varb = ClassD.varb, and so forth deleting pointers each time. But this is a waste of variables.
+But this is only a solution for classes that are connected via the tree diagram defined previously.\\
+For Classes that have more than one relationship between them such as:\\
+\Tree [ [ [ [ ClassE ].ClassD ].ClassB [ ClassF ].ClassC ].ClassA ]\\
+Then to persist data from ClassE to ClassF, one would have to go via E-D-B-A-C-F, meaning that the user must duplicate class variables for all classes and then assign ClassD.varb = ClassE.varb, ClassB.varb = ClassD.varb, and so forth deleting pointers each time. But this is a waste of duplicate class variables as before, since only ClassE and ClassF should be the only classes with duplicate variables.
 
-To try my previous solution of not deleting pointers to until absolutely neccesary, then I could assign ClassF.varb =  ClassE.varb directly, so long as I dont delete Classes E,D,B,C,F until the very end. This means that 5 windows would be taking up memory when only 2 is needed.
+To try my previous solution of not deleting pointers to until absolutely neccesary, would require me assigning ClassF.varb =  ClassE.varb directly, so long as I dont delete Classes E,D,B,A,C,F until the very end. This means that 6 windows would be taking up space in memory when only 2 are needed.
 
 QSettings is the answer to this. The user simply commits settings to file in one class, and another class reads it at a later point without having duplicate variables or leave idle windows open.
 It's implementation is simple:
@@ -230,7 +230,7 @@ setting.writeSetting("varb", this->varb);
 QSettings *setting = QSettings("Appname","Group");
 this>varb = setting.value("varb").toType();
 \end{lstlisting}
-It should be noted that QSettings wraps primitives with objects, and so the user must then convert them back to the relevant type when assigining them againg.
+It should be noted that QSettings wraps primitives with objects, and so the user must then convert them back to the relevant type when assigining them again.
 
-
-\end{document}
+%
+%\end{document}
