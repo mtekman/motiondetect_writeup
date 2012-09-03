@@ -82,7 +82,7 @@
 %%%% END Article customizations
 
 \vspace{-20pt}
-\part{User Interfaces}
+\part{User Interfaces}\label{userinterfaces}
 \vspace{-20pt}
 \section{GUI Map}\label{guimap}
 \begin{figure}[H]
@@ -184,7 +184,7 @@ On top of this one may want to the application to remember the settings the user
 
 To get around this, we use QSettings.
 
-\subsection{QSettings}
+\subsection{QSettings}\label{QSettings}
 QSettings is Qt's implementation of providing persistent platform settings. QSettings writes a configuration file to ~/.config/appname/settingsname.ini which can preserve settings between application usage, but also has the hidden benefit that it enables different classes sharing no parent-child relationship to share data between them.
 
 This may seem a small overhead of continuously reading and writing from disk, but it is far easier implementation that the alternative, which is to create duplicate  class variables so that for example; Class A with public variables vara,varb,varc, and Class B with public variables vara,varb,varc, and Class C with public variables vara,varb,varc. Say that ClassB has varb changed by the user, and Class C wants to access that setting. Now imagine the following implementation:\\
