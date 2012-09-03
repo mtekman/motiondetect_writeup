@@ -118,7 +118,7 @@ FrankenCamera (or {\bf FCam}) is a very easy to use open-source C++ API for cont
 \item[Sensor]{The sensor object listens for calls for capture, and outputs a frame by performing all the image pipelining in it's own thread. Once pipeline exits (or the thread terminates) the sensor is ready to be configured for the next frame.}
 \item[Frame]{Frames can be accessed from the sensor by calling the getFrame() function which performs blocking on any pending shots. The ease of API is shown here, as this is the \it{only} blocking call in the entire API.}
 \end{enumerate}
-
+\footnote{FCam Image - http://graphics.stanford.edu/papers/fcam/}
 \begin{wrapfigure}{R}{0.5\textwidth}
 	\vspace{-40pt}
 	\begin{center}
