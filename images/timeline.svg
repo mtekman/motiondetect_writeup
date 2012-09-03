@@ -14,7 +14,10 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="timeline.svg">
+   sodipodi:docname="timeline.svg"
+   inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4">
     <marker
@@ -150,8 +153,8 @@
      inkscape:guide-bbox="true"
      inkscape:window-width="1571"
      inkscape:window-height="816"
-     inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-x="168"
+     inkscape:window-y="175"
      inkscape:window-maximized="0">
     <sodipodi:guide
        orientation="0,1"
@@ -178,7 +181,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -255,7 +258,7 @@
     <text
        xml:space="preserve"
        style="font-size:22.28863907px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="-97.763992"
+       x="-117.76399"
        y="320.33429"
        id="text3055"
        sodipodi:linespacing="125%"
@@ -263,9 +266,9 @@
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90"><tspan
          sodipodi:role="line"
-         x="-97.763992"
+         x="-117.76399"
          y="320.33429"
-         id="tspan3063">IP Webcam</tspan></text>
+         id="tspan3063">IP Streaming</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:22.28863907px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
@@ -368,7 +371,7 @@
          y="293.65085"
          x="102.85714"
          height="37.142857"
-         width="245.23473"
+         width="209.19179"
          id="rect3115"
          style="fill:#2ad4ff"
          inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
@@ -377,9 +380,9 @@
       <rect
          style="fill:#2ad4ff"
          id="rect3117"
-         width="185.87415"
+         width="227.21753"
          height="37.142857"
-         x="345.40469"
+         x="304.06131"
          y="353.65085"
          ry="17.142857"
          inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
@@ -410,8 +413,8 @@
       <path
          inkscape:connector-curvature="0"
          id="path3125"
-         d="m 24.95882,312.50504 319.68498,0"
-         style="fill:none;stroke:#000000;stroke-width:1.94672024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.94672037, 3.89344073;stroke-dashoffset:19.46720369;marker-start:none;marker-mid:none;marker-end:url(#Arrow1Mend)"
+         d="m 25.141017,312.09517 283.573513,0"
+         style="fill:none;stroke:#000000;stroke-width:2.19904184;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.19904188, 4.39808376;stroke-dashoffset:21.99041882;marker-start:none;marker-mid:none;marker-end:url(#Arrow1Mend)"
          inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90"
@@ -446,7 +449,7 @@
          sodipodi:nodetypes="cccc"
          inkscape:connector-curvature="0"
          id="path5297"
-         d="m 347.49026,312.62686 43.05325,-0.3338 -103.51311,60.55863 56.98556,-0.26697"
+         d="m 307.49026,312.62686 43.05325,-0.3338 -103.51311,60.55863 56.98556,-0.26697"
          style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0;marker-start:none;marker-end:url(#Arrow1Lend)"
          inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
          inkscape:export-xdpi="90"
@@ -469,22 +472,6 @@
          inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90" />
-      <text
-         xml:space="preserve"
-         style="font-size:36.13132477px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         x="101.004"
-         y="259.24905"
-         id="text3035"
-         sodipodi:linespacing="125%"
-         transform="scale(1.1880718,0.84169997)"
-         inkscape:export-filename="/media/Free/Dropbox/Sync/UCL_Work/MSc_WriteUp/images/timeline.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90"><tspan
-           sodipodi:role="line"
-           id="tspan3037"
-           x="101.004"
-           y="259.24905"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">Development Timeline</tspan></text>
     </g>
   </g>
 </svg>
