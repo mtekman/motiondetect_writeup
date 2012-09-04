@@ -311,7 +311,7 @@ To use Alarmd, one needs to use libalarmd, which is native to the phone and so t
 Alarmd jobs have APPID's, which uniquely match a job to an application making it far easier to retrieve and edit jobs without affecting other jobs or having to filter through them.
 
 \section{Optimisations/Error Proofing}
-Commandline not called until arguments!=0, then it is destroyed intelligently.
+The Commandline class is not called until arguments!=0, at which point it is then deleted after all input has been parsed.
 
 Even with the decent examples at the Maemo wiki, the application was error prone: sometimes jobs would be added correctly and sometimes not, sometimes the jobs would execute correctly and sometimes not. 
 
@@ -349,24 +349,7 @@ It was written on the phone itself, using the nano text editor.
 
 To access it, the user must type 'motiondetect --easter'. The code can be found on page~\pageref{easter} in the Appendix.
 
-\begin{thebibliography}{9}
-\bibitem{alarmdpack}
-Simo Piiroinen, Alarm Daemon,  Source: \url{http://maemo.org/packages/view/alarmd/}
-Page~\pageref{ref:alarmdpack}
-
-\bibitem{alarmedpyth}
-Carol Alexandru, Alarmed Scheduling Application Package and Source - \url{http://maemo.org/packages/view/alarmed/}
-Page~\pageref{ref:alarmedpyth}
-
-\bibitem{alarmdframe}
-Maemo Documentation Wiki, Alarmd Framework - \url{http://wiki.maemo.org/Documentation/Maemo_5_Developer_Guide/Using_Generic_Platform_Components/Alarm_Framework}
-Page~\pageref{ref:alarmdframe}
-
-\bibitem{mickey}
-Mickey.Mouse.Theme.Song - Youtube Account created to demonstrate TimeLapse videos, (more suitable unique names were hard to create), \url{http://www.youtube.com/channel/UCbs6SUFR4UW6oREchDsRSpQ?feature=mhee}
-Page~\pageref{ref:mickey}
-
-\end{thebibliography}
-
+%\begin{thebibliography}{9}
+%\end{thebibliography}
 
 %\end{document}

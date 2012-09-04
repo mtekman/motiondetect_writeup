@@ -10,7 +10,7 @@ Applications follow the same open-source framework as Debian applications, where
 
 
 \subsubsection{Future of Nokia}
-Nokia's previous OS was Symbian, which at the time was one of the most popular mobile operating system. Every one in two mobile phones sold in 2009 carried the Symbian OS\footnote{Blookmber Business - http://www.businessweek.com/globalbiz/content/nov2009/gb2009114\_367401.htm} a stark contrast to the current leading smartphone OS's of today. Maemo was Nokia's next brain child, the open-source succesor to Symbian which it replaced in the release of  it's then next-gen internet tablet phones, a bold and somewhat puzzling move by Nokia after the success of their initial Symbian OS. Maemo's open framework attracted many hardcore linux developers hungry to port linux applications onto the device, but sadly that was mostly all the phone was good for. The initial Diablo release for the Nokia N810 was superseded by  the Fremantle release for the N900, which has now been surpassed by the Harmattan release for the N9 and N950.
+Nokia's previous OS was Symbian, which at the time was one of the most popular mobile operating system. Every one in two mobile phones sold in 2009 carried the Symbian OS\footnote{Blookmber Business - http://www.businessweek.com/globalbiz/content/nov2009/gb2009114\_367401.htm}\label{ref:blook} a stark contrast to the current leading smartphone OS's of today. Maemo was Nokia's next brain child, the open-source succesor to Symbian which it replaced in the release of  it's then next-gen internet tablet phones, a bold and somewhat puzzling move by Nokia after the success of their initial Symbian OS. Maemo's open framework attracted many hardcore linux developers hungry to port linux applications onto the device, but sadly that was mostly all the phone was good for. The initial Diablo release for the Nokia N810 was superseded by  the Fremantle release for the N900, which has now been surpassed by the Harmattan release for the N9 and N950.
 
 Harmattan was supposed to be the stepping stone between Maemo and Meego, Nokia's next inventure, which was a merge between Moblin OS and Maemo. However though initial development images worked well with Nokia devices the Meego project was dropped by Nokia and the community had to once again pick up the slack, and are currently maintining Meego under the codename 'Mer' which is now being used as the template for the next completely open-source mobile OS 'Tizen' which will be launched on Samsung phones in the near future.
 
@@ -37,7 +37,7 @@ std::cout has the benefit that the developer can choose when to flush output to 
 Another useful feature of printing directly to the console is that I can use the \textbackslash r operator to clear any current output on a given line and overwrite it. For place where I was outputting the current filename of the recorded file, this saved a lot of wasted lines from being printed as the filenames simply overwrote each other in the same line until the recording process finished, and I then moved to a new line.
 
 \subsubsection{Message Handlers}
-Before I used cout, I attempted to use a qMessageHandler() that would automatically pipe qDebug() streams directly to std::cout. On the QtGlobal API\footnote{qInstallMessageHandler - http://doc.qt.nokia.com/4.7-snapshot/qtglobal.html\#qInstallMsgHandler}, I found the following snippet of code:
+Before I used cout, I attempted to use a qMessageHandler() that would automatically pipe qDebug() streams directly to std::cout. On the QtGlobal API\footnote{qInstallMessageHandler - http://doc.qt.nokia.com/4.7-snapshot/qtglobal.html\#qInstallMsgHandler}\label{ref:qinst}, I found the following snippet of code:
 \begin{lstlisting}
  #include <qapplication.h>
  #include <stdio.h>
@@ -152,9 +152,9 @@ ui->myLabel->setMovie(movieLogo);
 \section{Manual}
 \subsection{System Manual}
 \subsubsection{Getting the source}
-The source code can be from the CD provided or can also be accesseed on the maemo packages database\footnote{Package Search - http://maemo.org/packages/} and search for WatchDog. Then select any Extras-Devel repository for the latest code, and click on source. Untar the file with ‘tar -zxvf  watchdog\_*.tar.gz’.
+The source code can be from the CD provided or can also be accesseed on the maemo packages database\footnote{Package Search - http://maemo.org/packages/}\label{ref:packsearch} and search for WatchDog. Then select any Extras-Devel repository for the latest code, and click on source. Untar the file with ‘tar -zxvf  watchdog\_*.tar.gz’.
 \subsubsection{Building with Qt}
-First download the QtSDK for either Windows or Linux from the official Qt site\footnote{Qt Downloads - http://qt.nokia.com/downloads}. Windows is recommended for stability reasons. A normal installation will take up 2.66GB of data, but a lot of this not needed so I recommend doing a custom installation. To install the neccesary components needed to run the app are:
+First download the QtSDK for either Windows or Linux from the official Qt site\footnote{Qt Downloads - http://qt.nokia.com/downloads}\label{ref:qtdown}. Windows is recommended for stability reasons. A normal installation will take up 2.66GB of data, but a lot of this not needed so I recommend doing a custom installation. To install the neccesary components needed to run the app are:
 \begin{enumerate}
 \item Tick the core QtSDK (greater or equal to v1.2.1-1)
 \item Untick experimental
@@ -179,7 +179,7 @@ If no target has been set up, then go to Tools... Options... select the Linux De
 
 \section{API example usage}
 \subsection{GStreamer Pipelining in C++}
- The following is just a small snippet from an example Camera class from the Maemo Documentation Wiki\footnote{Camera Example - http://wiki.maemo.org/Documentation/Maemo\_5\_Developer\_Guide/Using\_Multimedia\_Components/Camera\_API\_Usage}
+ The following is just a small snippet from an example Camera class from the Maemo Documentation Wiki\footnote{Camera Example - http://wiki.maemo.org/Documentation/Maemo\_5\_Developer\_Guide/Using\_Multimedia\_Components/Camera\_API\_Usage}\label{ref:camex}
 
 \begin{frame}{}
 \vspace{-20pt}

@@ -92,7 +92,7 @@
 
 \part*{}{\tiny.\\\\\\\\\\\\\\\\}
 \begin{abstract}
-Morphological image processing techniques were performed upon frames captured by the camera on the Nokia N900 smartphone to correctly detect motion for a wide variety image sizes and motion ranges using the FCam API and CImg processing library in C++ within the Qt Framework.\\\tab A commandline interface was then developed to help facilitate time lapse operations in order to efficiently watch a target within a set period of time at specified intervals. The motion detection and time lapse components were merged into a single application dubbed ‘WatchDog’ and released successfully on public repositories.\\\tab IP streaming and webcam operations were also developed but they will be implemented into WatchDog at a further date.
+Morphological image processing techniques were performed upon frames captured by the camera on the Nokia N900 smartphone to correctly detect motion for a wide variety of image sizes and motion ranges using the FCam API and CImg processing library in C++ within the Qt Framework.\\\tab A commandline interface was then developed to help facilitate time lapse operations in order to efficiently watch a target within a set period of time at specified intervals. The motion detection and time lapse components were merged into a single application dubbed ‘WatchDog’ and released successfully on public repositories.\\\tab IP streaming and webcam operations were also developed but they will be implemented into WatchDog at a further date.
 \\\\\let\thefootnote\relax\footnote{This report is submitted as part requirement for the MSc Computer Science degree at UCL. It is substantially the result of my own work except where explicitly indicated in the text. The report may be freely copied and distributed provided the source is explicitly acknowledged.}
 \end{abstract}
 \pagebreak
@@ -130,35 +130,44 @@ The project was developed over the course of several months with the initial foc
 \label{fig:timmy}
 \end{figure}
 
-{\large\bf What it is}
+{\large\bf What it is}\\
+The project is split into three components, each ordered in terms of importance:
 \begin{enumerate}
-\item {\bf Motion Detector} is a device that is able to distinguish between different components of a scene (i.e. what is moving, and what is not) and react to it.
-\item {\bf Time Lapse} captures images at pre-specified intervals, so that when those images are viewed successively it appears that the transition of time has increased.
-\item {\bf IP Streaming} sends video or audio data from one machine to another in real time using internet protocols.
+\item {\it Motion Detector} is a device that is able to distinguish between different components of a scene (i.e. what is moving, and what is not) and react to it.
+\item {\it Time Lapse} captures images at pre-specified intervals, so that when those images are viewed successively it appears that the transition of time has increased.
+\item {\it IP Streaming} sends video or audio data from one machine to another in real time using internet protocols.
 \end{enumerate}
 
 {\large\bf What it does}
-A simple example of motion detection where there is only one moving object, then often it is enough to simply subtract one image from the previous as two bitmaps and the watch the difference. The dark parts in this subtracted image would have cancelled each other out because they have not changed between frames. The parts that  ‘light up’ are parts where there was a substantial difference between one frame or the next: movement.
+\begin{enumerate}
+\item {\it MotionDetector} A simple example of motion detection is if there is only one moving object in a given scene, then often it is enough to simply subtract one image from the previous and watch the difference. The images are treated as bitmaps and their pixel values are mathematically subtracted so that a pixel at grid-coordinate (10,20) in image 1 is subtracted by the pixel at grid-coordinate (10,20) in image 2.
+The dark parts in this subtracted image would have cancelled each other out because they have not changed between frames. The parts that  ‘light up’ are parts where there was a substantial difference between one frame or the next: movement.
 
 Rarely is there ever only one moving object in a scene, and for a scene watching a man walk past we will not want to capture the rustling trees behind him. In this case a simple subtraction would no longer work and we must perform more advanced techniques (morpholigical operations) such as eroding and/or dilating the image which shrink out or embolden features of an image respectively. Combined, they are a powerful tool and by specifying the level of eroding and dilating one can control what represents significant motion or not.
-%%%HERE
 
+\item {\it Time Lapse} On a mobile a time lapse application simply sets up scheduled tasks so that images can be taken at intervals. A video library is then used to compile images into a movie, which when played will make the target appear much livelier than if it was shot in real-time. An interface is used to set up parameters such as start/stop date, interval, image size, and frame rate, but after that the user can then close the application since all the tasks will be performed in the background and do not require user interaction. The user can open the application at any time to check on ongoing jobs.
 
+\item {\it IP Streaming} Video from the front or back camera of the device is sent in a compressed/encoded format to another device that uncompresses/decodes it, allowing for real time streaming between machines without taking up too much bandwidth. The user can select an active remote device from a dropdown list and application will generate all the necessary code to initiate a stream, depending on what encoding is used, what protocols are used, and the type of target (e.g. a file, a webcam, X Window, or a browser window).
+\end{enumerate}
 
+{\large\bf Approaches taken}\\
+A great deal of testing, planning, and trial-and-error was performed in order to get each seperate component of the application working correctly, and a great deal more was taken during the merging process of the motion detector and time lapse components to create ‘WatchDog’. IP streaming is currently a standalone application at the moment dubbed ‘MediaStream’ but it will be later merged into WatchDog to create what I llike to call a ‘super-app’, i.e. an application capable of performing a wide range of video tasks.
 
+\pagebreak
 \import{parts/}{background.tex}
+\pagebreak
 \import{parts/}{motiondetect.tex}
+\pagebreak
 \import{parts/}{timelapse.tex}
+\pagebreak
 \import{parts/}{ipstreamer.tex}
 \import{parts/}{userinterfaces.tex}
 \import{parts/}{release.tex}
 
-\import{parts/}{appendix.tex}
-
 \part{Conclusions}
 I believe the app has been a success. Due to the dying state of the Maemo community and the lack of N900 users it perhaps hasn’t received all the recognition that it deserves - but by itself it is a good decent application that performs a wide variety of different tasks, and does them {\it well}.
 
-It satisfies all the requirements that a good motion detector needs such as detecting movement under a wide range of different scenarios and settings such as light/dark environments, or different types of movement such as allowing the user to specify different mask size and thresholds for large/small movement.
+It satisfies all the requirements that a good motion detector needs such as detecting movement under a wide range of different scenarios and settings such as light/dark environments, or different types of movement by allowing the user to specify different mask size and thresholds for large/small movement.
 
 It even goes beyond the initial requirements and extends its abilities, such that the user can opt to have their images converted into a movie after each session, or the user can choose to be emailed for each movement that occurs (with the option to have the image containing the movement emailed to them). This gives the application new function, so that it is no longer just a motion detector, but a full-blown security device that can notify and alert its owner of activities around the phone (such as emailing the mugshot of the guilty culprit attempting to steal something of the owner’s).
 
@@ -174,27 +183,195 @@ Windows mobile already has a motion detection app ‘Vio’\footnote{Vio detecti
 
 Vio lacks a commandline interface, and is closed-source. For me these are major contesting points, since a user should have access to their phone in every way possible, and they should also know that the security software they have just installed on their device is not itself a security risk (which is why I dont trust AVG or Avast AntiVirus software).
 
-iPhone and Android have similar motion detectors (e.g ‘Motion Detector’ for iPhone\footnote{Motion Detector - http://itunes.apple.com/gb/app/motion-detector/id331443079?mt=8}, and ‘Motion Detector Pro’ for Android\footnote{Motion Detector Pro - http://motiondetector.homepagepublisher.com/}), both of which have plenty of downloads but are not as fully developed as my app is in terms of features.
+iPhone and Android have similar motion detectors (e.g ‘Motion Detector’ for iPhone\footnote{Motion Detector - http://itunes.apple.com/gb/app/motion-detector/id331443079?mt=8}\label{ref:moip}, and ‘Motion Detector Pro’ for Android\footnote{Motion Detector Pro - http://motiondetector.homepagepublisher.com/}\label{ref:moan}), both of which have plenty of downloads but are not as fully developed as my app is in terms of features.
 
-Once the IP streaming component is well integrated into the application, I believe it will become a must-have app due to sheer multitasked functionality that it offers.
+Once the IP streaming component is well integrated into the application, I believe it will become a must-have app due to sheer multitasked functionality that it offers. Future plans are to extend the commandline functionality to take in an input video file and detect the motion within it, but this may require a great deal of careful planning, since it would mean that I would have to completely seperate my motion detection logic from the FCam API of which it is (loosely) bound.
 
 I’ve previously discussed porting the app to future phones, most likely Windows Mobile due to Qt being well-integrated into it, and this is the aim at the moment. Before I do that I need to secure a loyal fanbase who are familiar with my work, so I believe a required stepping stone for transitioning from Fremantle to Windows (without being called a traitor) is Harmattan . Due to Fremantle and Harmattan (Meego) using a similar framework, porting from one to the other will not be difficult and will help secure a loyal fanbase, since most of hardcore N900 Fremantle users switched to Harmattan N9 rather than choose the alternative (iPhone, Android, Windows).
 
 In the meantime, the app serves as a good end product for a neglected (but otherwise fantastic) phone and may be a possible winner of the Maemo 2012 Coding Competition.
 
-\begin{thebibliography}{9}
+\pagebreak
+\import{parts/}{appendix.tex}
 
+
+\begin{thebibliography}{9}
+%BACKGROUND
+\bibitem{footbibpack}
+Eric Domenjoud, The footbib package for Latex, February 2007, 
+\url{http://mirror.hmc.edu/ctan/macros/latex/contrib/footbib/footbib.pdf}
+Page~\pageref{ref:footbibpack}
+
+\bibitem{backsub}
+Massimo Picardi, Background Sutraction Techniques, Computer Vision Research Group, University of Technology, Sydney
+\url{http://www-staff.it.uts.edu.au/~massimo/BackgroundSubtractionReview-Piccardi.pdf}
+Page~\pageref{ref:backsub}
+
+\bibitem{digim}
+Howard E Burdick, Digital Imaging:Theory and Applications, McGraw-Hill  1997, University of Virginia, ISBN:0079130593, 9780079130594
+Page~\pageref{ref:digim}
+
+\bibitem{nokiasell}
+Chris Ducket, Nokia Sells Qt to Digia, techrepublic, August 9 2012, 
+\url{http://www.techrepublic.com/blog/australia/nokia-sells-qt-to-digia/1268}
+Page~\pageref{ref:nokiasell}
+
+\bibitem{gitvs}
+Scott Chacon (schacon), GitHub vs BitBucket, Pocoo
+\url{http://www.pocoo.org/~blackbird/github-vs-bitbucket/bitbucket.html}
+Page~\pageref{ref:gitvs}
+
+%motiondetect.tex
+\bibitem{fcamdoc}
+Adams, A., Talvala, E., Park, S. H., Jacobs, D. E., Ajdin, B., Gelfand, N., Dolson, J., Vaquero, D., Baek, J., Tico, M., Lensch, H. P., Matusik, W., Pulli, K., Horowitz, M., and Levoy, M -  The Frankencamera: an experimental platform for computational photography, ACM SIGGRAPH 2010 \url{http://doi.acm.org/10.1145/1833349.1778766} Page~\pageref{ref:fcamdoc}
+
+\bibitem{snavelly}
+Noah Snavelly, Introduction to Computer Vision,
+Cornell University, New York
+\url{http://www.cs.cornell.edu/courses/cs4670/2010fa/}
+Page~\pageref{ref:snavelly}
+
+\bibitem{libcv}
+Maemo Packages - LibCV \url{http://maemo.org/packages/view/libcv-dev/}
+Page~\pageref{ref:libcv}
+
+\bibitem{depbug}
+Oliver Hookins, Missing dependencies bug, Maemo mail lists
+\url{http://lists.maemo.org/pipermail/maemo-developers/2011-August/028583.html}
+Page ~\pageref{ref:depbug}
+
+\bibitem{cimgipl}
+Hon-Kwok Fung, CIMG IPL conversion class header text
+\url{http://sph2grid.googlecode.com/svn-history/r14/trunk/CImg/plugins/cimg_ipl.h}
+Page~\pageref{ref:cimgipl}
+
+\bibitem{slotbug}
+QML Signals and signal hander miscategorization, Qt Bug reports
+\url{https://bugreports.qt-project.org/browse/QTBUG-17072}
+Page~\pageref{ref:slotbug}
+
+\bibitem{qtmobbug}
+QtMobility bugs
+\url{http://www.developer.nokia.com/Community/Discussion/showthread.php?201846-Sending-Email-Using-Qt-Mobility}
+Page~\pageref{ref:qtmobbug}
+
+\bibitem{qtcp}
+“Brian G”, Creating and sending email with Qt, Qt Mail Lists
+\url{http://lists.trolltech.com/qt-interest/2006-10/thread01158-0.html}
+Page~\pageref{ref:qtcp}
+
+\bibitem{mailcmd}
+Nicolai’s Mailcmd Announce page
+\url{http://talk.maemo.org/showthread.php?t=82918}
+Page~\pageref{ref:mailcmd}
+
+\bibitem{fcamapi}
+Eino-Ville Talvala, Andrew Adams et al, FCam API Documentatio and Examples
+\url{http://fcam.garage.maemo.org/examples.html}
+Page~\pageref{ref:fcamapi}
+
+%timelapse.tex
+\bibitem{alarmdpack}
+Simo Piiroinen, Alarm Daemon,  Source: \url{http://maemo.org/packages/view/alarmd/}
+Page~\pageref{ref:alarmdpack}
+
+\bibitem{alarmedpyth}
+Carol Alexandru, Alarmed Scheduling Application Package and Source - \url{http://maemo.org/packages/view/alarmed/}
+Page~\pageref{ref:alarmedpyth}
+
+\bibitem{alarmdframe}
+Maemo Documentation Wiki, Alarmd Framework - \url{http://wiki.maemo.org/Documentation/Maemo_5_Developer_Guide/Using_Generic_Platform_Components/Alarm_Framework}
+Page~\pageref{ref:alarmdframe}
+
+\bibitem{mickey}
+Mickey.Mouse.Theme.Song - Youtube Account created to demonstrate TimeLapse videos, (more suitable unique names were hard to create), \url{http://www.youtube.com/channel/UCbs6SUFR4UW6oREchDsRSpQ?feature=mhee}
+Page~\pageref{ref:mickey}
+
+%ipstreamer.tex
+\bibitem{phonestreamer}
+Mehmet Tekman (tetris11\_), Phonestreamer Announce Page, Maemo Forums
+\url{http://talk.maemo.org/showthread.php?t=70877}
+Page~\pageref{ref:phonstreamer}, Page~\pageref{ref:phonser}
+
+\bibitem{arpscanman}
+Roy Hills, Arp-Scan Author, \url{http://linux.die.net/man/1/arp-scan}
+Page~\pageref{ref:arpscanman}
+
+\bibitem{arpscanmaemo}
+Colin Stephane, Arp-Scan for Maemo Announce Page, Maemo Forums
+\url{http://talk.maemo.org/showthread.php?t=73467}
+Page~\pageref{ref:arpscanmaemo}
+
+\bibitem{amy}
+Angry Yoda Master(AMY), Feature request on Phonstreamer Announce thread, Maemo Forums,
+\url{http://talk.maemo.org/showthread.php?p=1054381\&highlight=profiles\#post1054381}
+Page~\pageref{ref:amy}
+
+%userinterfaces.tex
+
+%release.tex
+\bibitem{repproc}
+Exras Repository Process Definition, Maemo Wiki,
+\url{http://wiki.maemo.org/Extras_repository_process_definition}
+Page~\pageref{ref:repproc}
+
+\bibitem{promtest}
+Extras-Devel and Promoting to Extras-Testing, Maemo Wiki,
+\url{http://wiki.maemo.org/Extras-devel#Promoting_packages_to_extras-testing}
+Page~\pageref{ref:promtest}
+
+\bibitem{promext}
+Extras-Testing and Promiting to Extras, Maemo Wiki,
+\url{http://wiki.maemo.org/Extras-devel#Promoting_packages_to_extras-testing}
+Page~\pageref{ref:promext}
+
+\bibitem{appraisal}
+User 'deed', Forum Post, PhoneStremer Announce Page, Maemo Forums,
+\url{http://talk.maemo.org/showpost.php?p=1255370&postcount=2}
+Page~\pageref{ref:appraisal}
+
+
+%appendix.tex
+\bibitem{blook}
+Natasha Lomas, Blookmber Business, Nov 2009,
+\url{http://www.businessweek.com/globalbiz/content/nov2009/gb2009114_367401.htm}
+Page~\pageref{ref:blook}
+
+\bibitem{qinst}
+QinstallMessageHandler, QtGlobal API
+\url{http://doc.qt.nokia.com/4.7-snapshot/qtglobal.html#qInstallMsgHandler}
+Page~\pageref{ref:qinst}
+
+\bibitem{packsearch}
+Maemo Packages Database, Maemo
+\url{http://maemo.org/packages/}
+Page~\pageref{ref:packsearch}
+
+\bibitem{qtdown}
+Qt Downloads, Nokia Labs
+\url{http://qt.nokia.com/downloads}
+Page~\pageref{ref:qtdown}
+
+\bibitem{camex}
+GStreamer Example Class C++, Maemo Documentation Wiki
+\url{http://wiki.maemo.org/Documentation/Maemo_5_Developer_Guide/Using_Multimedia_Components/Camera_API_Usage}
+Page~\pageref{ref:camex}
+
+%WRITEUP
 \bibitem{vio}
 Vio Detection, Motion Detection Application,
 \url{http://vio-detection.com/}
+Page~\pageref{ref:vio}
 
 \bibitem{moip}
 Senstic , Motion Detector, Iphone
 \url{http://itunes.apple.com/gb/app/motion-detector/id331443079?mt=8}
+Page~\pageref{ref:moip}
 
 \bibitem{moan}
 Motion Detector Pro, Android, (Anonymous Developer)
 \url{http://motiondetector.homepagepublisher.com/}
+Page~\pageref{ref:moan}
 
 \end{thebibliography}
 
